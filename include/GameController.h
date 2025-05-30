@@ -17,6 +17,7 @@ private:
 
 	sf::RenderWindow m_window;
 	sf::Clock m_deltaClock;
+	float m_deltaTime;
 	Camera m_camera;
 	Renderer m_renderer;
 

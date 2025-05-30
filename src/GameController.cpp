@@ -8,6 +8,7 @@ void GameController::run()
 
 	while (m_window.isOpen())
 	{
+		m_deltaTime = m_deltaClock.restart().asSeconds();
 		sf::Event event;
 		while (m_window.pollEvent(event))
 		{
@@ -46,5 +47,4 @@ void GameController::render(Renderer& renderer)
 		throw std::runtime_error("Failed to load texture");
 	}
 	renderer.draw(texture, sf::Vector2f(), sf::Vector2f(0.5,0.5));
-
 }
