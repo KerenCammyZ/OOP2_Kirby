@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Camera.h"
+#include "Renderer.h"
 
 class GameController
 {
@@ -12,8 +13,11 @@ public:
 private:
 	void update();
 	void handle();
-	void draw();
+	void render(Renderer& renderer);
 
 	sf::RenderWindow m_window;
+	sf::Clock m_deltaClock;
+	Camera m_camera;
+	Renderer m_renderer;
 
 };
