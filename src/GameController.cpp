@@ -45,6 +45,6 @@ void GameController::render(Renderer& renderer)
 	{
 		throw std::runtime_error("Failed to load texture");
 	}
-	renderer.draw(texture, sf::Vector2f(), sf::Vector2f(2,2));
+	renderer.draw(texture, sf::Vector2f(), sf::Vector2f(0.5,0.5));
 
 }
