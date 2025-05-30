@@ -8,6 +8,8 @@ GameController::GameController():
 
 void GameController::run()
 {
+	sf::Clock deltaClock;
+	Camera camera;
 
 	while (m_window.isOpen())
 	{
@@ -23,6 +25,7 @@ void GameController::run()
 
 		m_window.clear(sf::Color::Black);
 		//update
+		m_window.setView(camera.getView(m_window.getSize()));
 		update();
 		//draw
 		draw();

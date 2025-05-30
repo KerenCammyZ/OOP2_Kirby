@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+#include "Camera.h"
+
 class GameController
 {
 public:
