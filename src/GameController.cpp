@@ -1,7 +1,28 @@
 #include "GameController.h"
+#include "MovingObject.h"
 
 GameController::GameController():
-	m_window(sf::VideoMode(800, 600), "Kirby"), m_renderer(m_window){}
+	m_window(sf::VideoMode(1600, 1200), "Kirby"), m_renderer(m_window), m_world(b2Vec2(0.0f, 9.8f))
+{
+	m_kirbyTexture = std::make_shared<sf::Texture>();
+	if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
+	{
+		throw std::runtime_error("Failed to load Kirby texture");
+	}
+
+	m_kirby = std::make_unique<Kirby>();
+	m_kirby->setTexture(m_kirbyTexture);
+	m_kirby->initPhysics(m_world, b2Vec2(0.01f, 0.01f), b2Vec2(0.0f, 0.0f));
+
+	// Get the initial view of the camera
+	sf::View initialView = m_camera.getView(m_window.getSize());
+
+	// Get the center of the initial view
+	sf::Vector2f viewCenter = initialView.getCenter();
+
+	// Position Kirby near the center of the view
+	m_kirby->setPosition(viewCenter);
+}
 
 void GameController::run()
 {	
@@ -19,8 +40,8 @@ void GameController::run()
 		//handle
 		handle();
 
-		m_window.clear(sf::Color::Black);
 		//update
+		m_window.clear(sf::Color::Black);
 		m_window.setView(m_camera.getView(m_window.getSize()));
 		update(m_deltaTime);
 		//draw
@@ -31,6 +52,8 @@ void GameController::run()
 
 void GameController::update(float deltaTime)
 {
+	m_world.Step(deltaTime, 8, 3);
+	m_kirby->update(deltaTime);
 }
 
 void GameController::handle()
@@ -39,12 +62,5 @@ void GameController::handle()
 
 void GameController::render(Renderer& renderer)
 {
-	
-	//test object
-	sf::Texture texture;
-	if (!texture.loadFromFile("TestSprite.png"))
-	{
-		throw std::runtime_error("Failed to load texture");
-	}
-	renderer.draw(texture, sf::Vector2f(), sf::Vector2f(0.5,0.5));
+	m_kirby->draw(renderer);
 }

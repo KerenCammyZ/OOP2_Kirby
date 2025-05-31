@@ -13,7 +13,7 @@ class GameObject
 public:
 	// constructor and destructor
 	GameObject();
-	virtual ~GameObject() = default;
+	virtual ~GameObject();
 
 	// virtual methods
 	virtual void update(float dt) = 0;
@@ -30,7 +30,7 @@ public:
 	void setTexture(std::shared_ptr<sf::Texture> texture);
 	sf::FloatRect getBounds() const;
 
-private:
+protected:
 	sf::Vector2f m_position;
 	sf::Vector2f m_size;
 	std::shared_ptr<sf::Texture> m_texture; // Use shared_ptr for texture management

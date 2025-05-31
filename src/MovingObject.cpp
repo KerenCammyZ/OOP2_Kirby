@@ -21,12 +21,12 @@ void MovingObject::initPhysics(b2World& world, const b2Vec2& sizeMeters, const b
 	bodyDef.fixedRotation = fixedRotation;
 	m_body = world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
-	boxShape.SetAsBox(sizeMeters.x / 2.0f, sizeMeters.y / 2.0f);
-	b2FixtureDef fixtureDef;
+	boxShape.SetAsBox(sizeMeters.x, sizeMeters.y);
+	/*b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;
 	fixtureDef.density = density;
 	fixtureDef.friction = friction;
-	m_body->CreateFixture(&fixtureDef);
+	m_body->CreateFixture(&fixtureDef);*/
 
 	// set size and position in pixels
 	m_size = sf::Vector2f(sizeMeters.x * 100.0f, sizeMeters.y * 100.0f);
@@ -35,6 +35,8 @@ void MovingObject::initPhysics(b2World& world, const b2Vec2& sizeMeters, const b
 
 void MovingObject::update(float dt)
 {
+	move(dt);
+
 	if (m_body)
 	{
 		b2Vec2 position = m_body->GetPosition();
