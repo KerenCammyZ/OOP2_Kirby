@@ -22,14 +22,14 @@ void GameController::run()
 		m_window.clear(sf::Color::Black);
 		//update
 		m_window.setView(m_camera.getView(m_window.getSize()));
-		update();
+		update(m_deltaTime);
 		//draw
 		render(m_renderer);
 		m_window.display();
 	}
 }
 
-void GameController::update()
+void GameController::update(float deltaTime)
 {
 }
 

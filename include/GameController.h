@@ -11,7 +11,7 @@ public:
 	~GameController() = default;
 	void run();
 private:
-	void update();
+	void update(float deltaTime);
 	void handle();
 	void render(Renderer& renderer);
 
