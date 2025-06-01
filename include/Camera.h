@@ -1,3 +1,4 @@
+// Camera.h : Manages the visible area of the game world
 #pragma once
 
 #include <SFML/Graphics.hpp>

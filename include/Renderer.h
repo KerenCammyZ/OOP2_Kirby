@@ -1,3 +1,4 @@
+// Renderer.h : Handles drawing textures and sprites to the screen.
 #pragma once
 #include <SFML/Graphics.hpp>
 
