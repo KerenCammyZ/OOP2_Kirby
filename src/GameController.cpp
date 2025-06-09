@@ -36,7 +36,7 @@ void GameController::run()
 			if (event.type == sf::Event::Closed)
 				m_window.close();
 		}
-
+		
 		//handle
 		handle();
 

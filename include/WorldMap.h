@@ -7,25 +7,20 @@
 #include "box2d/box2d.h"
 #pragma warning(pop)
 
+#include "Renderer.h"
+#include "GameObject.h"
+
 class WorldMap
 {
 public:
-	WorldMap() = default; // Default constructor
-	//WorldMap(b2World& world, const sf::Vector2f& size, const sf::Vector2f& position = {0.f, 0.f});
+	WorldMap(sf::Image& collisionIm, sf::Texture backround, b2World& world); // Default constructor
 	~WorldMap() = default;
-	//// Disable copy and move semantics
-	//WorldMap(const WorldMap&) = delete;
-	//WorldMap& operator=(const WorldMap&) = delete;
-	//WorldMap(WorldMap&&) = delete;
-	//WorldMap& operator=(WorldMap&&) = delete;
-	//// Update the world map
-	//void update(float dt);
-	void draw(sf::RenderTarget& target) const;
+	void draw(Renderer& renderer) const;
 	void loadFromImage(const sf::Image& image);
 private:
-	//b2World& m_world; // Reference to the Box2D world
-	//sf::RectangleShape m_shape; // Shape representing the world map
-	//sf::Vector2f m_size; // Size of the world map
-	//sf::Vector2f m_position; // Position of the world map
-	//bool m_isVisible; // Visibility flag for the world map
+	b2World& m_world; // Reference to the Box2D world
+	sf::RectangleShape m_shape; // Shape representing the world map
+	std::shared_ptr<sf::Texture> m_texture; 
+	sf::Image m_collisions;
+	std::vector<std::vector<std::unique_ptr<GameObject>>> m_grid;
 };
