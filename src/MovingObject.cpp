@@ -12,25 +12,24 @@ MovingObject::~MovingObject()
 		throw std::runtime_error("MovingObject: Body is null or not in a valid world.");
 }
 
-void MovingObject::initPhysics(b2World& world, const b2Vec2& sizeMeters, const b2Vec2& positionMeters,
-								bool fixedRotation, float density, float friction)
+void MovingObject::initPhysics(b2World& world, const b2Vec2& position, const b2Vec2& size)
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position = positionMeters;
+	bodyDef.position = position;
 	bodyDef.fixedRotation = fixedRotation;
 	m_body = world.CreateBody(&bodyDef);
 	b2PolygonShape boxShape;
-	boxShape.SetAsBox(sizeMeters.x, sizeMeters.y);
-	b2FixtureDef fixtureDef;
+	boxShape.SetAsBox(size.x, size.y);
+	/*b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;
 	fixtureDef.density = density;
 	fixtureDef.friction = friction;
-	m_body->CreateFixture(&fixtureDef);
+	m_body->CreateFixture(&fixtureDef);*/
 
 	// set size and position in pixels
-	m_size = sf::Vector2f(sizeMeters.x * 100.0f, sizeMeters.y * 100.0f);
-	m_position = sf::Vector2f(positionMeters.x * 100.0f, positionMeters.y * 100.0f);
+	m_size = sf::Vector2f(size.x * 100.0f, size.y * 100.0f);
+	m_position = sf::Vector2f(position.x * 100.0f, position.y * 100.0f);
 }
 
 void MovingObject::update(float dt)

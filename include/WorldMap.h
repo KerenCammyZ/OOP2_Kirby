@@ -21,6 +21,7 @@ private:
 	b2World& m_world; // Reference to the Box2D world
 	sf::RectangleShape m_shape; // Shape representing the world map
 	std::shared_ptr<sf::Texture> m_texture; 
-	sf::Image m_collisions;
+	sf::Image m_collisionMap;
+	sf::Texture m_backgroundTexture;
 	std::vector<std::vector<std::unique_ptr<GameObject>>> m_grid;
 };

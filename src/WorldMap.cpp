@@ -1,9 +1,9 @@
 #include "WorldMap.h"
 
 WorldMap::WorldMap(sf::Image& collisionIm, sf::Texture backround, b2World& world)
-	: m_collisions(collisionIm) , m_texture(&backround), m_world(world) 
+	: m_collisionMap(collisionIm) , m_texture(&backround), m_world(world) 
 {
-	loadFromImage(m_collisions);
+	loadFromImage(m_collisionMap);
 }
 
 void WorldMap::draw(Renderer& renderer) const

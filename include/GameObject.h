@@ -19,6 +19,8 @@ public:
 	virtual void update(float dt) = 0;
 	virtual void draw(Renderer& renderer) const;
 	virtual void onCollision(GameObject* other) {}
+	//virtual void initPhysics(b2World& world, const b2Vec2& sizeMeters, const b2Vec2& positionMeters) = 0;
+
 
 	// setters and getters
 	void setPosition(const sf::Vector2f& position);
