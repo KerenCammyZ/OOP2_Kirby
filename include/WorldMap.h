@@ -7,25 +7,23 @@
 #include "box2d/box2d.h"
 #pragma warning(pop)
 
+#include "Renderer.h"
+
 class WorldMap
 {
 public:
-	WorldMap() = default; // Default constructor
-	//WorldMap(b2World& world, const sf::Vector2f& size, const sf::Vector2f& position = {0.f, 0.f});
-	~WorldMap() = default;
-	//// Disable copy and move semantics
-	//WorldMap(const WorldMap&) = delete;
-	//WorldMap& operator=(const WorldMap&) = delete;
-	//WorldMap(WorldMap&&) = delete;
-	//WorldMap& operator=(WorldMap&&) = delete;
-	//// Update the world map
-	//void update(float dt);
+	WorldMap();
+	~WorldMap();
+	void init(std::shared_ptr<sf::Texture> backgroundTexture);
 	void draw(sf::RenderTarget& target) const;
-	void loadFromImage(const sf::Image& image);
+	void draw(Renderer& renderer) const;
+	//void createCollisionBodies(const sf::Image& image);
+	//void setTexture(std::shared_ptr<sf::Texture> texture);
+	sf::Vector2f getSize() const;
+	sf::FloatRect getBounds() const;
+
 private:
-	//b2World& m_world; // Reference to the Box2D world
-	//sf::RectangleShape m_shape; // Shape representing the world map
-	//sf::Vector2f m_size; // Size of the world map
-	//sf::Vector2f m_position; // Position of the world map
-	//bool m_isVisible; // Visibility flag for the world map
+	std::shared_ptr<sf::Texture> m_backgroundTexture;
+	sf::Vector2f m_position; // Usually (0,0) for background
+	sf::Vector2f m_size;     // Size based on texture
 };

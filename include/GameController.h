@@ -9,7 +9,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "Kirby.h"
-
+#include "WorldMap.h"
 
 class GameController
 {
@@ -31,4 +31,7 @@ private:
 
 	std::shared_ptr<sf::Texture> m_kirbyTexture;
 	std::unique_ptr<Kirby> m_kirby;
+
+	std::shared_ptr<sf::Texture> m_worldMapTexture;
+	std::unique_ptr<WorldMap> m_worldMap;
 };

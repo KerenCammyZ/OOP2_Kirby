@@ -21,4 +21,8 @@ void Kirby::move(float deltaTime)
 		vel.y = 0.0f;
 	}
 	setVelocity(vel);
+	
+	m_sprite.setOrigin(m_texture->getSize().x / 2.f, m_texture->getSize().y / 2.f);
+	m_sprite.setPosition(m_position);
+	m_sprite.setScale(1.0f, 1.0f); // Use texture's natural size
 }
