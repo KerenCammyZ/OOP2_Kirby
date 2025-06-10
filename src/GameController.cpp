@@ -5,6 +5,7 @@
 GameController::GameController():
 	m_window(sf::VideoMode(1600, 1200), "Kirby"), m_renderer(m_window), m_world(b2Vec2(0.0f, 9.8f))
 {
+	m_worldMap = std::make_unique<WorldMap>(m_world);
 	m_kirbyTexture = std::make_shared<sf::Texture>();
 	if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
 	{
@@ -13,7 +14,8 @@ GameController::GameController():
 
 	m_kirby = std::make_unique<Kirby>();
 	m_kirby->setTexture(m_kirbyTexture);
-	m_kirby->initPhysics(m_world, b2Vec2(0.01f, 0.01f), b2Vec2(0.01f, 0.01f));
+	m_kirby->initPhysics(m_world, b2Vec2(0.01f, 0.01f));
+	//m_kirby->setSize(sf::Vector2f(32, 32));
 
 	// Get the initial view of the camera
 	sf::View initialView = m_camera.getView(m_window.getSize());
@@ -27,11 +29,7 @@ GameController::GameController():
 
 void GameController::run()
 {	
-	//create test object
-	auto testObject = std::make_unique<StaticObject>(m_world, b2Vec2(0.0f, 0.0f));
-	//draw a test square where the test object is located
-	sf::RectangleShape testShape(sf::Vector2f(10.0f * 30.0f, 10.0f * 30.0f));
-	testShape.setPosition(testObject->getPosition().x * 30.0f, testObject->getPosition().y * 30.0f);
+	
 
 	while (m_window.isOpen())
 	{
@@ -52,7 +50,6 @@ void GameController::run()
 		update(m_deltaTime);
 		//draw
 		render(m_renderer);
-		m_window.draw(testShape);
 		
 		m_window.display();
 	}
@@ -70,5 +67,6 @@ void GameController::handle()
 
 void GameController::render(Renderer& renderer)
 {
+	m_worldMap->draw(renderer);
 	m_kirby->draw(renderer);
 }

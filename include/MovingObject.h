@@ -10,7 +10,7 @@ public:
 
 	virtual void update(float deltaTime) override;
 	virtual void move(float deltaTime) = 0;
-	virtual void initPhysics(b2World& world, const b2Vec2& sizeMeters, const b2Vec2& positionMeters);
+	virtual void initPhysics(b2World& world, const b2Vec2& positionMeters) override;
 
 	void setVelocity(const b2Vec2& velocity);
 	b2Vec2 getVelocity() const;

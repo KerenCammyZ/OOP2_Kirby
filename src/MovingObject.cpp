@@ -12,24 +12,29 @@ MovingObject::~MovingObject()
 		throw std::runtime_error("MovingObject: Body is null or not in a valid world.");
 }
 
-void MovingObject::initPhysics(b2World& world, const b2Vec2& position, const b2Vec2& size)
+void MovingObject::initPhysics(b2World& world, const b2Vec2& position)
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position = position;
 	bodyDef.fixedRotation = fixedRotation;
 	m_body = world.CreateBody(&bodyDef);
+
 	b2PolygonShape boxShape;
-	boxShape.SetAsBox(size.x, size.y);
-	/*b2FixtureDef fixtureDef;
+	// Convert global size to meters (assuming your physics scale)
+	const float SCALE = 30.0f; // Define your scale factor
+	boxShape.SetAsBox(TILE_SIZE / (2.0f * SCALE),
+		TILE_SIZE / (2.0f * SCALE));
+
+	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &boxShape;
-	fixtureDef.density = density;
-	fixtureDef.friction = friction;
-	m_body->CreateFixture(&fixtureDef);*/
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	m_body->CreateFixture(&fixtureDef);
 
 	// set size and position in pixels
-	m_size = sf::Vector2f(size.x * 100.0f, size.y * 100.0f);
-	m_position = sf::Vector2f(position.x * 100.0f, position.y * 100.0f);
+	//m_size = sf::Vector2f(size.x * 32.0f, size.y * 32.0f);
+	//m_position = sf::Vector2f(position.x * 100.0f, position.y * 100.0f);
 }
 
 void MovingObject::update(float dt)

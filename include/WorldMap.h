@@ -13,15 +13,16 @@
 class WorldMap
 {
 public:
-	WorldMap(sf::Image& collisionIm, sf::Texture backround, b2World& world); // Default constructor
+	WorldMap(b2World& world);// Default constructor
+	WorldMap(sf::Image& collisionIm, sf::Texture backround, b2World& world); 
 	~WorldMap() = default;
 	void draw(Renderer& renderer) const;
 	void loadFromImage(const sf::Image& image);
 private:
 	b2World& m_world; // Reference to the Box2D world
 	sf::RectangleShape m_shape; // Shape representing the world map
-	std::shared_ptr<sf::Texture> m_texture; 
+	std::shared_ptr<sf::Texture> m_texture;
 	sf::Image m_collisionMap;
-	sf::Texture m_backgroundTexture;
+	//sf::Texture m_backgroundTexture;
 	std::vector<std::vector<std::unique_ptr<GameObject>>> m_grid;
 };

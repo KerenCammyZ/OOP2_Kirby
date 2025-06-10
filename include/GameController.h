@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "Kirby.h"
+#include "WorldMap.h"
 
 
 class GameController
@@ -29,6 +30,8 @@ private:
 	Renderer m_renderer;
 	b2World m_world;
 
+	std::unique_ptr<WorldMap> m_worldMap;
 	std::shared_ptr<sf::Texture> m_kirbyTexture;
 	std::unique_ptr<Kirby> m_kirby;
+
 };

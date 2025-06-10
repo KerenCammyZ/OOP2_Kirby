@@ -7,7 +7,7 @@ GameObject::~GameObject() {}
 void GameObject::draw(Renderer& renderer) const
 {
 	if (m_texture)
-		renderer.draw(*m_texture, m_position, m_size);
+		renderer.draw(*m_texture, m_position, sf::Vector2f(TILE_SIZE, TILE_SIZE));
 	else
 		throw std::runtime_error("Texture not set for GameObject, cannot draw.");
 }
