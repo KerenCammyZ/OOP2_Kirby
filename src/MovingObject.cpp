@@ -12,7 +12,7 @@ MovingObject::~MovingObject()
 		throw std::runtime_error("MovingObject: Body is null or not in a valid world.");
 }
 
-void MovingObject::initPhysics(b2World& world, const b2Vec2& sizeMeters, const b2Vec2& positionMeters,
+void MovingObject::initPhysics(b2World& world, const b2Vec2& positionMeters, const b2Vec2& sizeMeters,
 								bool fixedRotation, float density, float friction)
 {
 	b2BodyDef bodyDef;

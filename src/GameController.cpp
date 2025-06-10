@@ -12,16 +12,15 @@ GameController::GameController():
 
 	m_kirby = std::make_unique<Kirby>();
 	m_kirby->setTexture(m_kirbyTexture);
-	m_kirby->initPhysics(m_world, b2Vec2(0.01f, 0.01f), b2Vec2(0.0f, 0.0f));
+	m_kirby->initPhysics(m_world, b2Vec2(0.0f, 0.0f));
 
-	// Get the initial view of the camera
-	sf::View initialView = m_camera.getView(m_window.getSize());
-
-	// Get the center of the initial view
-	sf::Vector2f viewCenter = initialView.getCenter();
-
-	// Position Kirby near the center of the view
-	m_kirby->setPosition(viewCenter);
+	sf::View view;
+	view.setSize(m_window.getSize().x, m_window.getSize().y);
+	view.setCenter(m_kirby->getPosition().x, m_kirby->getPosition().y);
+	m_window.setView(view);
+	
+	m_worldMap = std::make_unique<WorldMap>();
+	m_worldMap->loadBackground("Level1.png");
 }
 
 void GameController::run()
@@ -62,5 +61,6 @@ void GameController::handle()
 
 void GameController::render(Renderer& renderer)
 {
+	m_worldMap->draw(m_window);
 	m_kirby->draw(renderer);
 }
