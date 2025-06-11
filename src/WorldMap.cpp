@@ -43,3 +43,18 @@ sf::FloatRect WorldMap::getBounds() const
 {
 	return m_backgroundSprite.getGlobalBounds();
 }
+
+void WorldMap::setSize(const sf::Vector2f& size)
+{
+	if (m_backgroundTexture)
+	{
+		sf::Vector2u texSize = m_backgroundTexture->getSize();
+		float scaleX = size.x / static_cast<float>(texSize.x);
+		float scaleY = size.y / static_cast<float>(texSize.y);
+		m_backgroundSprite.setScale(scaleX, scaleY);
+	}
+	else
+	{
+		throw std::runtime_error("Background texture not set for WorldMap");
+	}
+}

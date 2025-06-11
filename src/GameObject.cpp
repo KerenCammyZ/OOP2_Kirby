@@ -4,113 +4,14 @@ GameObject::GameObject(){}
 
 GameObject::~GameObject() {}
 
-void GameObject::draw(Renderer& renderer) const
-{
-	/*if (m_texture)
-		renderer.draw(*m_texture, m_position, m_size);
-	else
-		throw std::runtime_error("Texture not set for GameObject, cannot draw.");*/
-
-	if (m_texture)
-	{
-		if (m_size == sf::Vector2f(m_texture->getSize()))
-			renderer.draw(*m_texture, m_position); // Use natural texture size
-		else
-			renderer.draw(*m_texture, m_position, m_size); // Use custom size when needed
-	}
-	else
-		throw std::runtime_error("Texture not set for GameObject, cannot draw.");
-}
-
 void GameObject::draw(sf::RenderTarget& target) const
 {
 	target.draw(m_sprite);
 }
 
-//void GameObject::initPhysics(b2World& world, const b2Vec2& positionMeters, bool fixedRotation, float density, float friction)
-//{
-//	if (!m_size.x || !m_size.y)
-//		throw std::runtime_error("Size must be set before initializing physics");
-//
-//	createPhysicsBody(world, positionMeters, fixedRotation, density, friction);
-//}
-
-void GameObject::initPhysics(b2World& world, const sf::Vector2f& positionPixels,
-	bool fixedRotation, float density, float friction)
-{
-	// Ensure the object's size (in pixels) has been set before creating the physics body.
-	if (m_size.x <= 0 || m_size.y <= 0)
-		throw std::runtime_error("Size must be set before initializing physics");
-
-	// Convert the SFML pixel vector to a Box2D meter vector for the body's position.
-	b2Vec2 positionMeters(positionPixels.x / PIXELS_PER_METER, positionPixels.y / PIXELS_PER_METER);
-
-	createPhysicsBody(world, positionMeters, fixedRotation, density, friction);
-}
-
-//void GameObject::createPhysicsBody(b2World& world, const b2Vec2& positionMeters,
-//	bool fixedRotation, float density, float friction)
-//{
-//	b2BodyDef bodyDef;
-//	bodyDef.type = b2_dynamicBody;
-//	bodyDef.position = positionMeters;
-//	bodyDef.fixedRotation = fixedRotation;
-//
-//	m_body = world.CreateBody(&bodyDef);
-//
-//	b2PolygonShape shape;
-//	shape.SetAsBox(m_size.x / 60.0f, m_size.y / 60.0f); // Convert pixels to meters
-//
-//	b2FixtureDef fixtureDef;
-//	fixtureDef.shape = &shape;
-//	fixtureDef.density = density;
-//	fixtureDef.friction = friction;
-//
-//	m_body->CreateFixture(&fixtureDef);
-//}
-
-// MODIFIED: This function now uses the constant for conversion.
-void GameObject::createPhysicsBody(b2World& world, const b2Vec2& positionMeters,
-	bool fixedRotation, float density, float friction)
-{
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position = positionMeters;
-	bodyDef.fixedRotation = fixedRotation;
-
-	m_body = world.CreateBody(&bodyDef);
-
-	b2PolygonShape shape;
-	// Calculate the half-width and half-height in meters from our pixel size.
-	float halfWidthMeters = (m_size.x / 2.0f) / PIXELS_PER_METER;
-	float halfHeightMeters = (m_size.y / 2.0f) / PIXELS_PER_METER;
-	shape.SetAsBox(halfWidthMeters, halfHeightMeters);
-
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &shape;
-	fixtureDef.density = density;
-	fixtureDef.friction = friction;
-
-	m_body->CreateFixture(&fixtureDef);
-}
-
-//void GameObject::setPosition(const sf::Vector2f& position)
-//{
-//	m_position = position;
-//	if(m_body)
-//		m_body->SetTransform(b2Vec2(position.x / 30.0f, position.y / 30.0f), m_body->GetAngle());
-//	else
-//		throw std::runtime_error("Body not set for GameObject, cannot set position.");
-//}
-
 void GameObject::setPosition(const sf::Vector2f& position)
 {
 	m_position = position;
-	if (m_body)
-	{
-		// Convert pixel position to meter position for the physics body.
-		m_body->SetTransform(b2Vec2(position.x / PIXELS_PER_METER, position.y / PIXELS_PER_METER), m_body->GetAngle());
-	}
 }
 
 sf::Vector2f GameObject::getPosition() const
@@ -120,16 +21,6 @@ sf::Vector2f GameObject::getPosition() const
 
 void GameObject::setSize(const sf::Vector2f& size)
 {
-	/*m_size = size;
-	m_sprite.setScale(size);
-	if (m_body)
-	{
-		b2PolygonShape shape;
-		shape.SetAsBox(size.x / 2.0f, size.y / 2.0f);
-		m_body->CreateFixture(&shape, 1.0f);
-	}
-	else 
-		throw std::runtime_error("Body not set for GameObject, cannot set size.");*/
 
 	m_size = size;
 
