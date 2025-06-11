@@ -1,4 +1,6 @@
 #include "WorldMap.h"
+#include "Floor.h" 
+#include <iostream>
 
 WorldMap::WorldMap() {}
 
@@ -57,4 +59,38 @@ void WorldMap::setSize(const sf::Vector2f& size)
 	{
 		throw std::runtime_error("Background texture not set for WorldMap");
 	}
+}
+
+std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions(const sf::Image& collisionMap ,sf::Vector2f scale)
+{
+	std::vector<std::unique_ptr<StaticObject>> collidables;
+	sf::Vector2u mapSize = collisionMap.getSize();
+	const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
+	sf::Color groundColor(76, 255, 0);
+	for (unsigned int y = 0; y < mapSize.y; ++y)
+	{
+		for (unsigned int x = 0; x < mapSize.x; ++x)
+		{
+			if (collisionMap.getPixel(x, y) == groundColor)
+			{
+				auto floorTile = std::make_unique<Floor>();
+
+				// Calculate the SCALED size of the tile
+				float scaledTileWidth = TILE_SIZE * scale.x;
+				float scaledTileHeight = TILE_SIZE * scale.y;
+
+				// Calculate the SCALED position of the tile's center
+				float posX = (x * scaledTileWidth) + (scaledTileWidth / 2.f);
+				float posY = (y * scaledTileHeight) + (scaledTileHeight / 2.f);
+
+				floorTile->setPosition({ posX, posY });
+				floorTile->setSize({ scaledTileWidth, scaledTileHeight });
+
+				collidables.push_back(std::move(floorTile));
+			}
+		}
+	}
+
+	std::cout << "Generated " << collidables.size() << " floor tiles from the collision map.\n";
+	return collidables;
 }
