@@ -8,5 +8,5 @@ MovingObject::~MovingObject() = default;
 void MovingObject::update(float dt)
 {
 	move(dt);
+	GameObject::update(dt);
 }
-

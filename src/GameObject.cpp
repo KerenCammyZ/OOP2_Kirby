@@ -9,6 +9,11 @@ void GameObject::draw(sf::RenderTarget& target) const
 	target.draw(m_sprite);
 }
 
+void GameObject::update(float dt)
+{
+	m_sprite.setPosition(m_position);
+}
+
 void GameObject::setPosition(const sf::Vector2f& position)
 {
 	m_position = position;

@@ -12,5 +12,5 @@ public:
 	virtual void move(float deltaTime) = 0;
 
 protected:
-	float m_speed = 0.1f; // Default speed
+	float m_speed = 200.0f;
 };
