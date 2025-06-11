@@ -50,10 +50,7 @@ void GameController::run()
 		//update
 		m_window.clear(sf::Color::Black);
 		update(m_deltaTime);
-		//draw
-		//render(m_renderer);
-		m_worldMap->draw(m_window);
-		m_kirby->draw(m_window);
+		draw();
 		m_window.display();
 	}
 }
@@ -65,4 +62,10 @@ void GameController::update(float deltaTime)
 
 void GameController::handle()
 {
+}
+
+void GameController::draw()
+{
+	m_worldMap->draw(m_window);
+	m_kirby->draw(m_window);
 }

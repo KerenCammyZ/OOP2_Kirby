@@ -13,6 +13,7 @@ public:
 private:
 	void update(float deltaTime);
 	void handle();
+	void draw();
 
 	sf::RenderWindow m_window;
 	sf::Clock m_deltaClock;
