@@ -4,9 +4,17 @@ GameObject::GameObject(){}
 
 GameObject::~GameObject() {}
 
+bool GameObject::collidesWith(GameObject& other) const
+{
+	return getBounds().intersects(other.getBounds());
+}
+
 void GameObject::draw(sf::RenderTarget& target) const
 {
-	target.draw(m_sprite);
+	if (m_texture)
+	{
+		target.draw(m_sprite);
+	}
 }
 
 void GameObject::update(float dt)
@@ -57,8 +65,7 @@ void GameObject::setTexture(std::shared_ptr<sf::Texture> texture)
 
 sf::FloatRect GameObject::getBounds() const
 {
-	if(m_texture)
-		return sf::FloatRect(m_position, m_size);
-	else
-		throw std::runtime_error("Texture not set for GameObject, cannot get bounds.");
+	// The origin is now centered, so adjust the position for the bounding box
+	sf::Vector2f cornerPosition = m_position - sf::Vector2f(m_size.x / 2.f, m_size.y / 2.f);
+	return sf::FloatRect(cornerPosition, m_size);
 }

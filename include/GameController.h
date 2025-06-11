@@ -3,6 +3,7 @@
 #include "Kirby.h"
 #include "WorldMap.h"
 #include "GlobalSizes.h"
+#include "Floor.h"
 
 class GameController
 {
@@ -14,6 +15,7 @@ private:
 	void update(float deltaTime);
 	void handle();
 	void draw();
+	void checkCollisions();
 
 	sf::RenderWindow m_window;
 	sf::Clock m_deltaClock;
@@ -24,4 +26,7 @@ private:
 
 	std::shared_ptr<sf::Texture> m_worldMapTexture;
 	std::unique_ptr<WorldMap> m_worldMap;
+
+	// A vector to hold all static objects
+	std::vector<std::unique_ptr<StaticObject>> m_staticObjects;
 };

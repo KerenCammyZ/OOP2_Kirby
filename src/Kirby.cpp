@@ -28,3 +28,8 @@ void Kirby::move(float deltaTime)
 	// Update the object's logical position
 	m_position += movement * deltaTime;
 }
+
+void Kirby::handleCollision(GameObject* other)
+{
+	other->handleCollision(this);
+}
