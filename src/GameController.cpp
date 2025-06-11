@@ -12,7 +12,17 @@ GameController::GameController():
 
 	m_kirby = std::make_unique<Kirby>();
 	m_kirby->setTexture(m_kirbyTexture);
-	m_kirby->initPhysics(m_world, b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f));
+	
+	// Set Kirby's VISUAL size in PIXELS
+	sf::Vector2f kirbySize(0.5f, 0.5f);
+	m_kirby->setSize(kirbySize);
+
+	// Set Kirby's starting position in PIXELS
+	sf::Vector2f startPosition(0,0);
+
+	// Initialize the physics body using pixel coordinates.
+	// The function will handle the conversion to meters.
+	m_kirby->initPhysics(m_world, startPosition);
 
 	m_worldMapTexture = std::make_shared<sf::Texture>();
 	if(!m_worldMapTexture->loadFromFile("Level1Map.png"))

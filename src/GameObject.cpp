@@ -27,14 +27,49 @@ void GameObject::draw(sf::RenderTarget& target) const
 	target.draw(m_sprite);
 }
 
-void GameObject::initPhysics(b2World& world, const b2Vec2& positionMeters, bool fixedRotation, float density, float friction)
+//void GameObject::initPhysics(b2World& world, const b2Vec2& positionMeters, bool fixedRotation, float density, float friction)
+//{
+//	if (!m_size.x || !m_size.y)
+//		throw std::runtime_error("Size must be set before initializing physics");
+//
+//	createPhysicsBody(world, positionMeters, fixedRotation, density, friction);
+//}
+
+void GameObject::initPhysics(b2World& world, const sf::Vector2f& positionPixels,
+	bool fixedRotation, float density, float friction)
 {
-	if (!m_size.x || !m_size.y)
+	// Ensure the object's size (in pixels) has been set before creating the physics body.
+	if (m_size.x <= 0 || m_size.y <= 0)
 		throw std::runtime_error("Size must be set before initializing physics");
+
+	// Convert the SFML pixel vector to a Box2D meter vector for the body's position.
+	b2Vec2 positionMeters(positionPixels.x / PIXELS_PER_METER, positionPixels.y / PIXELS_PER_METER);
 
 	createPhysicsBody(world, positionMeters, fixedRotation, density, friction);
 }
 
+//void GameObject::createPhysicsBody(b2World& world, const b2Vec2& positionMeters,
+//	bool fixedRotation, float density, float friction)
+//{
+//	b2BodyDef bodyDef;
+//	bodyDef.type = b2_dynamicBody;
+//	bodyDef.position = positionMeters;
+//	bodyDef.fixedRotation = fixedRotation;
+//
+//	m_body = world.CreateBody(&bodyDef);
+//
+//	b2PolygonShape shape;
+//	shape.SetAsBox(m_size.x / 60.0f, m_size.y / 60.0f); // Convert pixels to meters
+//
+//	b2FixtureDef fixtureDef;
+//	fixtureDef.shape = &shape;
+//	fixtureDef.density = density;
+//	fixtureDef.friction = friction;
+//
+//	m_body->CreateFixture(&fixtureDef);
+//}
+
+// MODIFIED: This function now uses the constant for conversion.
 void GameObject::createPhysicsBody(b2World& world, const b2Vec2& positionMeters,
 	bool fixedRotation, float density, float friction)
 {
@@ -46,7 +81,10 @@ void GameObject::createPhysicsBody(b2World& world, const b2Vec2& positionMeters,
 	m_body = world.CreateBody(&bodyDef);
 
 	b2PolygonShape shape;
-	shape.SetAsBox(m_size.x / 60.0f, m_size.y / 60.0f); // Convert pixels to meters
+	// Calculate the half-width and half-height in meters from our pixel size.
+	float halfWidthMeters = (m_size.x / 2.0f) / PIXELS_PER_METER;
+	float halfHeightMeters = (m_size.y / 2.0f) / PIXELS_PER_METER;
+	shape.SetAsBox(halfWidthMeters, halfHeightMeters);
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &shape;
@@ -56,13 +94,23 @@ void GameObject::createPhysicsBody(b2World& world, const b2Vec2& positionMeters,
 	m_body->CreateFixture(&fixtureDef);
 }
 
+//void GameObject::setPosition(const sf::Vector2f& position)
+//{
+//	m_position = position;
+//	if(m_body)
+//		m_body->SetTransform(b2Vec2(position.x / 30.0f, position.y / 30.0f), m_body->GetAngle());
+//	else
+//		throw std::runtime_error("Body not set for GameObject, cannot set position.");
+//}
+
 void GameObject::setPosition(const sf::Vector2f& position)
 {
 	m_position = position;
-	if(m_body)
-		m_body->SetTransform(b2Vec2(position.x / 30.0f, position.y / 30.0f), m_body->GetAngle());
-	else
-		throw std::runtime_error("Body not set for GameObject, cannot set position.");
+	if (m_body)
+	{
+		// Convert pixel position to meter position for the physics body.
+		m_body->SetTransform(b2Vec2(position.x / PIXELS_PER_METER, position.y / PIXELS_PER_METER), m_body->GetAngle());
+	}
 }
 
 sf::Vector2f GameObject::getPosition() const
@@ -72,7 +120,8 @@ sf::Vector2f GameObject::getPosition() const
 
 void GameObject::setSize(const sf::Vector2f& size)
 {
-	m_size = size;
+	/*m_size = size;
+	m_sprite.setScale(size);
 	if (m_body)
 	{
 		b2PolygonShape shape;
@@ -80,7 +129,23 @@ void GameObject::setSize(const sf::Vector2f& size)
 		m_body->CreateFixture(&shape, 1.0f);
 	}
 	else 
-		throw std::runtime_error("Body not set for GameObject, cannot set size.");
+		throw std::runtime_error("Body not set for GameObject, cannot set size.");*/
+
+	m_size = size;
+
+	// Check if the texture is loaded before trying to get its size
+	if (m_texture)
+	{
+		sf::Vector2u textureSize = m_texture->getSize();
+
+		// Avoid division by zero if texture is empty
+		if (textureSize.x > 0 && textureSize.y > 0)
+		{
+			float scaleX = size.x / textureSize.x;
+			float scaleY = size.y / textureSize.y;
+			m_sprite.setScale(scaleX, scaleY);
+		}
+	}
 }
 
 sf::Vector2f GameObject::getSize() const

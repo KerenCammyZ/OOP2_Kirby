@@ -7,6 +7,7 @@
 #pragma warning(pop)
 
 #include "Renderer.h"
+#include "GlobalSizes.h"
 
 class GameObject
 {
@@ -21,7 +22,9 @@ public:
 	virtual void onCollision(GameObject* other) {}
 
 	void draw(sf::RenderTarget& target) const;
-	void initPhysics(b2World& world, const b2Vec2& positionMeters,
+	/*void initPhysics(b2World& world, const b2Vec2& positionMeters,
+		bool fixedRotation = true, float density = 1.0f, float friction = 0.3f);*/
+	void initPhysics(b2World& world, const sf::Vector2f& positionPixels, 
 		bool fixedRotation = true, float density = 1.0f, float friction = 0.3f);
 
 	// setters and getters

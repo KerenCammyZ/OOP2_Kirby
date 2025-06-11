@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "Kirby.h"
 #include "WorldMap.h"
+#include "GlobalSizes.h"
 
 class GameController
 {
