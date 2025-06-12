@@ -2,7 +2,7 @@
 #include "MovingObject.h"
 
 GameController::GameController():
-	m_window(sf::VideoMode(1600, 1200), "Kirby")
+	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby")
 {
 	// kirby setup
 	m_kirbyTexture = std::make_shared<sf::Texture>();
@@ -12,7 +12,7 @@ GameController::GameController():
 	}
 	m_kirby = std::make_unique<Kirby>();
 	m_kirby->setTexture(m_kirbyTexture);
-	sf::Vector2f kirbySize(50.0f, 50.0f);
+	sf::Vector2f kirbySize(ENTITY_SIZE, ENTITY_SIZE);
 	m_kirby->setSize(kirbySize);
 	sf::Vector2f startPosition(0,0);
 
@@ -28,7 +28,7 @@ GameController::GameController():
 	sf::Vector2f originalMapSize = sf::Vector2f(m_worldMapTexture->getSize());
 
 	// 2. Define your target display size
-	sf::Vector2f targetMapSize(1600.0f, 1200.0f); //
+	sf::Vector2f targetMapSize(SCREEN_WIDTH, SCREEN_HEIGHT); //
 
 	// 3. Calculate the scale factors
 	sf::Vector2f mapScale(targetMapSize.x / originalMapSize.x,
