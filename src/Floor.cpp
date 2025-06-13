@@ -24,7 +24,7 @@ void Floor::handleCollision(Kirby* kirby)
 
 		// Resolve the collision by repositioning Kirby to sit exactly on top of the floor.
 		// This prevents him from sinking into it.
-		kirby->setPosition({ kirby->getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
+		kirby->setPosition({ kirby->getPosition().x, floorBounds.top - kirbyBounds.height });
 
 		// FUTURE: If you add gravity and jumping, you would also want to tell Kirby
 		// that he is grounded and reset his vertical velocity here.

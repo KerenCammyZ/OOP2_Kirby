@@ -32,6 +32,7 @@ sf::Vector2f GameObject::getPosition() const
 	return m_position;
 }
 
+
 void GameObject::setSize(const sf::Vector2f& size)
 {
 

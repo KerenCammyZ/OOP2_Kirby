@@ -31,6 +31,7 @@ void WorldMap::draw(sf::RenderTarget& target) const
 	}
 }
 
+// returns the size of the world map based on the texture size
 sf::Vector2f WorldMap::getSize() const
 {
 	if (m_backgroundTexture)
@@ -41,11 +42,13 @@ sf::Vector2f WorldMap::getSize() const
 	return sf::Vector2f(0.f, 0.f);
 }
 
+// Returns the bounds of the world map based on the background sprite
 sf::FloatRect WorldMap::getBounds() const
 {
 	return m_backgroundSprite.getGlobalBounds();
 }
 
+// Sets the size of the world map by scaling the background sprite
 void WorldMap::setSize(const sf::Vector2f& size)
 {
 	if (m_backgroundTexture)
@@ -61,18 +64,21 @@ void WorldMap::setSize(const sf::Vector2f& size)
 	}
 }
 
-std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions(const sf::Image& collisionMap ,sf::Vector2f scale)
+
+std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions(const sf::Image& collisionMap, sf::Vector2f scale)
 {
 	std::vector<std::unique_ptr<StaticObject>> collidables;
 	sf::Vector2u mapSize = collisionMap.getSize();
 	const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
 	sf::Color groundColor(76, 255, 0);
+
 	for (unsigned int y = 0; y < mapSize.y; ++y)
 	{
 		for (unsigned int x = 0; x < mapSize.x; ++x)
 		{
 			if (collisionMap.getPixel(x, y) == groundColor)
 			{
+				// Create a new Floor tile for each ground pixel
 				auto floorTile = std::make_unique<Floor>();
 
 				// Calculate the SCALED size of the tile

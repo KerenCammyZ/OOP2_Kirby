@@ -1,3 +1,4 @@
+// StaticObject.h
 #pragma once
 #include "StaticObject.h"
 

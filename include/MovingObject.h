@@ -1,3 +1,4 @@
+// MovingObject.h
 #pragma once
 
 #include "GameObject.h"
@@ -15,6 +16,6 @@ public:
 	sf::Vector2f getOldPosition() const;
 
 protected:
-	float m_speed = 200.0f;
+	float m_speed = 140.0f;
 	sf::Vector2f m_oldPosition;
 };

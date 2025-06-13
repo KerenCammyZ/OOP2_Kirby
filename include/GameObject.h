@@ -1,3 +1,4 @@
+// GameObject.h
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GlobalSizes.h"
