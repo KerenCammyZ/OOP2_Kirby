@@ -23,38 +23,26 @@ GameController::GameController():
 		throw std::runtime_error("Failed to load world map texture");
 	}
 	
-	// --- NEW: CALCULATE SCALE ---
-// 1. Get the original size of the texture
 	sf::Vector2f originalMapSize = sf::Vector2f(m_worldMapTexture->getSize());
+	sf::Vector2f targetMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	// 2. Define your target display size
-	sf::Vector2f targetMapSize(SCREEN_WIDTH, SCREEN_HEIGHT); //
-
-	// 3. Calculate the scale factors
+	// Calculate the scale factors
 	sf::Vector2f mapScale(targetMapSize.x / originalMapSize.x,
 		targetMapSize.y / originalMapSize.y);
 
-
-	// --- Initialize and set the size of the visual map ---
+	// Initialize and set the size of the visual map
 	m_worldMap = std::make_unique<WorldMap>();
 	m_worldMap->init(m_worldMapTexture); 
 	m_worldMap->setSize(targetMapSize); 
 
-	////floor setup (debugging purposes)
-	//auto floor = std::make_unique<Floor>();
-	//floor->setPosition({ 400.f, 500.f });
-	//floor->setSize({ 300.f, 20.f });      // Make it a wide platform
-	//m_staticObjects.push_back(std::move(floor));
 
-
-	// --- Load Collisions using the scale factor ---
+	// Load Collisions using the scale factor
 	sf::Image collisionImage;
 	if (!collisionImage.loadFromFile("Level1Collisions.png"))
 	{
 		throw std::runtime_error("Failed to load collision map image");
 	}
 
-	// Pass the calculated scale factor to the function
 	auto collidablesFromFile = m_worldMap->loadCollisions(collisionImage, mapScale);
 
 	m_staticObjects.insert(
@@ -90,14 +78,10 @@ void GameController::run()
 
 void GameController::checkCollisions()
 {
-	// Iterate through all the static objects in the game
 	for (const auto& staticObject : m_staticObjects)
 	{
-		// Use the collidesWith function to check for an intersection
 		if (m_kirby->collidesWith(*staticObject))
 		{
-			// If they collide, delegate handling to Kirby.
-			// This begins the double-dispatch process.
 			m_kirby->handleCollision(staticObject.get());
 		}
 	}
