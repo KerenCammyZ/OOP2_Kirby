@@ -16,10 +16,12 @@ private:
 	void handle();
 	void draw();
 	void checkCollisions();
+	void updateView();
 
 	sf::RenderWindow m_window;
 	sf::Clock m_deltaClock;
 	float m_deltaTime;
+	sf::View m_view;
 
 	std::shared_ptr<sf::Texture> m_kirbyTexture;
 	std::unique_ptr<Kirby> m_kirby;
