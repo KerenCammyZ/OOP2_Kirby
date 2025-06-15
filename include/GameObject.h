@@ -3,6 +3,7 @@
 #include "GlobalSizes.h"
 
 class Kirby; 
+class Door;
 
 class GameObject
 {
@@ -17,6 +18,7 @@ public:
 	// Double Dispatch Handlers
 	virtual void handleCollision(GameObject* other) = 0;
 	virtual void handleCollision(Kirby* kirby) = 0;
+	virtual void handleCollision(Door* door) = 0;
 
 	bool collidesWith(GameObject& other) const;
 	virtual void draw(sf::RenderTarget& target) const;

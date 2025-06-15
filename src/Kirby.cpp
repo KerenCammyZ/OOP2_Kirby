@@ -1,4 +1,5 @@
 #include "Kirby.h"
+#include "Door.h"
 
 Kirby::Kirby() {};
 
@@ -32,4 +33,11 @@ void Kirby::move(float deltaTime)
 void Kirby::handleCollision(GameObject* other)
 {
 	other->handleCollision(this);
+}
+
+void Kirby::handleCollision(Door* door)
+{
+	// Delegate the collision handling back to the door.
+	// The door knows where to send Kirby.
+	door->handleCollision(this);
 }

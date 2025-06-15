@@ -13,6 +13,7 @@ public:
 	// By default, static objects don't react to generic collisions
 	void handleCollision(GameObject* other) override;
 	virtual void handleCollision(Kirby* kirby) = 0;
+	void handleCollision(Door* door) override = 0;
 
 	// Override drawing and property setters to handle the debug shape
 	void draw(sf::RenderTarget& target) const override;
