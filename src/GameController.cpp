@@ -105,7 +105,8 @@ void GameController::updateView()
 	// and divide by two. This ensures the "ground" level is always at the same
 	// vertical position on the screen, creating a classic side-scroller feel.
 	float viewY = m_view.getSize().y / 2.f;
-
+	if(m_kirby->getPosition().y > viewY + (viewY /2))
+		viewY += m_kirby->getPosition().y;
 
 	// --- BOUNDARY CHECKS ---
 	// Prevent the camera from showing areas outside the level map.

@@ -9,4 +9,3 @@ static int SCREEN_HEIGHT = 1200; // originally 1200
 
 static int VIEW_WIDTH = 600; // originally 800
 static int VIEW_HEIGHT = 300; // originally 600
-
