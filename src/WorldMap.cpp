@@ -1,5 +1,6 @@
 #include "WorldMap.h"
-#include "Floor.h" 
+#include "Floor.h"
+#include "Wall.h"
 #include <iostream>
 
 WorldMap::WorldMap() {}
@@ -67,6 +68,7 @@ std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions(const sf::Im
 	sf::Vector2u mapSize = collisionMap.getSize();
 	const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
 	sf::Color groundColor(76, 255, 0);
+	sf::Color wallColor(255, 0, 0);
 	for (unsigned int y = 0; y < mapSize.y; ++y)
 	{
 		for (unsigned int x = 0; x < mapSize.x; ++x)
@@ -88,9 +90,26 @@ std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions(const sf::Im
 
 				collidables.push_back(std::move(floorTile));
 			}
+			else if (collisionMap.getPixel(x, y) == wallColor)
+			{
+				auto wallTile = std::make_unique<Wall>();
+
+				// Calculate the SCALED size of the tile
+				float scaledTileWidth = TILE_SIZE * scale.x;
+				float scaledTileHeight = TILE_SIZE * scale.y;
+
+				// Calculate the SCALED position of the tile's center
+				float posX = (x * scaledTileWidth) + (scaledTileWidth / 2.f);
+				float posY = (y * scaledTileHeight) + (scaledTileHeight / 2.f);
+
+				wallTile->setPosition({ posX, posY });
+				wallTile->setSize({ scaledTileWidth, scaledTileHeight });
+
+				collidables.push_back(std::move(wallTile));
+			}
 		}
 	}
 
-	std::cout << "Generated " << collidables.size() << " floor tiles from the collision map.\n";
+	std::cout << "Generated " << collidables.size() << " collidable tiles from the collision map.\n";
 	return collidables;
 }

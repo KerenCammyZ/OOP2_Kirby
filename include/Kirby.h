@@ -1,6 +1,6 @@
+// Kirby.h
 #pragma once
 #include "MovingObject.h"
-
 
 class Kirby : public MovingObject
 {

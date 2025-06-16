@@ -10,7 +10,7 @@ void Floor::handleCollision(Kirby* kirby)
 
 	// Get Kirby's position from the previous frame to determine the direction of approach
 	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
-	sf::FloatRect kirbyPrevBounds(kirbyPrevPos - sf::Vector2f(kirbyBounds.width / 2.f, kirbyBounds.height / 2.f), kirbyBounds.getSize());
+	sf::FloatRect kirbyPrevBounds(kirbyPrevPos - sf::Vector2f(kirbyBounds.width, kirbyBounds.height), kirbyBounds.getSize());
 
 	// A small tolerance to prevent floating-point inaccuracies and ensure
 	// the collision registers correctly when objects are flush.

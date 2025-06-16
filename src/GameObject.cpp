@@ -1,6 +1,13 @@
 #include "GameObject.h"
 
-GameObject::GameObject(){}
+GameObject::GameObject()
+{
+	m_position = sf::Vector2f(0.f, 0.f); // Initialize position to (0, 0)
+	m_size = sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE); // Default size based on ENTITY_SIZE
+	m_texture = nullptr; // No texture by default
+	m_sprite.setOrigin(m_size.x / 2.f, m_size.y / 2.f); // Center the sprite origin
+	m_sprite.setPosition(m_position); // Set initial position of the sprite
+}
 
 GameObject::~GameObject() {}
 
@@ -17,9 +24,10 @@ void GameObject::draw(sf::RenderTarget& target) const
 	}
 }
 
+// update method is called every frame to update the position of the sprite?
 void GameObject::update(float dt)
 {
-	m_sprite.setPosition(m_position);
+	m_sprite.setPosition(m_position); // NOTICE: relevant to moving objects only
 }
 
 void GameObject::setPosition(const sf::Vector2f& position)
@@ -32,21 +40,23 @@ sf::Vector2f GameObject::getPosition() const
 	return m_position;
 }
 
+// sets the size of the GameObject:
+// updates m_size and sets m_sprite scale accordingly
 void GameObject::setSize(const sf::Vector2f& size)
 {
-
 	m_size = size;
 
-	// Check if the texture is loaded before trying to get its size
-	if (m_texture)
+	if (m_texture)	// Check if the texture is loaded before trying to get its size
 	{
-		sf::Vector2u textureSize = m_texture->getSize();
+		sf::Vector2u textureSize = m_texture->getSize(); // original size in pixels
 
-		// Avoid division by zero if texture is empty
-		if (textureSize.x > 0 && textureSize.y > 0)
+		if (textureSize.x > 0 && textureSize.y > 0) // Avoid division by zero if texture is empty
 		{
+			// Calculate the scale factors by dividing the desired size by the texture's original size
+			// (determines how much the texture should be scaled to fit the desired size)
 			float scaleX = size.x / textureSize.x;
 			float scaleY = size.y / textureSize.y;
+			// Set the sprite's scale to match the desired size
 			m_sprite.setScale(scaleX, scaleY);
 		}
 	}

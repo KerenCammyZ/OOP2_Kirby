@@ -25,7 +25,8 @@ GameController::GameController():
 	m_kirby->setTexture(m_kirbyTexture);
 	sf::Vector2f kirbySize(ENTITY_SIZE, ENTITY_SIZE);
 	m_kirby->setSize(kirbySize);
-	sf::Vector2f startPosition(0,0);
+	sf::Vector2f startPosition(50,50);
+	m_kirby->setPosition(startPosition);
 
 	// worldmap setup
 	m_worldMapTexture = std::make_shared<sf::Texture>();

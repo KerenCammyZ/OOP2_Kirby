@@ -1,6 +1,6 @@
 #include "Kirby.h"
 
-Kirby::Kirby() {};
+Kirby::Kirby(){};
 
 void Kirby::move(float deltaTime)
 {

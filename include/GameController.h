@@ -1,3 +1,4 @@
+// GameController.h
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Kirby.h"
@@ -18,16 +19,16 @@ private:
 	void checkCollisions();
 	void updateView();
 
-	sf::RenderWindow m_window;
-	sf::Clock m_deltaClock;
 	float m_deltaTime;
+	sf::Clock m_deltaClock;
 	sf::View m_view;
+	sf::RenderWindow m_window;
+
+	std::unique_ptr<Kirby> m_kirby;
+	std::unique_ptr<WorldMap> m_worldMap;
 
 	std::shared_ptr<sf::Texture> m_kirbyTexture;
-	std::unique_ptr<Kirby> m_kirby;
-
 	std::shared_ptr<sf::Texture> m_worldMapTexture;
-	std::unique_ptr<WorldMap> m_worldMap;
 
 	// A vector to hold all static objects
 	std::vector<std::unique_ptr<StaticObject>> m_staticObjects;

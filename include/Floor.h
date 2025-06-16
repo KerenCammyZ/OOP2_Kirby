@@ -1,7 +1,7 @@
 #pragma once
 #include "StaticObject.h"
 
-class Kirby;
+//class Kirby;  // forward declaration, treated by a direct include in Floor.cpp
 class Floor : public StaticObject
 {
 public:
@@ -11,4 +11,3 @@ public:
 private:
 
 };
-
