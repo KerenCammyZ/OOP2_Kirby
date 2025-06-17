@@ -53,6 +53,7 @@ sf::Vector2f WorldMap::getSize() const
 		sf::Vector2u texSize = m_backgroundTexture->getSize();
 		return sf::Vector2f(static_cast<float>(texSize.x), static_cast<float>(texSize.y));
 	}
+	std::cout << "WorldMap::getSize() no m_backgroundTexture"; // FOR DEBUGGING
 	return sf::Vector2f(0.f, 0.f);
 }
 
@@ -108,6 +109,7 @@ void WorldMap::setCollisionMap(std::unique_ptr<sf::Image> collisionMap)
 	m_worldMap = std::move(collisionMap);
 }
 
+
 // Loads the collision map and generates collidable objects based on the colors in the image.
 // This method processes a collision map(an image) to generate collidable objects(StaticObject instances)
 // based on pixel colors in the image.
@@ -120,11 +122,12 @@ std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions()
 	}
 
 	sf::Vector2u mapSize = m_worldMap->getSize(); // collision map size
-	//const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
-	const float TILE_SIZE = ENTITY_SIZE; // The size of a tile in the ORIGINAL image
+	const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
+	//const float TILE_SIZE = ENTITY_SIZE; // The size of a tile in the ORIGINAL image
 
 	sf::Color groundColor(76, 255, 0);
 	sf::Color wallColor(255, 0, 0);
+
 	for (unsigned int y = 0; y < mapSize.y; ++y)
 	{
 		for (unsigned int x = 0; x < mapSize.x; ++x)
@@ -160,3 +163,37 @@ std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions()
 	std::cout << "Generated " << collidables.size() << " collidable tiles from the collision map.\n";
 	return collidables;
 }
+
+/*
+// In WorldMap.cpp - Simple collision loading
+std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions()
+{
+    std::vector<std::unique_ptr<StaticObject>> collidables;
+    if (!m_worldMap) return collidables;
+
+    sf::Vector2u mapSize = m_worldMap->getSize();
+    sf::Color groundColor(76, 255, 0);
+    
+    for (unsigned int y = 0; y < mapSize.y; ++y)
+    {
+        for (unsigned int x = 0; x < mapSize.x; ++x)
+        {
+            if (m_worldMap->getPixel(x, y) == groundColor)
+            {
+                auto floorTile = std::make_unique<Floor>();
+                
+                // Position tile at center of the scaled pixel area
+                float posX = (x * m_scale.x) + (m_scale.x / 2.f);
+                float posY = (y * m_scale.y) + (m_scale.y / 2.f);
+                floorTile->setPosition({posX, posY});
+                floorTile->setSize({m_scale.x, m_scale.y});
+                
+                collidables.push_back(std::move(floorTile));
+            }
+        }
+    }
+    
+    std::cout << "Generated " << collidables.size() << " collision tiles." << std::endl;
+    return collidables;
+}
+*/

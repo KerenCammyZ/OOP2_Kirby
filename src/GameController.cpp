@@ -147,6 +147,7 @@ void GameController::loadTextures()
 	if (!m_worldMapTexture->loadFromFile("Level1.png"))
 	{
 		throw std::runtime_error("Failed to load world map texture");
+
 	}
 }
 
@@ -178,10 +179,21 @@ void GameController::draw()
 	m_window.setView(m_view);
 	m_worldMap->draw(m_window);
 	m_kirby->draw(m_window);
+
 	for (const auto& obj : m_staticObjects)
 	{
 		obj->draw(m_window);
 	}
+
+	// Draw Kirby's collision bounds
+	sf::FloatRect kirbyBounds = m_kirby->getBounds();
+	sf::RectangleShape kirbyOutline;
+	kirbyOutline.setPosition(kirbyBounds.left, kirbyBounds.top);
+	kirbyOutline.setSize(sf::Vector2f(kirbyBounds.width, kirbyBounds.height));
+	kirbyOutline.setFillColor(sf::Color::Transparent);
+	kirbyOutline.setOutlineColor(sf::Color::Yellow);  // Bright yellow
+	kirbyOutline.setOutlineThickness(1.f);
+	m_window.draw(kirbyOutline);
 
 	// NOTE: If you were to draw UI elements (like a score or health bar),
 	// you would switch back to the default view here so they stay fixed on the screen:
