@@ -7,10 +7,15 @@ void Floor::handleCollision(Kirby* kirby)
 	// Get the bounding boxes of both objects for collision resolution
 	sf::FloatRect kirbyBounds = kirby->getBounds();
 	sf::FloatRect floorBounds = getBounds();
-
+	
+	std::cout << "Floor top: " << floorBounds.top << std::endl;
+	std::cout << "Floor bounds: (" << floorBounds.left << ", " << floorBounds.top
+		<< ", " << floorBounds.width << ", " << floorBounds.height << ")" << std::endl;
+	std::cout << "Kirby size: " << kirbyBounds.height << std::endl;
+	
 	// Get Kirby's position from the previous frame to determine the direction of approach
 	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
-	sf::FloatRect kirbyPrevBounds(kirbyPrevPos - sf::Vector2f(kirbyBounds.width, kirbyBounds.height), kirbyBounds.getSize());
+	sf::FloatRect kirbyPrevBounds(kirbyPrevPos - sf::Vector2f(kirbyBounds.width / 2.f, kirbyBounds.height / 2.f), kirbyBounds.getSize());
 
 	// A small tolerance to prevent floating-point inaccuracies and ensure
 	// the collision registers correctly when objects are flush.

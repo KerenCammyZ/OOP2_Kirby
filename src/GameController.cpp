@@ -2,7 +2,7 @@
 #include "MovingObject.h"
 
 GameController::GameController():
-	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby")
+	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_deltaTime(0.f)
 {
 	// VIEW (CAMERA) SETUP
 	// -------------------------------------------------------------------
@@ -15,6 +15,7 @@ GameController::GameController():
 	// focusing on the top-left part of the world.
 	m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
 
+/*
 	// kirby setup
 	m_kirbyTexture = std::make_shared<sf::Texture>();
 	if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
@@ -34,8 +35,8 @@ GameController::GameController():
 	{
 		throw std::runtime_error("Failed to load world map texture");
 	}
-	
-	sf::Vector2f originalMapSize = sf::Vector2f(m_worldMapTexture->getSize());
+
+	sf::Vector2f originalMapSize = sf::Vector2f(m_worldMapTexture->getSize());More actions
 	sf::Vector2f targetMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Calculate the scale factors
@@ -44,8 +45,8 @@ GameController::GameController():
 
 	// Initialize and set the size of the visual map
 	m_worldMap = std::make_unique<WorldMap>();
-	m_worldMap->init(m_worldMapTexture); 
-	m_worldMap->setSize(targetMapSize); 
+	m_worldMap->init(m_worldMapTexture);
+	m_worldMap->setSize(targetMapSize);
 
 
 	// Load Collisions using the scale factor
@@ -54,14 +55,18 @@ GameController::GameController():
 	{
 		throw std::runtime_error("Failed to load collision map image");
 	}
-
-	auto collidablesFromFile = m_worldMap->loadCollisions(collisionImage, mapScale);
+*/
+	loadTextures(); // load Kirby and World Map textures
+	m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
+	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
+	
+	loadCollisionMap();
+	auto collidablesFromFile = m_worldMap->loadCollisions();
 
 	m_staticObjects.insert(
 		m_staticObjects.end(),
 		std::make_move_iterator(collidablesFromFile.begin()),
 		std::make_move_iterator(collidablesFromFile.end()));
-
 }
 
 void GameController::run()
@@ -126,6 +131,34 @@ void GameController::updateView()
 
 	// Set the view's final center position for this frame.
 	m_view.setCenter(viewX, viewY);
+}
+
+// Load kirby and worldmap textures
+void GameController::loadTextures()
+{
+	m_kirbyTexture = std::make_shared<sf::Texture>();
+	m_worldMapTexture = std::make_shared<sf::Texture>();
+	
+	if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
+	{
+		throw std::runtime_error("Failed to load Kirby texture");
+	}
+
+	if (!m_worldMapTexture->loadFromFile("Level1.png"))
+	{
+		throw std::runtime_error("Failed to load world map texture");
+	}
+}
+
+// Load the collision map and set up static objects
+void GameController::loadCollisionMap()
+{
+	auto collisionImage = std::make_unique<sf::Image>();
+	if (!collisionImage->loadFromFile("Level1Collisions.png"))
+	{
+		throw std::runtime_error("Failed to load collision map image");
+	}
+	m_worldMap->setCollisionMap(std::move(collisionImage));
 }
 
 void GameController::update(float deltaTime)

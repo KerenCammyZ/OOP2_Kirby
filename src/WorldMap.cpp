@@ -3,7 +3,21 @@
 #include "Wall.h"
 #include <iostream>
 
-WorldMap::WorldMap() {}
+WorldMap::WorldMap(std::shared_ptr<sf::Texture>& backgroundTexture)
+	: m_backgroundTexture(backgroundTexture)
+{
+	// world map setup
+	sf::Vector2f originalMapSize = sf::Vector2f(backgroundTexture->getSize());
+	sf::Vector2f targetMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	// Calculate the scale factors
+	sf::Vector2f mapScale(targetMapSize.x / originalMapSize.x, targetMapSize.y / originalMapSize.y);
+	setScale(mapScale);
+
+	// Initialize and set the size of the visual map
+	init(backgroundTexture);
+	setSize(targetMapSize);
+}
 
 WorldMap::~WorldMap() = default;
 
@@ -47,8 +61,11 @@ sf::FloatRect WorldMap::getBounds() const
 	return m_backgroundSprite.getGlobalBounds();
 }
 
+// set the size of the visual map (by scaling)
 void WorldMap::setSize(const sf::Vector2f& size)
 {
+	// is currently called with the passed argument sf::vector2f(VIEW_WIDTH, VIEW_HEIGHT) 
+	// from the constructor
 	if (m_backgroundTexture)
 	{
 		sf::Vector2u texSize = m_backgroundTexture->getSize();
@@ -62,24 +79,67 @@ void WorldMap::setSize(const sf::Vector2f& size)
 	}
 }
 
-std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions(const sf::Image& collisionMap ,sf::Vector2f scale)
+// Ensures that the collision map aligns with the visual map.
+void WorldMap::setScale(const sf::Vector2f& scale)
+{
+	m_scale = scale;
+
+	// Usage:
+	// (previously mapScale)
+	// m_worldMap->loadCollisions(collisionImage, mapScale);
+	// float scaledTileWidth = TILE_SIZE * mapScale.x;
+	// float scaledTileHeight = TILE_SIZE * mapscale.y;
+
+	// Responsibility:
+	// m_scale is used to scale the collision map's tiles to match the visual map's dimensions.
+	// This ensures that collisions occur at the correct positions relative to the visual representation.
+
+	// Computed by:
+	// sf::Vector2f originalMapSize = sf::Vector2f(backgroundTexture->getSize());
+	// sf::Vector2f targetMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	// sf::Vector2f mapScale(targetMapSize.x / originalMapSize.x, targetMapSize.y / originalMapSize.y);
+	// setScale(mapScale);
+	//                         (the ratio of the visual map's size to the collision map's size.)
+}
+
+// Sets the collision map for the world map.
+void WorldMap::setCollisionMap(std::unique_ptr<sf::Image> collisionMap)
+{
+	m_worldMap = std::move(collisionMap);
+}
+
+// Loads the collision map and generates collidable objects based on the colors in the image.
+// This method processes a collision map(an image) to generate collidable objects(StaticObject instances)
+// based on pixel colors in the image.
+std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions()
 {
 	std::vector<std::unique_ptr<StaticObject>> collidables;
-	sf::Vector2u mapSize = collisionMap.getSize();
-	const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
+	if (!m_worldMap)
+	{
+		throw std::runtime_error("Collision map not set for WorldMap");
+	}
+
+	sf::Vector2u mapSize = m_worldMap->getSize(); // collision map size
+	//const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
+	const float TILE_SIZE = ENTITY_SIZE; // The size of a tile in the ORIGINAL image
+
 	sf::Color groundColor(76, 255, 0);
 	sf::Color wallColor(255, 0, 0);
 	for (unsigned int y = 0; y < mapSize.y; ++y)
 	{
 		for (unsigned int x = 0; x < mapSize.x; ++x)
 		{
-			if (collisionMap.getPixel(x, y) == groundColor)
+			// Process ground tiles
+			if (m_worldMap->getPixel(x, y) == groundColor)
 			{
 				auto floorTile = std::make_unique<Floor>();
 
+				// -- calculate the position and size of each tile.
+				// -- The position is adjusted to center the tile:
+	
 				// Calculate the SCALED size of the tile
-				float scaledTileWidth = TILE_SIZE * scale.x;
-				float scaledTileHeight = TILE_SIZE * scale.y;
+				float scaledTileWidth = TILE_SIZE * m_scale.x;
+				float scaledTileHeight = TILE_SIZE * m_scale.y;
 
 				// Calculate the SCALED position of the tile's center
 				float posX = (x * scaledTileWidth) + (scaledTileWidth / 2.f);
@@ -90,26 +150,13 @@ std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions(const sf::Im
 
 				collidables.push_back(std::move(floorTile));
 			}
-			else if (collisionMap.getPixel(x, y) == wallColor)
+			// Process wall tiles
+			else if (m_worldMap->getPixel(x, y) == wallColor)
 			{
-				auto wallTile = std::make_unique<Wall>();
-
-				// Calculate the SCALED size of the tile
-				float scaledTileWidth = TILE_SIZE * scale.x;
-				float scaledTileHeight = TILE_SIZE * scale.y;
-
-				// Calculate the SCALED position of the tile's center
-				float posX = (x * scaledTileWidth) + (scaledTileWidth / 2.f);
-				float posY = (y * scaledTileHeight) + (scaledTileHeight / 2.f);
-
-				wallTile->setPosition({ posX, posY });
-				wallTile->setSize({ scaledTileWidth, scaledTileHeight });
-
-				collidables.push_back(std::move(wallTile));
+				;
 			}
 		}
 	}
-
 	std::cout << "Generated " << collidables.size() << " collidable tiles from the collision map.\n";
 	return collidables;
 }

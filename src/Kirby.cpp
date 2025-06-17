@@ -1,6 +1,14 @@
+// Kirby.cpp : Inherits from MovingObject
 #include "Kirby.h"
 
-Kirby::Kirby(){};
+Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
+{
+	setTexture(kirbyTexture);
+	sf::Vector2f kirbySize(ENTITY_SIZE, ENTITY_SIZE);
+	setSize(kirbySize);
+	sf::Vector2f startPosition(50,50);
+	setPosition(startPosition);
+};
 
 void Kirby::move(float deltaTime)
 {

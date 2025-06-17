@@ -12,12 +12,16 @@ public:
 	GameController();
 	~GameController() = default;
 	void run();
+
 private:
 	void update(float deltaTime);
 	void handle();
 	void draw();
 	void checkCollisions();
 	void updateView();
+
+	void loadTextures();
+	void loadCollisionMap();
 
 	float m_deltaTime;
 	sf::Clock m_deltaClock;
