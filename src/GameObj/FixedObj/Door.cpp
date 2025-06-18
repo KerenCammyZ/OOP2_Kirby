@@ -10,7 +10,7 @@ void Door::handleCollision(Kirby* kirby)
 {
 
 	sf::Vector2f arrivalPosition = m_destination;
-	arrivalPosition.y += kirby->getSize().y; // Adjust based on Kirby's size
+	arrivalPosition.x += kirby->getSize().x; // Adjust based on Kirby's size
 
 	kirby->setPosition(arrivalPosition);
 

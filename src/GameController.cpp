@@ -89,25 +89,6 @@ void GameController::updateView()
 
 	// Set the view's final center position for this frame.
 	m_view.setCenter(viewX, viewY);
-	//// vertical movement
-	//float viewY = m_view.getSize().y / 2.f;
-
-
-	//// boundaries for the camera view
-	//sf::FloatRect worldBounds = m_worldMap->getBounds();
-	//float viewHalfWidth = m_view.getSize().x / 2.f;
-
-	//if (viewX < viewHalfWidth)
-	//{
-	//	viewX = viewHalfWidth;
-	//}
-	//if (viewX > worldBounds.width - viewHalfWidth)
-	//{
-	//	viewX = worldBounds.width - viewHalfWidth;
-	//}
-
-	//// Set the view's final center position for this frame.
-	//m_view.setCenter(viewX, viewY);
 }
 
 // Load kirby and worldmap textures
