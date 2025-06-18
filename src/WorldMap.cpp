@@ -1,7 +1,7 @@
 #include "WorldMap.h"
-#include "Floor.h"
-#include "Wall.h"
-#include "Door.h"
+#include "GameObj/FixedObj/Floor.h"
+#include "GameObj/FixedObj/Wall.h"
+#include "GameObj/FixedObj/Door.h"
 #include <iostream> // for debugging
 #include <map>
 #include <vector>

@@ -1,6 +1,8 @@
-// Wall.h
+// Wall.cpp
 #pragma once
-#include "StaticObject.h"
+#include "GameObj/FixedObj/StaticObject.h"
+
+class Kirby;
 
 class Wall : public StaticObject
 {

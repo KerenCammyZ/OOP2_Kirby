@@ -1,4 +1,5 @@
-#include "MovingObject.h"
+// MovingObject.cpp
+#include "GameObj/MovingObj/MovingObject.h"
 
 MovingObject::MovingObject() {}
 

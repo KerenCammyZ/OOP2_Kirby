@@ -1,5 +1,5 @@
-#include "StaticObject.h"
-#include "Kirby.h"
+// StaticObject.cpp
+#include "GameObj/FixedObj/StaticObject.h"
 
 StaticObject::StaticObject()
 {

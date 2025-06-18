@@ -1,6 +1,6 @@
-// Kirby.cpp : Inherits from MovingObject
-#include "Kirby.h"
-#include "Door.h"
+// Kirby.cpp
+#include "GameObj/MovingObj/Kirby.h"
+#include "GameObj/FixedObj/Door.h"
 
 Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 {

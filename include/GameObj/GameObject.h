@@ -1,4 +1,4 @@
-// GameObject.h : Abstract base class for all game objects
+// GameObject.h
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GlobalSizes.h"
@@ -11,7 +11,7 @@ class GameObject
 public:
 	// constructor and destructor
 	GameObject();
-	virtual ~GameObject();
+	virtual ~GameObject() = default;
 
 	// virtual methods
 	virtual void update(float dt);

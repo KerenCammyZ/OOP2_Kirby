@@ -1,8 +1,7 @@
-//Floor.h
+// Floor.h
 #pragma once
 #include "GameObj/FixedObj/StaticObject.h"
 
-class Kirby;
 class Door;
 
 class Floor : public StaticObject

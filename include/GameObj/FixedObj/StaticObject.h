@@ -1,6 +1,6 @@
-// StaticObject.h : Static Game Objects. Inherits from class GameObject
+// StaticObject.h
 #pragma once
-#include "GameObject.h"
+#include "GameObj/GameObject.h"
 
 class StaticObject : public GameObject
 {
@@ -9,8 +9,7 @@ public:
 	~StaticObject() = default;
 	// Static objects don't move, so their update is empty,
 	// but it must be implemented.
-	void update(float dt) override {}; // TODO consider declaring first in MovingObject
-	                                   // otherwise explain why it is declared in GameObject
+	void update(float dt) override {}; // TODO: maybe declare first in MovingObject
 
 	// By default, static objects don't react to generic collisions
 	void handleCollision(GameObject* other) override;

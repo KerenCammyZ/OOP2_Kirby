@@ -1,5 +1,6 @@
+// Door.h
 #pragma once
-#include "StaticObject.h"
+#include "GameObj/FixedObj/StaticObject.h"
 
 class Door : public StaticObject
 {

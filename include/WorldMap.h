@@ -2,7 +2,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "StaticObject.h"	
+#include "GameObj/FixedObj/StaticObject.h"	
 
 class WorldMap
 {

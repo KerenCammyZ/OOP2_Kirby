@@ -1,5 +1,6 @@
-#include "Floor.h"
-#include "Kirby.h"
+// Floor.cpp
+#include "GameObj/FixedObj/Floor.h"
+#include "GameObj/MovingObj/Kirby.h"
 #include <iostream>
 
 

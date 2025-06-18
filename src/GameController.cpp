@@ -1,5 +1,5 @@
+// GameController.cpp
 #include "GameController.h"
-#include "MovingObject.h"
 
 GameController::GameController():
 	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_deltaTime(0.f)
