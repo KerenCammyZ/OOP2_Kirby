@@ -1,8 +1,8 @@
 // Door.h
 #pragma once
-#include "GameObj/FixedObj/StaticObject.h"
+#include "GameObj/FixedObj/FixedObject.h"
 
-class Door : public StaticObject
+class Door : public FixedObject
 {
 public:
 	// The constructor now takes the destination coordinates

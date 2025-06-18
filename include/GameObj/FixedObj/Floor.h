@@ -1,10 +1,10 @@
 // Floor.h
 #pragma once
-#include "GameObj/FixedObj/StaticObject.h"
+#include "GameObj/FixedObj/FixedObject.h"
 
 class Door;
 
-class Floor : public StaticObject
+class Floor : public FixedObject
 {
 public:
 	Floor() = default;

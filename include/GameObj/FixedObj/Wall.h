@@ -1,10 +1,10 @@
 // Wall.cpp
 #pragma once
-#include "GameObj/FixedObj/StaticObject.h"
+#include "GameObj/FixedObj/FixedObject.h"
 
 class Kirby;
 
-class Wall : public StaticObject
+class Wall : public FixedObject
 {
 public:
 	Wall() = default;

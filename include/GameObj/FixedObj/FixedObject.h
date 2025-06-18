@@ -1,12 +1,12 @@
-// StaticObject.h
+// FixedObject.h
 #pragma once
 #include "GameObj/GameObject.h"
 
-class StaticObject : public GameObject
+class FixedObject : public GameObject
 {
 public:
-	StaticObject();
-	~StaticObject() = default;
+	FixedObject();
+	~FixedObject() = default;
 	// Static objects don't move, so their update is empty,
 	// but it must be implemented.
 	void update(float dt) override {}; // TODO: maybe declare first in MovingObject

@@ -129,11 +129,11 @@ void WorldMap::setCollisionMap(std::unique_ptr<sf::Image> collisionMap)
 
 
 // Loads the collision map and generates collidable objects based on the colors in the image.
-// This method processes a collision map(an image) to generate collidable objects(StaticObject instances)
+// This method processes a collision map(an image) to generate collidable objects(FixedObject instances)
 // based on pixel colors in the image.
-std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions()
+std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
 {
-	std::vector<std::unique_ptr<StaticObject>> collidables;
+	std::vector<std::unique_ptr<FixedObject>> collidables;
 	if (!m_worldMap) { throw std::runtime_error("Collision map not set for WorldMap"); }
 
 	sf::Vector2u mapSize = m_worldMap->getSize(); // collision map size
@@ -222,9 +222,9 @@ std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions()
 
 /*
 // In WorldMap.cpp - Simple collision loading
-std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions()
+std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
 {
-    std::vector<std::unique_ptr<StaticObject>> collidables;
+    std::vector<std::unique_ptr<FixedObject>> collidables;
     if (!m_worldMap) return collidables;
 
     sf::Vector2u mapSize = m_worldMap->getSize();

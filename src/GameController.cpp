@@ -63,8 +63,8 @@ GameController::GameController():
 	loadCollisionMap();
 	auto collidablesFromFile = m_worldMap->loadCollisions();
 
-	m_staticObjects.insert(
-		m_staticObjects.end(),
+	m_FixedObjects.insert(
+		m_FixedObjects.end(),
 		std::make_move_iterator(collidablesFromFile.begin()),
 		std::make_move_iterator(collidablesFromFile.end()));
 }
@@ -91,11 +91,11 @@ void GameController::run()
 
 void GameController::checkCollisions()
 {
-	for (const auto& staticObject : m_staticObjects)
+	for (const auto& FixedObject : m_FixedObjects)
 	{
-		if (m_kirby->collidesWith(*staticObject))
+		if (m_kirby->collidesWith(*FixedObject))
 		{
-			m_kirby->handleCollision(staticObject.get());
+			m_kirby->handleCollision(FixedObject.get());
 		}
 	}
 }
@@ -180,7 +180,7 @@ void GameController::draw()
 	m_worldMap->draw(m_window);
 	m_kirby->draw(m_window);
 
-	for (const auto& obj : m_staticObjects)
+	for (const auto& obj : m_FixedObjects)
 	{
 		obj->draw(m_window);
 	}

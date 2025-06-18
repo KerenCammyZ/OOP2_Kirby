@@ -2,7 +2,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "GameObj/FixedObj/StaticObject.h"	
+#include "GameObj/FixedObj/FixedObject.h"	
 
 class WorldMap
 {
@@ -18,7 +18,7 @@ public:
 	void setScale(const sf::Vector2f& mapScale);
 	void setCollisionMap(std::unique_ptr<sf::Image> collisionMap);
 
-	std::vector<std::unique_ptr<StaticObject>> loadCollisions();
+	std::vector<std::unique_ptr<FixedObject>> loadCollisions();
 
 private:
 	sf::Vector2f m_scale;
