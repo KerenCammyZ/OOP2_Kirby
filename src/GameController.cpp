@@ -6,9 +6,8 @@ GameController::GameController():
 {
 	// camera setup
 	m_view.setSize(VIEW_WIDTH, VIEW_HEIGHT);
-
+	m_levelBlockHeight = VIEW_HEIGHT; // The height of a level section is one view height
 	m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
-
 
 	loadTextures(); // TODO: move to resource manager
 	m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
@@ -60,24 +59,55 @@ void GameController::updateView()
 	float viewX = m_kirby->getPosition().x;
 
 	// vertical movement
-	float viewY = m_view.getSize().y / 2.f;
+	//The floor division gives us an integer index (0 for the top block, 1 for the middle, etc.)
+	int verticalBlockIndex = static_cast<int>(m_kirby->getPosition().y / m_levelBlockHeight);
+	//Calculate the Y-center of that block to lock the camera to it.
+	float viewY = (verticalBlockIndex * m_levelBlockHeight) + (m_levelBlockHeight / 2.f);
 
 
-	// boundaries for the camera view
+	// boundry checks
 	sf::FloatRect worldBounds = m_worldMap->getBounds();
 	float viewHalfWidth = m_view.getSize().x / 2.f;
+	float viewHalfHeight = m_view.getSize().y / 2.f;
 
-	if (viewX < viewHalfWidth)
-	{
+	// Left boundary
+	if (viewX < viewHalfWidth) {
 		viewX = viewHalfWidth;
 	}
-	if (viewX > worldBounds.width - viewHalfWidth)
-	{
+	// Right boundary
+	if (viewX > worldBounds.width - viewHalfWidth) {
 		viewX = worldBounds.width - viewHalfWidth;
+	}
+	// Top boundary
+	if (viewY < viewHalfHeight) {
+		viewY = viewHalfHeight;
+	}
+	// Bottom boundary
+	if (viewY > worldBounds.height - viewHalfHeight) {
+		viewY = worldBounds.height - viewHalfHeight;
 	}
 
 	// Set the view's final center position for this frame.
 	m_view.setCenter(viewX, viewY);
+	//// vertical movement
+	//float viewY = m_view.getSize().y / 2.f;
+
+
+	//// boundaries for the camera view
+	//sf::FloatRect worldBounds = m_worldMap->getBounds();
+	//float viewHalfWidth = m_view.getSize().x / 2.f;
+
+	//if (viewX < viewHalfWidth)
+	//{
+	//	viewX = viewHalfWidth;
+	//}
+	//if (viewX > worldBounds.width - viewHalfWidth)
+	//{
+	//	viewX = worldBounds.width - viewHalfWidth;
+	//}
+
+	//// Set the view's final center position for this frame.
+	//m_view.setCenter(viewX, viewY);
 }
 
 // Load kirby and worldmap textures

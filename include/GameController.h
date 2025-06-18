@@ -23,6 +23,7 @@ private:
 	void loadTextures();
 	void loadCollisionMap();
 
+	float m_levelBlockHeight;
 	float m_deltaTime;
 	sf::Clock m_deltaClock;
 	sf::View m_view;
