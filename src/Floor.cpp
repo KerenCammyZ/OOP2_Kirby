@@ -12,7 +12,7 @@ void Floor::handleCollision(Kirby* kirby)
 	
 	// Get Kirby's position from the previous frame to determine the direction of approach
 	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
-	sf::FloatRect kirbyPrevBounds(kirbyPrevPos - sf::Vector2f(kirbyBounds.width, kirbyBounds.height), kirbyBounds.getSize());
+	sf::FloatRect kirbyPrevBounds(kirbyPrevPos - sf::Vector2f(kirbyBounds.width / 2.f, kirbyBounds.height / 2.f), kirbyBounds.getSize());
 
 	// A small tolerance to prevent floating-point inaccuracies and ensure
 	// the collision registers correctly when objects are flush.
@@ -36,30 +36,3 @@ void Floor::handleCollision(Kirby* kirby)
 	// more importantly, from below. In that case, we do nothing,
 	// allowing him to pass through the floor.
 }
-
-
-/*
-// In Floor.cpp - Simple collision resolution
-void Floor::handleCollision(Kirby* kirby)
-{
-	sf::FloatRect kirbyBounds = kirby->getBounds();
-	sf::FloatRect floorBounds = getBounds();
-
-	// Check if Kirby was above this floor tile in the previous frame
-	sf::Vector2f prevPos = kirby->getOldPosition();
-	sf::FloatRect prevBounds(prevPos - sf::Vector2f(kirbyBounds.width / 2.f, kirbyBounds.height / 2.f),
-		sf::Vector2f(kirbyBounds.width, kirbyBounds.height));
-
-	bool wasAbove = (prevBounds.top + prevBounds.height) <= (floorBounds.top + 1.0f);
-
-	if (wasAbove)
-	{
-		// Position Kirby so his bottom edge touches the floor's top edge
-		float newY = floorBounds.top - (kirbyBounds.height / 2.f);
-		kirby->setPosition({ kirby->getPosition().x, newY });
-
-		std::cout << "Collision: Floor top=" << floorBounds.top
-			<< ", Kirby bottom=" << (newY + kirbyBounds.height / 2.f) << std::endl;
-	}
-}
-*/
