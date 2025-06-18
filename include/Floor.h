@@ -8,6 +8,7 @@ public:
 	Floor() = default;
 
 	void handleCollision(Kirby* kirby) override;
+	void handleCollision(Door* door) override {};
 private:
 
 };

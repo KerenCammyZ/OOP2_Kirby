@@ -1,5 +1,6 @@
 // Kirby.cpp : Inherits from MovingObject
 #include "Kirby.h"
+#include "Door.h"
 
 Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 {
@@ -9,6 +10,13 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	sf::Vector2f startPosition(50,50);
 	setPosition(startPosition);
 };
+
+void Kirby::handleCollision(Door* door)
+{
+	// Delegate the collision handling back to the door.
+	// The door knows where to send Kirby.
+	door->handleCollision(this);
+}
 
 void Kirby::move(float deltaTime)
 {

@@ -4,6 +4,8 @@
 #include "GlobalSizes.h"
 
 class Kirby; 
+class Door;
+
 class GameObject
 {
 public:
@@ -19,6 +21,7 @@ public:
 	// Double Dispatch Handlers
 	virtual void handleCollision(GameObject* other) = 0;
 	virtual void handleCollision(Kirby* kirby) = 0;
+	virtual void handleCollision(Door* door) = 0;
 
 	// setters and getters
 	virtual void setPosition(const sf::Vector2f& position);

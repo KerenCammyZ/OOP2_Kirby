@@ -1,7 +1,22 @@
 #include "WorldMap.h"
 #include "Floor.h"
 #include "Wall.h"
-#include <iostream>
+#include "Door.h"
+#include <iostream> // for debugging
+#include <map>
+#include <vector>
+
+// --- FIX: Define a custom comparator struct for sf::Color ---
+// This struct provides the sorting rules for the std::map.
+// It's a self-contained way to tell the map how to order its keys.
+struct ColorComparator {
+	bool operator()(const sf::Color& a, const sf::Color& b) const {
+		if (a.r != b.r) return a.r < b.r;
+		if (a.g != b.g) return a.g < b.g;
+		if (a.b != b.b) return a.b < b.b;
+		return a.a < b.a;
+	}
+};
 
 WorldMap::WorldMap(std::shared_ptr<sf::Texture>& backgroundTexture)
 	: m_backgroundTexture(backgroundTexture)
@@ -21,6 +36,7 @@ WorldMap::WorldMap(std::shared_ptr<sf::Texture>& backgroundTexture)
 
 WorldMap::~WorldMap() = default;
 
+// Initialize the world map by setting the background graphics
 void WorldMap::init(std::shared_ptr<sf::Texture> backgroundTexture)
 {
 	if (!backgroundTexture)
@@ -70,9 +86,11 @@ void WorldMap::setSize(const sf::Vector2f& size)
 	if (m_backgroundTexture)
 	{
 		sf::Vector2u texSize = m_backgroundTexture->getSize();
-		float scaleX = size.x / static_cast<float>(texSize.x);
-		float scaleY = size.y / static_cast<float>(texSize.y);
-		m_backgroundSprite.setScale(scaleX, scaleY);
+		if (texSize.x > 0 && texSize.y > 0) {
+			float scaleX = size.x / static_cast<float>(texSize.x);
+			float scaleY = size.y / static_cast<float>(texSize.y);
+			m_backgroundSprite.setScale(scaleX, scaleY);
+		}
 	}
 	else
 	{
@@ -116,48 +134,86 @@ void WorldMap::setCollisionMap(std::unique_ptr<sf::Image> collisionMap)
 std::vector<std::unique_ptr<StaticObject>> WorldMap::loadCollisions()
 {
 	std::vector<std::unique_ptr<StaticObject>> collidables;
-	if (!m_worldMap)
-	{
-		throw std::runtime_error("Collision map not set for WorldMap");
-	}
+	if (!m_worldMap) { throw std::runtime_error("Collision map not set for WorldMap"); }
 
 	sf::Vector2u mapSize = m_worldMap->getSize(); // collision map size
 	const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
-	//const float TILE_SIZE = ENTITY_SIZE; // The size of a tile in the ORIGINAL image
 
 	sf::Color groundColor(76, 255, 0);
 	sf::Color wallColor(255, 0, 0);
+	const std::vector<sf::Color> doorPairColors = {
+		sf::Color(0, 38, 255),       // Door Color A
+		sf::Color(0, 148, 255),   // Door Color B
+	};
+
+	// --- FIX: Use the custom comparator in the map definition ---Add commentMore actions
+	std::map<sf::Color, std::vector<sf::Vector2f>, ColorComparator> doorLocations;
+
+	// --- PASS 1: Find all special pixels and categorize them ---
 
 	for (unsigned int y = 0; y < mapSize.y; ++y)
 	{
 		for (unsigned int x = 0; x < mapSize.x; ++x)
 		{
+			sf::Color pixelColor = m_worldMap->getPixel(x, y);
+
+			float posX = (x * TILE_SIZE * m_scale.x) + (TILE_SIZE * m_scale.x / 2.f);
+			float posY = (y * TILE_SIZE * m_scale.y) + (TILE_SIZE * m_scale.y / 2.f);
+			sf::Vector2f position(posX, posY);
+
 			// Process ground tiles
-			if (m_worldMap->getPixel(x, y) == groundColor)
+			if (pixelColor == groundColor)
 			{
 				auto floorTile = std::make_unique<Floor>();
 
-				// -- calculate the position and size of each tile.
-				// -- The position is adjusted to center the tile:
-	
-				// Calculate the SCALED size of the tile
-				float scaledTileWidth = TILE_SIZE * m_scale.x;
-				float scaledTileHeight = TILE_SIZE * m_scale.y;
-
-				// Calculate the SCALED position of the tile's center
-				float posX = (x * scaledTileWidth) + (scaledTileWidth / 2.f);
-				float posY = (y * scaledTileHeight) + (scaledTileHeight / 2.f);
-
-				floorTile->setPosition({ posX, posY });
-				floorTile->setSize({ scaledTileWidth, scaledTileHeight });
-
+				floorTile->setPosition(position);
+				floorTile->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
 				collidables.push_back(std::move(floorTile));
 			}
 			// Process wall tiles
-			else if (m_worldMap->getPixel(x, y) == wallColor)
+			else if (pixelColor == wallColor)
 			{
 				;
 			}
+			else
+			{
+				for (const auto& doorColor : doorPairColors)
+				{
+					if (pixelColor == doorColor)
+					{
+						doorLocations[doorColor].push_back(position);
+						break;
+					}
+				}
+			}
+		}
+	}
+	// --- PASS 2: Process the door map and create linked pairs ---
+	for (const auto& pair : doorLocations)
+	{
+		const std::vector<sf::Vector2f>& locations = pair.second;
+		if (locations.size() == 2)
+		{
+			sf::Vector2f posA = locations[0];
+			sf::Vector2f posB = locations[1];
+
+			auto doorA = std::make_unique<Door>(posB);
+			doorA->setPosition(posA);
+			doorA->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y * 2.f });
+
+			auto doorB = std::make_unique<Door>(posA);
+			doorB->setPosition(posB);
+			doorB->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y * 2.f });
+
+			collidables.push_back(std::move(doorA));
+			collidables.push_back(std::move(doorB));
+
+			std::cout << "Created a door pair between (" << posA.x << "," << posA.y << ") and (" << posB.x << "," << posB.y << ")\n";
+		}
+		else
+		{
+			std::cerr << "Warning: Invalid door pair found! Expected 2 pixels for a door, but found "
+				<< locations.size() << ". Check your collision map.\n";
 		}
 	}
 	std::cout << "Generated " << collidables.size() << " collidable tiles from the collision map.\n";

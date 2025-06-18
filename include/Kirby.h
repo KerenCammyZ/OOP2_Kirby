@@ -10,5 +10,6 @@ public:
 
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
-	void handleCollision(Kirby* kirby) override {}; // Kirby hitting himself
+	void handleCollision(Kirby* kirby) override {};
+	void handleCollision(Door* door) override;
 };
