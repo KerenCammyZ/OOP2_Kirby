@@ -1,10 +1,8 @@
 #include "GameObj/FixedObj/Door.h"
 #include "GameObj/MovingObj/Kirby.h"
 
-// Store the destination when the door is created
 Door::Door(sf::Vector2f destination) : m_destination(destination)
 {
-	// You can set a debug color for doors to see them
 	m_debugShape.setFillColor(sf::Color(255, 0, 255, 100)); // Semi-transparent magenta
 }
 

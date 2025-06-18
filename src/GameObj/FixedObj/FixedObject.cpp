@@ -11,9 +11,8 @@ FixedObject::FixedObject()
 
 void FixedObject::draw(sf::RenderTarget& target) const
 {
-	// Call the base class draw first (in case there's ever a texture)
-	GameObject::draw(target);
-	// Then, draw our debug shape
+	//GameObject::draw(target);
+	//// Then, draw our debug shape
 	target.draw(m_debugShape);
 }
 

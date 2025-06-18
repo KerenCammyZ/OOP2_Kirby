@@ -7,8 +7,6 @@ class FixedObject : public GameObject
 public:
 	FixedObject();
 	~FixedObject() = default;
-	// Static objects don't move, so their update is empty,
-	// but it must be implemented.
 	void update(float dt) override {}; // TODO: maybe declare first in MovingObject
 
 	// By default, static objects don't react to generic collisions

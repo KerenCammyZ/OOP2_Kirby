@@ -34,6 +34,5 @@ private:
 	std::shared_ptr<sf::Texture> m_kirbyTexture;
 	std::shared_ptr<sf::Texture> m_worldMapTexture;
 
-	// A vector to hold all static objects
 	std::vector<std::unique_ptr<FixedObject>> m_FixedObjects;
 };

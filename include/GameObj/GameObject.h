@@ -38,6 +38,6 @@ public:
 protected:
 	sf::Vector2f m_position;
 	sf::Vector2f m_size;
-	std::shared_ptr<sf::Texture> m_texture; // Use shared_ptr for texture management
-	sf::Sprite m_sprite; // Sprite for rendering the texture
+	std::shared_ptr<sf::Texture> m_texture;
+	sf::Sprite m_sprite;
 };

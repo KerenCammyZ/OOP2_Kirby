@@ -23,7 +23,7 @@ void Floor::handleCollision(Kirby* kirby)
 	if (kirbyPrevBounds.top + kirbyPrevBounds.height <= floorBounds.top + collisionTolerance)
 	{
 		// If true, this is a valid top-down collision.
-		std::cout << "Kirby landed on Floor from above.\n";
+		//std::cout << "Kirby landed on Floor from above.\n";
 
 		// Resolve the collision by repositioning Kirby to sit exactly on top of the floor.
 		// This prevents him from sinking into it.
@@ -33,7 +33,4 @@ void Floor::handleCollision(Kirby* kirby)
 		// that he is grounded and reset his vertical velocity here.
 		// For example: kirby.setGrounded(true);
 	}
-	// If the condition is false, it means Kirby is coming from the side or,
-	// more importantly, from below. In that case, we do nothing,
-	// allowing him to pass through the floor.
 }
