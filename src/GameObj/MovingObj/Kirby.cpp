@@ -13,8 +13,6 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 
 void Kirby::handleCollision(Door* door)
 {
-	// Delegate the collision handling back to the door.
-	// The door knows where to send Kirby.
 	door->handleCollision(this);
 }
 

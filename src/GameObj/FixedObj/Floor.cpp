@@ -22,11 +22,7 @@ void Floor::handleCollision(Kirby* kirby)
 	// LOGIC: Check if the bottom of Kirby in the PREVIOUS frame was above the top of the floor.
 	if (kirbyPrevBounds.top + kirbyPrevBounds.height <= floorBounds.top + collisionTolerance)
 	{
-		// If true, this is a valid top-down collision.
-		//std::cout << "Kirby landed on Floor from above.\n";
-
 		// Resolve the collision by repositioning Kirby to sit exactly on top of the floor.
-		// This prevents him from sinking into it.
 		kirby->setPosition({ kirby->getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
 
 		// FUTURE: If you add gravity and jumping, you would also want to tell Kirby

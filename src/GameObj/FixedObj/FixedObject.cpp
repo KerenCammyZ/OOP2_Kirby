@@ -11,21 +11,19 @@ FixedObject::FixedObject()
 
 void FixedObject::draw(sf::RenderTarget& target) const
 {
-	//GameObject::draw(target);
-	//// Then, draw our debug shape
 	target.draw(m_debugShape);
 }
 
 void FixedObject::setSize(const sf::Vector2f& size)
 {
-	GameObject::setSize(size); // Call base to handle sprite scaling
+	GameObject::setSize(size);
 	m_debugShape.setSize(size);
 	m_debugShape.setOrigin(size.x / 2.f, size.y / 2.f); // Keep origin centered
 }
 
 void FixedObject::setPosition(const sf::Vector2f& position)
 {
-	GameObject::setPosition(position); // Call base to update m_position
+	GameObject::setPosition(position);
 	m_debugShape.setPosition(position);
 }
 

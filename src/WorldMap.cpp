@@ -102,23 +102,6 @@ void WorldMap::setSize(const sf::Vector2f& size)
 void WorldMap::setScale(const sf::Vector2f& scale)
 {
 	m_scale = scale;
-
-	// Usage:
-	// (previously mapScale)
-	// m_worldMap->loadCollisions(collisionImage, mapScale);
-	// float scaledTileWidth = TILE_SIZE * mapScale.x;
-	// float scaledTileHeight = TILE_SIZE * mapscale.y;
-
-	// Responsibility:
-	// m_scale is used to scale the collision map's tiles to match the visual map's dimensions.
-	// This ensures that collisions occur at the correct positions relative to the visual representation.
-
-	// Computed by:
-	// sf::Vector2f originalMapSize = sf::Vector2f(backgroundTexture->getSize());
-	// sf::Vector2f targetMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	// sf::Vector2f mapScale(targetMapSize.x / originalMapSize.x, targetMapSize.y / originalMapSize.y);
-	// setScale(mapScale);
-	//                         (the ratio of the visual map's size to the collision map's size.)
 }
 
 // Sets the collision map for the world map.
@@ -219,37 +202,3 @@ std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
 	std::cout << "Generated " << collidables.size() << " collidable tiles from the collision map.\n";
 	return collidables;
 }
-
-/*
-// In WorldMap.cpp - Simple collision loading
-std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
-{
-    std::vector<std::unique_ptr<FixedObject>> collidables;
-    if (!m_worldMap) return collidables;
-
-    sf::Vector2u mapSize = m_worldMap->getSize();
-    sf::Color groundColor(76, 255, 0);
-    
-    for (unsigned int y = 0; y < mapSize.y; ++y)
-    {
-        for (unsigned int x = 0; x < mapSize.x; ++x)
-        {
-            if (m_worldMap->getPixel(x, y) == groundColor)
-            {
-                auto floorTile = std::make_unique<Floor>();
-                
-                // Position tile at center of the scaled pixel area
-                float posX = (x * m_scale.x) + (m_scale.x / 2.f);
-                float posY = (y * m_scale.y) + (m_scale.y / 2.f);
-                floorTile->setPosition({posX, posY});
-                floorTile->setSize({m_scale.x, m_scale.y});
-                
-                collidables.push_back(std::move(floorTile));
-            }
-        }
-    }
-    
-    std::cout << "Generated " << collidables.size() << " collision tiles." << std::endl;
-    return collidables;
-}
-*/

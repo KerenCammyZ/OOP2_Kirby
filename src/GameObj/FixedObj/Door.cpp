@@ -8,9 +8,7 @@ Door::Door(sf::Vector2f destination) : m_destination(destination)
 
 void Door::handleCollision(Kirby* kirby)
 {
-	// To prevent instantly teleporting back and forth, add a small offset
-	// to the destination, pushing Kirby out of the exit door slightly.
-	// This assumes the player enters from the bottom of the door.
+
 	sf::Vector2f arrivalPosition = m_destination;
 	arrivalPosition.y += kirby->getSize().y; // Adjust based on Kirby's size
 
