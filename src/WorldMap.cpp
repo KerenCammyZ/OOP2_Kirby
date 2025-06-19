@@ -6,9 +6,8 @@
 #include <map>
 #include <vector>
 
-// --- FIX: Define a custom comparator struct for sf::Color ---
+// custom comparator struct for sf::Color
 // This struct provides the sorting rules for the std::map.
-// It's a self-contained way to tell the map how to order its keys.
 struct ColorComparator {
 	bool operator()(const sf::Color& a, const sf::Color& b) const {
 		if (a.r != b.r) return a.r < b.r;
@@ -81,8 +80,6 @@ sf::FloatRect WorldMap::getBounds() const
 // set the size of the visual map (by scaling)
 void WorldMap::setSize(const sf::Vector2f& size)
 {
-	// is currently called with the passed argument sf::vector2f(VIEW_WIDTH, VIEW_HEIGHT) 
-	// from the constructor
 	if (m_backgroundTexture)
 	{
 		sf::Vector2u texSize = m_backgroundTexture->getSize();
@@ -110,10 +107,7 @@ void WorldMap::setCollisionMap(std::unique_ptr<sf::Image> collisionMap)
 	m_worldMap = std::move(collisionMap);
 }
 
-
 // Loads the collision map and generates collidable objects based on the colors in the image.
-// This method processes a collision map(an image) to generate collidable objects(FixedObject instances)
-// based on pixel colors in the image.
 std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
 {
 	std::vector<std::unique_ptr<FixedObject>> collidables;
@@ -129,11 +123,9 @@ std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
 		sf::Color(0, 148, 255),   // Door Color B
 	};
 
-	// --- FIX: Use the custom comparator in the map definition ---Add commentMore actions
 	std::map<sf::Color, std::vector<sf::Vector2f>, ColorComparator> doorLocations;
 
-	// --- PASS 1: Find all special pixels and categorize them ---
-
+	//Find all special pixels and categorize them
 	for (unsigned int y = 0; y < mapSize.y; ++y)
 	{
 		for (unsigned int x = 0; x < mapSize.x; ++x)
@@ -171,7 +163,7 @@ std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
 			}
 		}
 	}
-	// --- PASS 2: Process the door map and create linked pairs ---
+	// Process the door map and create linked pairs
 	for (const auto& pair : doorLocations)
 	{
 		const std::vector<sf::Vector2f>& locations = pair.second;
