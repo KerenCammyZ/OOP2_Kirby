@@ -21,7 +21,6 @@ private:
 	void updateView();
 
 	void loadTextures();
-	void loadCollisionMap();
 
 	float m_levelBlockHeight;
 	float m_deltaTime;
@@ -35,5 +34,5 @@ private:
 	std::shared_ptr<sf::Texture> m_kirbyTexture;
 	std::shared_ptr<sf::Texture> m_worldMapTexture;
 
-	std::vector<std::unique_ptr<FixedObject>> m_FixedObjects;
+	std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
 };

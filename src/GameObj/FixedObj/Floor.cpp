@@ -2,7 +2,21 @@
 #include "GameObj/FixedObj/Floor.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include <iostream>
+#include "GameObjectFactory.h"
+#include "GlobalSizes.h"
 
+static bool isFloorRegistered = GameObjectFactory::instance().registerType(
+	sf::Color(76, 255, 0), // The color key for a Floor object
+	[](sf::Vector2f position) -> std::unique_ptr<GameObject> // The blueprint
+	{
+		// This lambda function creates and returns a new Floor object
+		// when the factory is asked to create one for the color green.
+		auto floor = std::make_unique<Floor>();
+		// Note: position is passed to the factory create function but not used here
+		// because Floor's constructor doesn't need it. The position is set later.
+		return floor;
+	}
+);
 
 void Floor::handleCollision(Kirby* kirby)
 {

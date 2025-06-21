@@ -3,7 +3,7 @@
 
 Door::Door(sf::Vector2f destination) : m_destination(destination)
 {
-	m_debugShape.setFillColor(sf::Color(255, 0, 255, 100)); // Semi-transparent magenta
+	m_collisionShape.setFillColor(sf::Color(255, 0, 255, 100)); // Semi-transparent magenta
 }
 
 void Door::handleCollision(Kirby* kirby)

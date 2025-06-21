@@ -13,13 +13,7 @@ GameController::GameController():
 	m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
 	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
 	
-	loadCollisionMap();
-	auto collidablesFromFile = m_worldMap->loadCollisions();
-
-	m_FixedObjects.insert(
-		m_FixedObjects.end(),
-		std::make_move_iterator(collidablesFromFile.begin()),
-		std::make_move_iterator(collidablesFromFile.end()));
+	m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 }
 
 void GameController::run()
@@ -44,11 +38,12 @@ void GameController::run()
 
 void GameController::checkCollisions()
 {
-	for (const auto& FixedObject : m_FixedObjects)
+	for (const auto& otherObject : m_allGameObjects)
 	{
-		if (m_kirby->collidesWith(*FixedObject))
+		if (m_kirby->collidesWith(*otherObject))
 		{
-			m_kirby->handleCollision(FixedObject.get());
+			// Double dispatch will handle the specific collision type
+			m_kirby->handleCollision(otherObject.get());
 		}
 	}
 }
@@ -109,20 +104,15 @@ void GameController::loadTextures()
 	}
 }
 
-// Load the collision map and set up static objects
-void GameController::loadCollisionMap()
-{
-	auto collisionImage = std::make_unique<sf::Image>();
-	if (!collisionImage->loadFromFile("Level1Collisions.png"))
-	{
-		throw std::runtime_error("Failed to load collision map image");
-	}
-	m_worldMap->setCollisionMap(std::move(collisionImage));
-}
-
 void GameController::update(float deltaTime)
 {
 	m_kirby->update(deltaTime);
+	// Update all other objects loaded from the map
+	for (auto& obj : m_allGameObjects)
+	{
+		// Polymorphism calls the correct update (MovingObject vs FixedObject)
+		obj->update(deltaTime);
+	}
 	checkCollisions();
 	updateView(); // Update the camera's position every frame
 }
@@ -138,7 +128,8 @@ void GameController::draw()
 	m_worldMap->draw(m_window);
 	m_kirby->draw(m_window);
 
-	for (const auto& obj : m_FixedObjects)
+	// Draw all other objects from our unified list
+	for (const auto& obj : m_allGameObjects)
 	{
 		obj->draw(m_window);
 	}

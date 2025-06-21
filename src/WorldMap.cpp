@@ -1,75 +1,129 @@
+// WorldMap.h
 #include "WorldMap.h"
-#include "GameObj/FixedObj/Floor.h"
-#include "GameObj/FixedObj/Wall.h"
+#include "GameObjectFactory.h"
 #include "GameObj/FixedObj/Door.h"
-#include <iostream> // for debugging
+#include "GlobalSizes.h"
+
+// Standard library includes
+#include <iostream>
+#include <stdexcept>
 #include <map>
-#include <vector>
 
-// custom comparator struct for sf::Color
-// This struct provides the sorting rules for the std::map.
-struct ColorComparator {
-	bool operator()(const sf::Color& a, const sf::Color& b) const {
-		if (a.r != b.r) return a.r < b.r;
-		if (a.g != b.g) return a.g < b.g;
-		if (a.b != b.b) return a.b < b.b;
-		return a.a < b.a;
-	}
-};
-
-WorldMap::WorldMap(std::shared_ptr<sf::Texture>& backgroundTexture)
-	: m_backgroundTexture(backgroundTexture)
+// Constructor: sets up the visual sprite and calculates the scale
+WorldMap::WorldMap(std::shared_ptr<sf::Texture> backgroundTexture)
 {
-	// world map setup
-	sf::Vector2f originalMapSize = sf::Vector2f(backgroundTexture->getSize());
-	sf::Vector2f targetMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	if (!backgroundTexture)
+	{
+		throw std::runtime_error("Cannot create WorldMap with a null texture");
+	}
+	m_backgroundTexture = backgroundTexture;
 
-	// Calculate the scale factors
-	sf::Vector2f mapScale(targetMapSize.x / originalMapSize.x, targetMapSize.y / originalMapSize.y);
-	setScale(mapScale);
+	// Calculate the scale needed to fit the visual map to the screen
+	sf::Vector2f originalMapSize = sf::Vector2f(m_backgroundTexture->getSize());
+	sf::Vector2f targetMapSize((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
+	m_scale = { targetMapSize.x / originalMapSize.x, targetMapSize.y / originalMapSize.y };
 
-	// Initialize and set the size of the visual map
-	init(backgroundTexture);
+	// Initialize the sprite with the correct texture and scale
+	init(m_backgroundTexture);
 	setSize(targetMapSize);
 }
 
-WorldMap::~WorldMap() = default;
+//WorldMap::~WorldMap() = default;
 
-// Initialize the world map by setting the background graphics
+// Initialize the background sprite
 void WorldMap::init(std::shared_ptr<sf::Texture> backgroundTexture)
 {
-	if (!backgroundTexture)
-		throw std::runtime_error("Background texture cannot be null");
-
-	m_backgroundTexture = backgroundTexture;
-
-	// Set the sprite's texture and position it at the world origin
 	m_backgroundSprite.setTexture(*m_backgroundTexture);
 	m_backgroundSprite.setPosition(0.f, 0.f);
 }
 
-// Updated to draw the member sprite
+// Draw the visual background
 void WorldMap::draw(sf::RenderTarget& target) const
 {
-	if (m_backgroundTexture)
-	{
-		target.draw(m_backgroundSprite);
-	}
-	else
-	{
-		throw std::runtime_error("Background texture not set for WorldMap");
-	}
+	target.draw(m_backgroundSprite);
 }
+
+// This is the new, primary function for loading all objects.
+// It replaces the logic that was previously in GameController.
+std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std::string& filePath)
+{
+	sf::Image collisionImage;
+	if (!collisionImage.loadFromFile(filePath))
+	{
+		throw std::runtime_error("Failed to load collision map image: " + filePath);
+	}
+
+	std::vector<std::unique_ptr<GameObject>> createdObjects;
+	std::map<sf::Color, std::vector<sf::Vector2f>, ColorComparator> doorLocations;
+	const float TILE_SIZE = 1.0f;
+
+	// --- PASS 1: Create factory-based objects and find door locations ---
+	for (unsigned int y = 0; y < collisionImage.getSize().y; ++y)
+	{
+		for (unsigned int x = 0; x < collisionImage.getSize().x; ++x)
+		{
+			sf::Color pixelColor = collisionImage.getPixel(x, y);
+			if (pixelColor.a == 0) continue; // Skip transparent pixels
+
+			sf::Vector2f position(
+				(x * TILE_SIZE * m_scale.x) + (TILE_SIZE * m_scale.x / 2.f),
+				(y * TILE_SIZE * m_scale.y) + (TILE_SIZE * m_scale.y / 2.f) + 1.0f // + 1.0f for collision overlap
+			);
+
+			auto newObject = GameObjectFactory::instance().create(pixelColor, position);
+
+			if (newObject)
+			{
+				newObject->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
+				newObject->setPosition(position);
+				createdObjects.push_back(std::move(newObject));
+			}
+			else
+			{
+				// If the factory can't create it, assume it's a door and store its location
+				doorLocations[pixelColor].push_back(position);
+			}
+		}
+	}
+
+	// --- PASS 2: Create and link the doors ---
+	for (const auto& pair : doorLocations)
+	{
+		const auto& locations = pair.second;
+		if (locations.size() == 2)
+		{
+			// Create Door A, which leads to B's location
+			auto doorA = std::make_unique<Door>(locations[1]);
+			doorA->setPosition(locations[0]);
+			doorA->setSize({ TILE_SIZE * m_scale.x * 4, TILE_SIZE * m_scale.y * 4 }); // Make doors larger
+
+			// Create Door B, which leads to A's location
+			auto doorB = std::make_unique<Door>(locations[0]);
+			doorB->setPosition(locations[1]);
+			doorB->setSize({ TILE_SIZE * m_scale.x * 4, TILE_SIZE * m_scale.y * 4 });
+
+			createdObjects.push_back(std::move(doorA));
+			createdObjects.push_back(std::move(doorB));
+		}
+		else if (!locations.empty())
+		{
+			// Warn the level designer if a door color doesn't have exactly 2 pixels
+			std::cerr << "Warning: Invalid door pair for color ("
+				<< (int)pair.first.r << "," << (int)pair.first.g << "," << (int)pair.first.b
+				<< "). Found " << locations.size() << " pixels, but expected 2.\n";
+		}
+	}
+
+	std::cout << "Loaded " << createdObjects.size() << " objects from " << filePath << "\n";
+	return createdObjects;
+}
+
+
+// --- Getters and Setters ---
 
 sf::Vector2f WorldMap::getSize() const
 {
-	if (m_backgroundTexture)
-	{
-		sf::Vector2u texSize = m_backgroundTexture->getSize();
-		return sf::Vector2f(static_cast<float>(texSize.x), static_cast<float>(texSize.y));
-	}
-	std::cout << "WorldMap::getSize() no m_backgroundTexture"; // FOR DEBUGGING
-	return sf::Vector2f(0.f, 0.f);
+	return sf::Vector2f(m_backgroundSprite.getGlobalBounds().width, m_backgroundSprite.getGlobalBounds().height);
 }
 
 sf::FloatRect WorldMap::getBounds() const
@@ -77,120 +131,11 @@ sf::FloatRect WorldMap::getBounds() const
 	return m_backgroundSprite.getGlobalBounds();
 }
 
-// set the size of the visual map (by scaling)
 void WorldMap::setSize(const sf::Vector2f& size)
 {
-	if (m_backgroundTexture)
+	sf::Vector2u texSize = m_backgroundTexture->getSize();
+	if (texSize.x > 0 && texSize.y > 0)
 	{
-		sf::Vector2u texSize = m_backgroundTexture->getSize();
-		if (texSize.x > 0 && texSize.y > 0) {
-			float scaleX = size.x / static_cast<float>(texSize.x);
-			float scaleY = size.y / static_cast<float>(texSize.y);
-			m_backgroundSprite.setScale(scaleX, scaleY);
-		}
+		m_backgroundSprite.setScale(m_scale.x, m_scale.y);
 	}
-	else
-	{
-		throw std::runtime_error("Background texture not set for WorldMap");
-	}
-}
-
-// Ensures that the collision map aligns with the visual map.
-void WorldMap::setScale(const sf::Vector2f& scale)
-{
-	m_scale = scale;
-}
-
-// Sets the collision map for the world map.
-void WorldMap::setCollisionMap(std::unique_ptr<sf::Image> collisionMap)
-{
-	m_worldMap = std::move(collisionMap);
-}
-
-// Loads the collision map and generates collidable objects based on the colors in the image.
-std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
-{
-	std::vector<std::unique_ptr<FixedObject>> collidables;
-	if (!m_worldMap) { throw std::runtime_error("Collision map not set for WorldMap"); }
-
-	sf::Vector2u mapSize = m_worldMap->getSize(); // collision map size
-	const float TILE_SIZE = 1.0f; // The size of a tile in the ORIGINAL image
-
-	sf::Color groundColor(76, 255, 0);
-	sf::Color wallColor(255, 0, 0);
-	const std::vector<sf::Color> doorPairColors = {
-		sf::Color(0, 38, 255),       // Door Color A
-		sf::Color(0, 148, 255),   // Door Color B
-	};
-
-	std::map<sf::Color, std::vector<sf::Vector2f>, ColorComparator> doorLocations;
-
-	//Find all special pixels and categorize them
-	for (unsigned int y = 0; y < mapSize.y; ++y)
-	{
-		for (unsigned int x = 0; x < mapSize.x; ++x)
-		{
-			sf::Color pixelColor = m_worldMap->getPixel(x, y);
-
-			float posX = (x * TILE_SIZE * m_scale.x) + (TILE_SIZE * m_scale.x / 2.f);
-			float posY = (y * TILE_SIZE * m_scale.y) + (TILE_SIZE * m_scale.y / 2.f);
-			sf::Vector2f position(posX, posY);
-
-			// Process ground tiles
-			if (pixelColor == groundColor)
-			{
-				auto floorTile = std::make_unique<Floor>();
-
-				floorTile->setPosition(position);
-				floorTile->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
-				collidables.push_back(std::move(floorTile));
-			}
-			// Process wall tiles
-			else if (pixelColor == wallColor)
-			{
-				;
-			}
-			else
-			{
-				for (const auto& doorColor : doorPairColors)
-				{
-					if (pixelColor == doorColor)
-					{
-						doorLocations[doorColor].push_back(position);
-						break;
-					}
-				}
-			}
-		}
-	}
-	// Process the door map and create linked pairs
-	for (const auto& pair : doorLocations)
-	{
-		const std::vector<sf::Vector2f>& locations = pair.second;
-		if (locations.size() == 2)
-		{
-			sf::Vector2f posA = locations[0];
-			sf::Vector2f posB = locations[1];
-
-			auto doorA = std::make_unique<Door>(posB);
-			doorA->setPosition(posA);
-			doorA->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y * 2.f });
-
-			auto doorB = std::make_unique<Door>(posA);
-			doorB->setPosition(posB);
-			doorB->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y * 2.f });
-
-			collidables.push_back(std::move(doorA));
-			collidables.push_back(std::move(doorB));
-
-			std::cout << "Created a door pair between (" << posA.x << "," << posA.y << ") and (" << posB.x << "," << posB.y << ")\n";
-		}
-		else
-		{
-			std::cerr << "Warning: Invalid door pair found! Expected 2 pixels for a door, but found "
-				<< locations.size() << ". Check your collision map.\n";
-		}
-	}
-	std::cout << "Generated " << collidables.size() << " collidable tiles from the collision map.\n";
-	return collidables;
 }

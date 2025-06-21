@@ -1,34 +1,45 @@
 // FixedObject.cpp
 #include "GameObj/FixedObj/FixedObject.h"
+#include "GameObj/MovingObj/Kirby.h" // For handleCollision
 
 FixedObject::FixedObject()
 {
-	// Configure the appearance of the debug shape
-	m_debugShape.setFillColor(sf::Color(120, 120, 120, 150)); // Semi-transparent grey
-	m_debugShape.setOutlineColor(sf::Color::White);
-	m_debugShape.setOutlineThickness(1.f);
+	// Configure the appearance of the debug shape once on creation
+	m_collisionShape.setFillColor(sf::Color::Transparent);
+	m_collisionShape.setOutlineColor(sf::Color::White);
+	m_collisionShape.setOutlineThickness(1.f);
 }
 
+// Override: Call the base to draw the sprite (if any), then draw the debug shape
 void FixedObject::draw(sf::RenderTarget& target) const
 {
-	target.draw(m_debugShape);
+	GameObject::draw(target);
+	target.draw(m_collisionShape);
 }
 
+// Override: Call the base to set logical size, then set the debug shape's size
 void FixedObject::setSize(const sf::Vector2f& size)
 {
-	GameObject::setSize(size);
-	m_debugShape.setSize(size);
-	m_debugShape.setOrigin(size.x / 2.f, size.y / 2.f); // Keep origin centered
+	GameObject::setSize(size); // Sets m_size
+	m_collisionShape.setSize(size);
+	m_collisionShape.setOrigin(size.x / 2.f, size.y / 2.f);
 }
 
+// Override: Call the base to set logical position, then set the debug shape's position
 void FixedObject::setPosition(const sf::Vector2f& position)
 {
-	GameObject::setPosition(position);
-	m_debugShape.setPosition(position);
+	GameObject::setPosition(position); // Sets m_position
+	m_collisionShape.setPosition(position);
 }
 
+// Override: Return the bounds of the debug shape, not the empty sprite
+sf::FloatRect FixedObject::getBounds() const
+{
+	return m_collisionShape.getGlobalBounds();
+}
+
+// Double dispatch implementation
 void FixedObject::handleCollision(GameObject* other)
 {
-	// Standard double dispatch entry
 	other->handleCollision(this);
 }
