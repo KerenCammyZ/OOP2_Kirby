@@ -9,7 +9,7 @@ public:
 	virtual ~KirbyState() = default;
 
 	// Checks for input that would cause a state change (e.g., press Right to go from Standing to Moving)
-	virtual std::unique_ptr<KirbyState> handleInput() = 0;
+	virtual std::unique_ptr<KirbyState> handleInput(Kirby& kirby) = 0;
 
 	// Updates Kirby's logic for the current state (e.g., apply movement)
 	virtual void update(Kirby& kirby, float deltaTime) = 0;

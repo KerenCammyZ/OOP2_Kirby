@@ -1,35 +1,45 @@
-#include "States/KirbyWalkingState.h" // Renamed
-#include "States/KirbyStandingState.h" 
-#include "GameObj/MovingObj/Kirby.h"   
+#include "States/KirbyWalkingState.h"
+#include "States/KirbyStandingState.h"
+#include "States/KirbyJumpingState.h"
+#include "States/KirbyFallingState.h"  // Include falling
+#include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 
-std::unique_ptr<KirbyState> KirbyWalkingState::handleInput()
+std::unique_ptr<KirbyState> KirbyWalkingState::handleInput(Kirby& kirby)
 {
-	// If LEFT and RIGHT are no longer pressed, go back to standing.
+	// --- THIS IS THE "WALK OFF A CLIFF" LOGIC ---
+	// If we are no longer on the ground, we must be falling.
+	if (!kirby.isGrounded())
+	{
+		return std::make_unique<KirbyFallingState>();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		return std::make_unique<KirbyJumpingState>();
+	}
+
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
 		!sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		return std::make_unique<KirbyStandingState>();
 	}
-
 	return nullptr;
 }
 
 void KirbyWalkingState::update(Kirby& kirby, float deltaTime)
 {
-	sf::Vector2f movement(0.f, 0.f);
 	float speed = kirby.getSpeed();
+	float horizontalVelocity = 0.f;
 
-	// ONLY check for horizontal movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		movement.x -= speed;
+		horizontalVelocity -= speed;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		movement.x += speed;
+		horizontalVelocity += speed;
 	}
-
-	// Update Kirby's position. Note we are only changing the X-coordinate.
-	kirby.setPosition(kirby.getPosition() + movement * deltaTime);
+	// The walking state now controls horizontal velocity.
+	kirby.setVelocity({ horizontalVelocity, 0.f });
 }

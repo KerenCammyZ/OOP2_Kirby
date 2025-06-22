@@ -1,9 +1,14 @@
-// Kirby.cpp
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/FixedObj/Door.h"
-#include "States/KirbyStandingState.h" // Include the initial state
+#include "States/KirbyStandingState.h"
+#include "GlobalSizes.h"
+
+// It's better to declare these constants where they are used,
+// but for now, we'll make them accessible via GlobalSizes.h
+// Make sure GlobalSizes.h is included in any file that needs them.
 
 Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
+	: m_velocity(0.f, 0.f), m_isGrounded(false) // Initialize physics members
 {
 	setTexture(kirbyTexture);
 	sf::Vector2f kirbySize(ENTITY_SIZE, ENTITY_SIZE);
@@ -16,10 +21,33 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	m_state->enter(*this);
 };
 
-// Add the definition for the speed getter
-float Kirby::getSpeed() const
+// This is the main update function and the ONLY one that should contain this logic.
+void Kirby::update(float deltaTime)
 {
-	return m_speed;
+	// 1. Assume we are not on the ground at the start of the frame.
+	//    The collision check later will correct this if we are.
+	setGrounded(false);
+
+	// 2. Let the current state handle transitions and modify velocity.
+	auto newState = m_state->handleInput(*this);
+	if (newState)
+	{
+		m_state = std::move(newState);
+		m_state->enter(*this);
+	}
+	m_state->update(*this, deltaTime);
+
+	// 3. Apply the final velocity to our position.
+	//    This is where all movement actually happens.
+	m_oldPosition = m_position;
+	setPosition(m_position + m_velocity * deltaTime);
+	GameObject::update(deltaTime);
+}
+
+
+void Kirby::handleCollision(GameObject* other)
+{
+	other->handleCollision(this);
 }
 
 void Kirby::handleCollision(Door* door)
@@ -27,25 +55,13 @@ void Kirby::handleCollision(Door* door)
 	door->handleCollision(this);
 }
 
-// The move method is now completely driven by the state pattern.
-// This single function replaces all the previous input-handling logic.
-void Kirby::move(float deltaTime)
+float Kirby::getSpeed() const
 {
-	// 1. Let the current state check for input that causes a state change.
-	auto newState = m_state->handleInput();
-
-	// 2. If a new state is returned, transition to it.
-	if (newState)
-	{
-		m_state = std::move(newState);
-		m_state->enter(*this); // Call the entry action for the new state
-	}
-
-	// 3. Update Kirby's behavior based on the current state.
-	m_state->update(*this, deltaTime);
+	return m_speed;
 }
 
-void Kirby::handleCollision(GameObject* other)
-{
-	other->handleCollision(this);
-}
+// --- NEW PHYSICS METHOD DEFINITIONS ---
+void Kirby::setVelocity(const sf::Vector2f& velocity) { m_velocity = velocity; }
+sf::Vector2f Kirby::getVelocity() const { return m_velocity; }
+void Kirby::setGrounded(bool grounded) { m_isGrounded = grounded; }
+bool Kirby::isGrounded() const { return m_isGrounded; }

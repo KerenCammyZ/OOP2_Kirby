@@ -15,6 +15,10 @@ const sf::Color WALL(255, 0, 0);
 const sf::Color DOOR_A(0, 38, 255);
 const sf::Color DOOR_B(0, 148, 255);
 
+// --- NEW PHYSICS CONSTANTS ---
+const float GRAVITY = 200.0f;
+const float JUMP_STRENGTH = 200.0f;
+
 /*
 // Adjusted sizes for lower resolution displays
 static int SCREEN_WIDTH = 800; // originally 1600

@@ -1,18 +1,27 @@
 // Kirby.h
 #pragma once
 #include "GameObj/MovingObj/MovingObject.h"
-#include <memory> // Add memory for std::unique_ptr
+#include <memory>
 
-class KirbyState; // Forward-declare the base state class
+class KirbyState;
 
 class Kirby : public MovingObject
 {
 public:
 	Kirby(std::shared_ptr<sf::Texture>& kirbyTexture);
-	void move(float deltaTime) override;
 
-	// Add a public getter for speed so states can access it
+	// We override MovingObject's update to handle our new physics logic
+	void update(float deltaTime) override;
+	void move(float deltaTime) override {};
+
 	float getSpeed() const;
+
+	// --- NEW PHYSICS GETTERS/SETTERS ---
+	void setVelocity(const sf::Vector2f& velocity);
+	sf::Vector2f getVelocity() const;
+
+	void setGrounded(bool grounded);
+	bool isGrounded() const;
 
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
@@ -20,6 +29,9 @@ public:
 	void handleCollision(Door* door) override;
 
 private:
-	// Kirby now owns its current state
 	std::unique_ptr<KirbyState> m_state;
+
+	// --- NEW PHYSICS MEMBERS ---
+	sf::Vector2f m_velocity;
+	bool m_isGrounded;
 };
