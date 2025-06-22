@@ -17,7 +17,7 @@ const sf::Color DOOR_B(0, 148, 255);
 
 // --- NEW PHYSICS CONSTANTS ---
 const float GRAVITY = 200.0f;
-const float JUMP_STRENGTH = 200.0f;
+const float JUMP_STRENGTH = 120.0f;
 
 /*
 // Adjusted sizes for lower resolution displays

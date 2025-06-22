@@ -26,7 +26,7 @@ void Kirby::update(float deltaTime)
 {
 	// 1. Assume we are not on the ground at the start of the frame.
 	//    The collision check later will correct this if we are.
-	setGrounded(false);
+	//setGrounded(false);
 
 	// 2. Let the current state handle transitions and modify velocity.
 	auto newState = m_state->handleInput(*this);
@@ -42,6 +42,8 @@ void Kirby::update(float deltaTime)
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
 	GameObject::update(deltaTime);
+
+	setGrounded(false);
 }
 
 
