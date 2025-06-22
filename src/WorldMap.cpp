@@ -156,7 +156,11 @@ std::vector<std::unique_ptr<FixedObject>> WorldMap::loadCollisions()
 			// Process wall tiles
 			else if (pixelColor == wallColor)
 			{
-				;
+				auto wallTile = std::make_unique<Wall>();
+
+				wallTile->setPosition(position);
+				wallTile->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
+				collidables.push_back(std::move(wallTile));
 			}
 			else
 			{

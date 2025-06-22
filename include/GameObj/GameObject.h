@@ -27,7 +27,7 @@ public:
 	virtual void setPosition(const sf::Vector2f& position);
 	sf::Vector2f getPosition() const;
 
-	virtual void setSize(const sf::Vector2f& size);;
+	virtual void setSize(const sf::Vector2f& size);
 	sf::Vector2f getSize() const;
 
 	bool collidesWith(GameObject& other) const;
