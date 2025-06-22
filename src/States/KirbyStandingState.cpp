@@ -1,24 +1,22 @@
 #include "States/KirbyStandingState.h"
-#include "States/KirbyMovingState.h" // To transition to the moving state
+#include "States/KirbyWalkingState.h" // Use the new WalkingState
 #include <SFML/Window/Keyboard.hpp>
 
 std::unique_ptr<KirbyState> KirbyStandingState::handleInput()
 {
-	// If any movement key is pressed, transition to the Moving state.
+	// If a HORIZONTAL movement key is pressed, transition to the Walking state.
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
-		sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
-		sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ||
-		sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		return std::make_unique<KirbyMovingState>();
+		return std::make_unique<KirbyWalkingState>();
 	}
 
-	// Otherwise, remain in the Standing state.
+	// We will add the check for the UP key here later to trigger a JUMP state.
+
 	return nullptr;
 }
 
 void KirbyStandingState::update(Kirby& kirby, float deltaTime)
 {
 	// Kirby doesn't move when standing, so this is empty.
-	// You could add idle animations here later.
 }

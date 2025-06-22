@@ -1,7 +1,7 @@
 #pragma once
 #include "States/KirbyState.h"
 
-class KirbyMovingState : public KirbyState
+class KirbyWalkingState : public KirbyState
 {
 public:
 	std::unique_ptr<KirbyState> handleInput() override;
