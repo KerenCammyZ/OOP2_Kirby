@@ -119,6 +119,8 @@ void GameController::update(float deltaTime)
 
 void GameController::handle()
 {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
 }
 
 void GameController::draw()
