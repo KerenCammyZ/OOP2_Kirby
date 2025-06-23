@@ -2,6 +2,7 @@
 #include "WorldMap.h"
 #include "GameObjectFactory.h"
 #include "GameObj/FixedObj/Door.h"
+//#include "GameObj/FixedObj/Wall.h"
 #include "GlobalSizes.h"
 
 // Standard library includes

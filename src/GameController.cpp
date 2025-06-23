@@ -14,6 +14,12 @@ GameController::GameController():
 	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
 	
 	m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
+
+	auto enemyTexture = std::make_shared<sf::Texture>();
+	if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
+		throw std::runtime_error("Failed to load Waddle Dee texture");
+	}
+	m_allGameObjects.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(500.f, 200.f)));
 }
 
 void GameController::run()
@@ -100,7 +106,6 @@ void GameController::loadTextures()
 	if (!m_worldMapTexture->loadFromFile("Level1.png"))
 	{
 		throw std::runtime_error("Failed to load world map texture");
-
 	}
 }
 
@@ -121,6 +126,8 @@ void GameController::handle()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 		m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		m_window.close();
 }
 
 void GameController::draw()

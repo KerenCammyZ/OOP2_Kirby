@@ -2,9 +2,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GameObj/MovingObj/Kirby.h"
+#include "GameObj/MovingObj/Enemy.h"
+#include "GameObj/FixedObj/Floor.h"
 #include "WorldMap.h"
 #include "GlobalSizes.h"
-#include "GameObj/FixedObj/Floor.h"
 
 class GameController
 {

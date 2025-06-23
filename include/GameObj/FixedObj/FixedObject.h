@@ -9,8 +9,8 @@ public:
 	~FixedObject() = default;
 	void update(float dt) override {};
 
-	void handleCollision(GameObject* other) override;
 	virtual void handleCollision(Kirby* kirby) = 0;
+	void handleCollision(GameObject* other) override;
 	void handleCollision(Door* door) override = 0;
 
 	// --- OVERRIDE DECLARATIONS ---

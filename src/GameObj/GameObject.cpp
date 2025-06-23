@@ -69,6 +69,7 @@ sf::Vector2f GameObject::getSize() const
 	return m_size;
 }
 
+// Set the texture for the GameObject and update the sprite accordingly
 void GameObject::setTexture(std::shared_ptr<sf::Texture> texture)
 {
 	m_texture = texture;
