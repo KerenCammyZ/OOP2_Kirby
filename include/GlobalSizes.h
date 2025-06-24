@@ -2,7 +2,6 @@
 #pragma once
 
 constexpr float ENTITY_SIZE = 24.0f;
-//constexpr float ENTITY_SIZE = 12.0f;
 
 static int SCREEN_WIDTH = 1600;
 static int SCREEN_HEIGHT = 1200;
@@ -22,6 +21,7 @@ const float JUMP_STRENGTH = 120.0f;
 
 
 //// Adjusted sizes for lower resolution displays
+//constexpr float ENTITY_SIZE = 12.0f; // originally 24.0f
 //static int SCREEN_WIDTH = 800; // originally 1600
 //static int SCREEN_HEIGHT = 600; // originally 1200
 //

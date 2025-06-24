@@ -15,7 +15,7 @@ static bool isFloorRegistered = GameObjectFactory::instance().registerType(
 		// when the factory is asked to create one for the color red.
 		auto wall = std::make_unique<Wall>();
 		// Note: position is passed to the factory create function but not used here
-		// because Floor's constructor doesn't need it. The position is set later.
+		// because Wall's constructor doesn't need it. The position is set later.
 		return wall;
 	}
 );

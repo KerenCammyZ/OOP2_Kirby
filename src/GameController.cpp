@@ -13,13 +13,28 @@ GameController::GameController():
 	m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
 	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
 	
-	m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
+	// load game objects from the world map
+	auto objects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
+	// separate enemies from fixed objects (load enemies)
+	for (auto it = objects.begin(); it != objects.end(); )
+	{
+		if (auto enemy = dynamic_cast<Enemy*>(it->get()))
+		{
+			m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(it->release())));
+			it = objects.erase(it);
+		} else {
+			++it;
+		}
+	}
+	m_allGameObjects = std::move(objects);
+	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 
+	//TEMP: direct non-factory loading for enemies
 	auto enemyTexture = std::make_shared<sf::Texture>();
 	if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
 		throw std::runtime_error("Failed to load Waddle Dee texture");
 	}
-	m_allGameObjects.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(500.f, 200.f)));
+	m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f)));
 }
 
 void GameController::run()
@@ -42,13 +57,13 @@ void GameController::run()
 	}
 }
 
-void GameController::checkCollisions()
-{
+void GameController::checkCollisions()  
+{  
 	for (const auto& otherObject : m_allGameObjects)
 	{
 		if (m_kirby->collidesWith(*otherObject))
 		{
-			// Double dispatch will handle the specific collision type
+			// Double dispatch will handle the specific collision type  
 			m_kirby->handleCollision(otherObject.get());
 		}
 	}
@@ -141,6 +156,12 @@ void GameController::draw()
 	for (const auto& obj : m_allGameObjects)
 	{
 		obj->draw(m_window);
+	}
+
+	// Draw all enemies
+	for (const auto& enemy : m_enemies)
+	{
+		enemy->draw(m_window);
 	}
 
 	// NOTE: If you were to draw UI elements (like a score or health bar),

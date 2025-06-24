@@ -6,6 +6,7 @@
 #include "GameObj/FixedObj/Floor.h"
 #include "WorldMap.h"
 #include "GlobalSizes.h"
+#include <vector>
 
 class GameController
 {
@@ -36,4 +37,5 @@ private:
 	std::shared_ptr<sf::Texture> m_worldMapTexture;
 
 	std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
+	std::vector<std::unique_ptr<Enemy>> m_enemies;
 };

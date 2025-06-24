@@ -78,6 +78,15 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
 				newObject->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
 				newObject->setPosition(position);
 				createdObjects.push_back(std::move(newObject));
+
+				// Check if this object is an enemy --  code could be suitable in a LevelManager class
+				//                                      which has direct access to dynamic objects
+				/*if (auto enemy = dynamic_cast<Enemy*>(newObject.get())) {
+					m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(newObject.release())));
+				}
+				else {
+					createdObjects.push_back(std::move(newObject));
+				}*/
 			}
 			else
 			{
