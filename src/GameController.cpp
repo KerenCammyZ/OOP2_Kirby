@@ -30,11 +30,11 @@ GameController::GameController():
 	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 
 	//TEMP: direct non-factory loading for enemies
-	auto enemyTexture = std::make_shared<sf::Texture>();
-	if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-		throw std::runtime_error("Failed to load Waddle Dee texture");
-	}
-	m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f)));
+	//auto enemyTexture = std::make_shared<sf::Texture>();
+	//if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
+	//	throw std::runtime_error("Failed to load Waddle Dee texture");
+	//}
+	//m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f)));
 }
 
 void GameController::run()

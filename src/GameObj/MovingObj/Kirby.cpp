@@ -61,13 +61,7 @@ void Kirby::handleCollision(Door* door)
 
 void Kirby::handleCollision(Wall* wall)
 {
-	// collision from left
-	if (getPosition().x + getSize().x <= wall->getPosition().x)
-	{
-		setPosition(sf::Vector2f(wall->getPosition().x + getSize().x, getPosition().y));
-	}
-	else
-		setPosition(getOldPosition());
+	setPosition(getOldPosition());
 	setVelocity(sf::Vector2f(0, 0));
 }
 

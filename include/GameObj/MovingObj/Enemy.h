@@ -15,6 +15,9 @@ public:
 	void handleCollision(Door* door) {};
 	void handleCollision(Wall* wall);
 
+	//void setTexture(std::string filename);
 private:
 	sf::Vector2f m_direction{ -1.f, 0.f };
+	sf::Texture m_texture;
+	sf::Sprite m_sprite;
 };
