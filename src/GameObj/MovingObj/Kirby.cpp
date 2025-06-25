@@ -2,6 +2,8 @@
 #include "GameObj/FixedObj/Door.h"
 #include "States/KirbyStandingState.h"
 #include "GlobalSizes.h"
+#include "GameObj/FixedObj/Wall.h"
+#include <iostream>
 
 // It's better to declare these constants where they are used,
 // but for now, we'll make them accessible via GlobalSizes.h
@@ -47,14 +49,20 @@ void Kirby::update(float deltaTime)
 }
 
 
-void Kirby::handleCollision(GameObject* other)
-{
-	other->handleCollision(this);
+void Kirby::handleCollision(GameObject* other)  
+{  
+	other->handleCollision(this);  
 }
 
 void Kirby::handleCollision(Door* door)
 {
 	door->handleCollision(this);
+}
+
+void Kirby::handleCollision(Wall* wall)
+{
+	setPosition(getOldPosition());
+	setVelocity(sf::Vector2f(0, 0));
 }
 
 float Kirby::getSpeed() const

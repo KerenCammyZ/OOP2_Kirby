@@ -19,11 +19,12 @@ const sf::Color DOOR_B(0, 148, 255);
 const float GRAVITY = 200.0f;
 const float JUMP_STRENGTH = 120.0f;
 
-/*
-// Adjusted sizes for lower resolution displays
-static int SCREEN_WIDTH = 800; // originally 1600
-static int SCREEN_HEIGHT = 600; // originally 1200
 
-static int VIEW_WIDTH = 300; // originally 800
-static int VIEW_HEIGHT = 150; // originally 600
-*/
+//// Adjusted sizes for lower resolution displays
+//constexpr float ENTITY_SIZE = 12.0f; // originally 24.0f
+//static int SCREEN_WIDTH = 800; // originally 1600
+//static int SCREEN_HEIGHT = 600; // originally 1200
+//
+//static int VIEW_WIDTH = 300; // originally 800
+//static int VIEW_HEIGHT = 150; // originally 600
+//

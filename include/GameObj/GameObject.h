@@ -19,6 +19,9 @@ public:
 	virtual void handleCollision(Kirby* kirby) = 0;
 	virtual void handleCollision(Door* door) = 0;
 
+	// enforce override in moving objects only
+	// virtual void handleCollision(Wall* wall) {}
+
 	// --- VIRTUAL SETTERS AND GETTERS ---
 	virtual void setPosition(const sf::Vector2f& position);
 	sf::Vector2f getPosition() const;

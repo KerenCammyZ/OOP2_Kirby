@@ -4,6 +4,7 @@
 #include <memory>
 
 class KirbyState;
+class Wall;
 
 class Kirby : public MovingObject
 {
@@ -27,6 +28,8 @@ public:
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override {};
 	void handleCollision(Door* door) override;
+
+	void handleCollision(Wall* wall);
 
 private:
 	std::unique_ptr<KirbyState> m_state;
