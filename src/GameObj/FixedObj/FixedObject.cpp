@@ -14,7 +14,7 @@ FixedObject::FixedObject()
 void FixedObject::draw(sf::RenderTarget& target) const
 {
 	GameObject::draw(target);
-	target.draw(m_collisionShape);
+	//target.draw(m_collisionShape);
 }
 
 // Override: Call the base to set logical size, then set the debug shape's size
