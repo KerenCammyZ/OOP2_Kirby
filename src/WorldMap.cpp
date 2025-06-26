@@ -66,12 +66,36 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
 			sf::Color pixelColor = collisionImage.getPixel(x, y);
 			if (pixelColor.a == 0) continue; // Skip transparent pixels
 
+			// --- START OF DEBUGGING BLOCK ---
+			// Check if the pixel is yellow, our target color
+			if (pixelColor.r == 255 && pixelColor.g == 216 && pixelColor.b == 0)
+			{
+				std::cout << "DEBUG: Found a yellow pixel at (" << x << "," << y << ")! ";
+				std::cout << "RGBA: (" << (int)pixelColor.r << ", " << (int)pixelColor.g << ", "
+					<< (int)pixelColor.b << ", " << (int)pixelColor.a << ")\n";
+			}
+			// --- END OF DEBUGGING BLOCK ---
+
 			sf::Vector2f position(
 				(x * TILE_SIZE * m_scale.x) + (TILE_SIZE * m_scale.x / 2.f),
 				(y * TILE_SIZE * m_scale.y) + (TILE_SIZE * m_scale.y / 2.f) + 1.0f // + 1.0f for collision overlap
 			);
 
 			auto newObject = GameObjectFactory::instance().create(pixelColor, position);
+
+			// --- START OF FACTORY DEBUGGING BLOCK ---
+			if (pixelColor.r == 255 && pixelColor.g == 255 && pixelColor.b == 0)
+			{
+				if (newObject)
+				{
+					std::cout << "  -> SUCCESS: Factory created an object for this pixel.\n";
+				}
+				else
+				{
+					std::cerr << "  -> FAILURE: Factory returned nullptr. The color key is not registered correctly or the lambda failed.\n";
+				}
+			}
+			// --- END OF FACTORY DEBUGGING BLOCK ---
 
 			if (newObject)
 			{
