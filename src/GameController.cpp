@@ -1,5 +1,6 @@
 // GameController.cpp
 #include "GameController.h"
+#include <iostream>
 
 GameController::GameController():
 	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_deltaTime(0.f)
@@ -14,7 +15,7 @@ GameController::GameController():
 	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
 	
 	// load game objects from the world map
-	auto objects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
+	auto objects = m_worldMap->loadObjectsFromFile("Level1Collisions-Copy.png");
 	// separate enemies from fixed objects (load enemies)
 	for (auto it = objects.begin(); it != objects.end(); )
 	{
@@ -26,15 +27,16 @@ GameController::GameController():
 			++it;
 		}
 	}
-	m_allGameObjects = std::move(objects);
+	m_allGameObjects = std::move(objects); // contains only fixed objects (no enemies)
+
 	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 
 	//TEMP: direct non-factory loading for enemies
-	//auto enemyTexture = std::make_shared<sf::Texture>();
-	//if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-	//	throw std::runtime_error("Failed to load Waddle Dee texture");
-	//}
-	//m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f)));
+	auto enemyTexture = std::make_shared<sf::Texture>();
+	if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
+		throw std::runtime_error("Failed to load Waddle Dee texture");
+	}
+	m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f)));
 }
 
 void GameController::run()
@@ -127,12 +129,19 @@ void GameController::loadTextures()
 void GameController::update(float deltaTime)
 {
 	m_kirby->update(deltaTime);
+	
 	// Update all other objects loaded from the map
 	for (auto& obj : m_allGameObjects)
 	{
 		// Polymorphism calls the correct update (MovingObject vs FixedObject)
 		obj->update(deltaTime);
 	}
+
+	for (auto& enemy : m_enemies)
+	{
+		enemy->update(deltaTime);
+	}
+
 	checkCollisions();
 	updateView(); // Update the camera's position every frame
 }
@@ -163,6 +172,8 @@ void GameController::draw()
 	{
 		enemy->draw(m_window);
 	}
+
+	
 
 	// NOTE: If you were to draw UI elements (like a score or health bar),
 	// you would switch back to the default view here so they stay fixed on the screen:

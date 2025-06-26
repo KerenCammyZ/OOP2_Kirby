@@ -5,47 +5,43 @@
 
 sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key
 
-
-// Register multiple enemies with different colors  
-//static bool isWaddleDeeRegistered = GameObjectFactory::instance().registerType(  
-//   sf::Color(0, 20, 0),
-//   [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
-//       auto enemy = std::make_unique<Enemy>();
-//       enemy->setPosition(position);  
-//       // Optionally set size, texture, etc.
-//	   auto enemyTexture = std::make_shared<sf::Texture>();
-//	   if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-//		   throw std::runtime_error("Failed to load Waddle Dee texture");
-//	   }
-//	   enemy->setTexture(enemyTexture);
-//       return enemy;  
-//   }  
-//);  
-
-static bool isTwizzyRegistered = GameObjectFactory::instance().registerType(  
-   sf::Color(0, 0, 80), 
+static bool isWaddleDeeRegistered = GameObjectFactory::instance().registerType(  
+   sf::Color(0, 0, 40), // Color key for WaddleDee
    [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
-       auto enemy = std::make_unique<Enemy>();
-       enemy->setPosition(position);  
-       // Optionally set size, texture, etc. 
 	   auto enemyTexture = std::make_shared<sf::Texture>();
-	   if (!enemyTexture->loadFromFile("TwizzySprite.png")) {
-		   throw std::runtime_error("Failed to load Twizzy texture");
+	   if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
+		   throw std::runtime_error("Failed to load Waddle Dee texture");
 	   }
-	   enemy->setTexture(enemyTexture);
+       auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+       // enemy->setPosition(position);  
+	   //enemy->setTexture(enemyTexture);
        return enemy;  
    }  
 );  
 
-//static bool isGreenEnemyRegistered = GameObjectFactory::instance().registerType(  
-//   sf::Color(0, 255, 0), // Color key for Green Enemy  
-//   [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
-//       auto enemy = std::make_unique<Enemy>();  
-//       enemy->setPosition(position);  
-//       // Optionally set size, texture, etc.  
-//       return enemy;  
-//   }  
-//);
+static bool isTwizzyRegistered = GameObjectFactory::instance().registerType(  
+   sf::Color(0, 0, 80),  // Color key for Twizzy
+   [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
+	   auto enemyTexture = std::make_shared<sf::Texture>();
+	   if (!enemyTexture->loadFromFile("TwizzySprite.png")) {
+		   throw std::runtime_error("Failed to load Twizzy texture");
+	   }
+       auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+       //enemy->setPosition(position);  
+	   //enemy->setTexture(enemyTexture);
+       return enemy;  
+   }  
+);  
+
+static bool isGreenEnemyRegistered = GameObjectFactory::instance().registerType(  
+   sf::Color(0, 0, 120), // Color key for Green Enemy  
+   [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
+       auto enemy = std::make_unique<Enemy>();  
+       enemy->setPosition(position);  
+       // Optionally set size, texture, etc.  
+       return enemy;  
+   }  
+);
 
 Enemy::Enemy()
 {
@@ -63,18 +59,13 @@ Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosit
 
 void Enemy::move(float deltaTime)
 {
-	m_position += m_direction * m_speed * deltaTime;
+	;
 }
+
 
 // Handle collision with walls by reversing direction
 void Enemy::handleCollision(Wall* wall)
 {
-	setPosition(m_oldPosition);
 	m_direction = -m_direction;
+	setPosition(m_oldPosition);
 }
-
-//void Enemy::setTexture(std::string filename)
-//{
-//	m_texture.loadFromFile(filename);
-//	m_sprite.setTexture(m_texture);
-//}
