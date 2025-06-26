@@ -65,10 +65,11 @@ void Kirby::handleCollision(Wall* wall)
 	setVelocity(sf::Vector2f(0, 0));
 }
 
-float Kirby::getSpeed() const
-{
-	return m_speed;
-}
+// NOTE: Transfered this function to MovingObject
+//float Kirby::getSpeed() const
+//{
+//	return m_speed;
+//}
 
 // --- NEW PHYSICS METHOD DEFINITIONS ---
 void Kirby::setVelocity(const sf::Vector2f& velocity) { m_velocity = velocity; }

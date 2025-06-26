@@ -15,7 +15,7 @@ public:
 	void update(float deltaTime) override;
 	void move(float deltaTime) override {};
 
-	float getSpeed() const;
+	//float getSpeed() const; // NOTE: Transfered function to MovingObject
 
 	// --- NEW PHYSICS GETTERS/SETTERS ---
 	void setVelocity(const sf::Vector2f& velocity);

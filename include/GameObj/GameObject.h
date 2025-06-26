@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include "GlobalSizes.h"
 
+enum class ObjectType { WALL, GIFT, ENEMY, DEFAULT };
+
 class Kirby;
 class Door;
 
@@ -32,6 +34,8 @@ public:
 	bool collidesWith(GameObject& other) const;
 	virtual sf::FloatRect getBounds() const;
 	void setTexture(std::shared_ptr<sf::Texture> texture);
+
+	virtual ObjectType getType() const { return ObjectType::DEFAULT; }
 
 protected:
 	sf::Vector2f m_position;

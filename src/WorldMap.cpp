@@ -77,6 +77,10 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
 			{
 				newObject->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
 				newObject->setPosition(position);
+				if(newObject.get()->getType() == ObjectType::ENEMY)
+				{					
+					newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
+				}
 				createdObjects.push_back(std::move(newObject));
 			}
 			else

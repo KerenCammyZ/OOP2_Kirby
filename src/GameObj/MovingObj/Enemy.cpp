@@ -23,6 +23,7 @@ bool Enemy::isWaddleDeeRegistered = GameObjectFactory::registerType(
 	   enemy->setTexture(enemyTexture);
 	   enemy->setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
        enemy->setPosition(position);  
+	   enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
        return enemy;  
    }  
 );  
@@ -85,7 +86,11 @@ Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosit
 // Handle collision with walls by reversing direction
 void Enemy::handleCollision(Wall* wall)
 {
-	m_direction = -m_direction;
+    sf::Vector2f currentScale = m_sprite.getScale();
+    m_sprite.setScale(-currentScale.x, currentScale.y);
+    
+	m_direction = -m_direction; // Reverse direction on collision
+    
 	setPosition(m_oldPosition);
 }
 
@@ -103,6 +108,7 @@ void Enemy::attack(float deltaTime)
 
 void Enemy::setMoveBehavior(std::unique_ptr<MoveBehavior> moveBehavior)
 {
+	moveBehavior->setOwner(this);
 	m_moveBehavior = std::move(moveBehavior);
 }
 

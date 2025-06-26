@@ -33,6 +33,8 @@ public:
 	sf::Sprite getSprite() const { return m_sprite; }
 	sf::Vector2f getpritePosition() { return m_sprite.getPosition(); }
 
+	ObjectType getType() const { return ObjectType::ENEMY; }
+	sf::Vector2f getDirection() const { return m_direction; }
 
 private:
 	std::string name; // for debugging
@@ -41,9 +43,9 @@ private:
 	std::unique_ptr <AttackBehavior> m_attackBehavior;
 
 	sf::Vector2f m_direction{ -1.f, 0.f };
-	//sf::Texture m_texture;
-	//sf::Sprite m_sprite;
 	static bool m_registeritem; // Static member to register this type with the factory
+	//static bool m_registerTwizzy;
+	//static bool m_registerWaddleDee;
 	static bool isGreenEnemyRegistered;
 	static bool isTwizzyRegistered;
 	static bool isWaddleDeeRegistered;

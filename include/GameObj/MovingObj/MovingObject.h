@@ -14,6 +14,9 @@ public:
 	void setOldPosition(const sf::Vector2f& position);
 	sf::Vector2f getOldPosition() const;
 
+	float getSpeed() const { return m_speed; }
+	void setSpeed(float speed) { m_speed = speed; }
+
 protected:
 	float m_speed = 250.0f;
 	sf::Vector2f m_oldPosition;

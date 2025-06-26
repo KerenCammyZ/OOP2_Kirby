@@ -23,7 +23,7 @@ void GameObject::draw(sf::RenderTarget& target) const
 	}
 }
 
-// update method is called every frame to update the position of the sprite?
+
 void GameObject::update(float dt)
 {
 	if (m_texture) {

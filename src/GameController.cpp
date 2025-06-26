@@ -16,12 +16,11 @@ GameController::GameController():
 	
 	// load game objects from the world map
 	auto objects = m_worldMap->loadObjectsFromFile("Level1Collisions-Copy.png");
-	// separate enemies from fixed objects (load enemies)
+	
 	for (auto it = objects.begin(); it != objects.end(); )
-	{
+	{   // separate enemies from fixed objects (load enemies)
 		if (auto enemy = dynamic_cast<Enemy*>(it->get()))
 		{
-			it->get()->setSize({ ENTITY_SIZE, ENTITY_SIZE }); // Set size for the enemy
 			m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(it->release())));
 			it = objects.erase(it);
 		} else {
@@ -32,12 +31,6 @@ GameController::GameController():
 
 	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 
-	//TEMP: direct non-factory loading for enemies
-	//auto enemyTexture = std::make_shared<sf::Texture>();
-	//if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-	//	throw std::runtime_error("Failed to load Waddle Dee texture");
-	//}
-	//m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f))); // missing strategy
 	std::cout << "Loaded " << m_enemies.size() << " enemies.\n";
 }
 
@@ -69,6 +62,17 @@ void GameController::checkCollisions()
 		{
 			// Double dispatch will handle the specific collision type  
 			m_kirby->handleCollision(otherObject.get());
+		}
+	}
+	for (const auto& enemy : m_enemies)
+	{
+		for (const auto& otherObject : m_allGameObjects) {
+			if (otherObject->getType() == ObjectType::WALL &&
+				enemy->collidesWith(*otherObject))
+			{
+				// Double dispatch will handle the specific collision type  
+				enemy->handleCollision(static_cast<Wall*>(otherObject.get()));
+			}
 		}
 	}
 }
@@ -139,13 +143,10 @@ void GameController::update(float deltaTime)
 		obj->update(deltaTime);
 	}
 
-	static bool testUpdate = true;
 	for (auto& enemy : m_enemies)
 	{
-		if (testUpdate)
-			enemy->update(deltaTime);
+		enemy->update(deltaTime);
 	}
-	testUpdate = false;
 
 	checkCollisions();
 	updateView(); // Update the camera's position every frame 
