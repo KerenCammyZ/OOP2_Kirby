@@ -21,6 +21,7 @@ GameController::GameController():
 	{
 		if (auto enemy = dynamic_cast<Enemy*>(it->get()))
 		{
+			it->get()->setSize({ ENTITY_SIZE, ENTITY_SIZE }); // Set size for the enemy
 			m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(it->release())));
 			it = objects.erase(it);
 		} else {
@@ -156,6 +157,27 @@ void GameController::handle()
 		m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		m_window.close();
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	{
+		m_window.draw(m_enemies[0]->getSprite()); // Draw the first enemy for testing
+		
+		std::cout << m_enemies[0]->getName() << " is at position: "
+			<< m_enemies[0]->getPosition().x << ", " << m_enemies[0]->getPosition().y << "\n";
+
+		std::cout << "kirby is at position: " << m_kirby->getPosition().x << ", " << m_kirby->getPosition().y << "\n";
+
+		std::cout << "Enemy has texture: " << (m_enemies[0]->hasTexture() ? "Yes" : "No") << "\n";
+		std::cout << "Enemy sprite position: "
+			<< m_enemies[0]->getpritePosition().x << ", " << m_enemies[0]->getpritePosition().y << "\n";
+		std::cout << "Sprite size: "
+			<< m_enemies[0]->getSprite().getGlobalBounds().width << "x"
+			<< m_enemies[0]->getSprite().getGlobalBounds().height << "\n";
+		std::cout << "Texture size: "
+			<< m_enemies[0]->getTextureSize().x << "x"
+			<< m_enemies[0]->getTextureSize().y << "\n";
+		std::cout << "Kirby Sprite size: "
+			<< m_kirby->getSize().x << "x" << m_kirby->getSize().y << "\n";
+	}
 }
 
 void GameController::draw()
@@ -178,7 +200,6 @@ void GameController::draw()
 	}
 
 	
-
 	// NOTE: If you were to draw UI elements (like a score or health bar),
 	// you would switch back to the default view here so they stay fixed on the screen:
 	// m_window.setView(m_window.getDefaultView());

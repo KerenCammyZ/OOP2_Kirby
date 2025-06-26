@@ -2,7 +2,6 @@
 #include "WorldMap.h"
 #include "GameObjectFactory.h"
 #include "GameObj/FixedObj/Door.h"
-//#include "GameObj/FixedObj/Wall.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GlobalSizes.h"
 
@@ -72,7 +71,7 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
 				(y * TILE_SIZE * m_scale.y) + (TILE_SIZE * m_scale.y / 2.f) + 1.0f // + 1.0f for collision overlap
 			);
 
-			auto newObject = GameObjectFactory::instance().create(pixelColor, position);
+			auto newObject = GameObjectFactory::create(pixelColor, position);
 
 			if (newObject)
 			{

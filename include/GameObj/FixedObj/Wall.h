@@ -15,4 +15,5 @@ public:
 	void setPosition(const sf::Vector2f& position) override;
 
 private:  
+	static bool m_registeritem; // Static member to register this type with the factory
 };

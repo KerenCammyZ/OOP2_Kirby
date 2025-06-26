@@ -12,7 +12,7 @@ class Enemy : public MovingObject
 public:
 	Enemy();
 	Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
-	void update(float deltaTime) override;
+	//void update(float deltaTime) override;
 	void move(float deltaTime) override;
 	void attack(float deltaTime);
 
@@ -28,6 +28,11 @@ public:
 	// for debugging
 	std::string getName() const { return name; }
 	void setName(const std::string& type) { name = type; }
+	bool hasTexture() { return (m_texture != nullptr); }
+	sf::Vector2f getTextureSize() { return sf::Vector2f(m_texture->getSize()); }
+	sf::Sprite getSprite() const { return m_sprite; }
+	sf::Vector2f getpritePosition() { return m_sprite.getPosition(); }
+
 
 private:
 	std::string name; // for debugging
@@ -36,6 +41,10 @@ private:
 	std::unique_ptr <AttackBehavior> m_attackBehavior;
 
 	sf::Vector2f m_direction{ -1.f, 0.f };
-	sf::Texture m_texture;
-	sf::Sprite m_sprite;
+	//sf::Texture m_texture;
+	//sf::Sprite m_sprite;
+	static bool m_registeritem; // Static member to register this type with the factory
+	static bool isGreenEnemyRegistered;
+	static bool isTwizzyRegistered;
+	static bool isWaddleDeeRegistered;
 };

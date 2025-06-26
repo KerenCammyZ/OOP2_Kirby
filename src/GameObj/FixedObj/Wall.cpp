@@ -7,7 +7,7 @@
 
 sf::Color wallColor(255, 0, 0);
 
-static bool isFloorRegistered = GameObjectFactory::instance().registerType(
+bool Wall::m_registeritem = GameObjectFactory::registerType(
 	sf::Color(wallColor), // The color key for a Wall object
 	[](sf::Vector2f position) -> std::unique_ptr<GameObject> // The blueprint
 	{

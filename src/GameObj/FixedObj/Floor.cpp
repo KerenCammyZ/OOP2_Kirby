@@ -5,7 +5,7 @@
 #include "GameObjectFactory.h"
 #include "GlobalSizes.h"
 
-static bool isFloorRegistered = GameObjectFactory::instance().registerType(
+bool Floor::m_registeritem = GameObjectFactory::registerType(
 	sf::Color(76, 255, 0), // The color key for a Floor object
 	[](sf::Vector2f position) -> std::unique_ptr<GameObject> // The blueprint
 	{

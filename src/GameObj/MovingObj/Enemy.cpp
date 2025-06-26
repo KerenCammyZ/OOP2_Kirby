@@ -8,41 +8,45 @@
 
 sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key
 
-static bool isWaddleDeeRegistered = GameObjectFactory::instance().registerType(  
+bool Enemy::isWaddleDeeRegistered = GameObjectFactory::registerType(  
    sf::Color(0, 0, 40), // Color key for WaddleDee
    [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
 	   auto enemyTexture = std::make_shared<sf::Texture>();
 	   if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
 		   throw std::runtime_error("Failed to load Waddle Dee texture");
 	   }
-       auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+       //auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+	   auto enemy = std::make_unique<Enemy>();
 	   enemy->setMoveBehavior(std::make_unique<PatrolMove>());
 	   enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 	   enemy->setName("WaddleDee"); // Set type for debugging
-       // enemy->setPosition(position);  
-	   //enemy->setTexture(enemyTexture);
+	   enemy->setTexture(enemyTexture);
+	   enemy->setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
+       enemy->setPosition(position);  
        return enemy;  
    }  
 );  
 
-static bool isTwizzyRegistered = GameObjectFactory::instance().registerType(  
+bool Enemy::isTwizzyRegistered = GameObjectFactory::registerType(  
    sf::Color(0, 0, 80),  // Color key for Twizzy
    [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
 	   auto enemyTexture = std::make_shared<sf::Texture>();
 	   if (!enemyTexture->loadFromFile("TwizzySprite.png")) {
 		   throw std::runtime_error("Failed to load Twizzy texture");
 	   }
-       auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+       //auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+	   auto enemy = std::make_unique<Enemy>();
 	   enemy->setMoveBehavior(std::make_unique<FlyingMove>());
 	   enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 	   enemy->setName("Twizzy"); // Set type for debugging
-       //enemy->setPosition(position);  
-	   //enemy->setTexture(enemyTexture);
+	   enemy->setTexture(enemyTexture);
+	   enemy->setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
+       enemy->setPosition(position);  
        return enemy;  
    }  
 );  
 
-static bool isGreenEnemyRegistered = GameObjectFactory::instance().registerType(  
+bool Enemy::isGreenEnemyRegistered = GameObjectFactory::registerType(  
    sf::Color(0, 0, 120), // Color key for Green Enemy  
    [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
        auto enemy = std::make_unique<Enemy>();  
@@ -65,13 +69,18 @@ Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosit
 	m_speed = 180.0f;
 }
 
-void Enemy::update(float deltaTime)
-{
-	std::cout << getName() << ":\n";
-	move(deltaTime);
-	attack(deltaTime);
-	std::cout << "\n";
-}
+//void Enemy::update(float deltaTime)
+//{
+//	std::cout << getName() << ": ";
+//	if (m_texture)
+//		std::cout << "texture exists\n";
+//	else
+//		std::cout << "texture missing\n";
+//
+//	move(deltaTime);
+//	attack(deltaTime);
+//	std::cout << "\n";
+//}
 
 // Handle collision with walls by reversing direction
 void Enemy::handleCollision(Wall* wall)
