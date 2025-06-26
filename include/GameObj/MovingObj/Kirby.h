@@ -1,10 +1,12 @@
 // Kirby.h
 #pragma once
 #include "GameObj/MovingObj/MovingObject.h"
+#include "PresentManager.h" 
 #include <memory>
 
 class KirbyState;
 class Wall;
+class PresentCommand;
 
 class Kirby : public MovingObject
 {
@@ -16,6 +18,11 @@ public:
 	void move(float deltaTime) override {};
 
 	float getSpeed() const;
+	void setSpeed(float speed);
+	float getOriginalSpeed() const;
+
+	// The single public method to add any present's effect
+	void addPresentEffect(std::unique_ptr<PresentCommand> command);
 
 	// --- NEW PHYSICS GETTERS/SETTERS ---
 	void setVelocity(const sf::Vector2f& velocity);
@@ -33,6 +40,9 @@ public:
 
 private:
 	std::unique_ptr<KirbyState> m_state;
+
+	PresentManager m_presentManager;
+	float m_originalSpeed;
 
 	// --- NEW PHYSICS MEMBERS ---
 	sf::Vector2f m_velocity;

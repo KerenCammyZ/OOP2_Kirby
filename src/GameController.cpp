@@ -27,14 +27,6 @@ GameController::GameController():
 		}
 	}
 	m_allGameObjects = std::move(objects);
-	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
-
-	//TEMP: direct non-factory loading for enemies
-	//auto enemyTexture = std::make_shared<sf::Texture>();
-	//if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-	//	throw std::runtime_error("Failed to load Waddle Dee texture");
-	//}
-	//m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f)));
 }
 
 void GameController::run()
@@ -135,6 +127,24 @@ void GameController::update(float deltaTime)
 	}
 	checkCollisions();
 	updateView(); // Update the camera's position every frame
+
+	// --- NEW: Remove collected presents ---
+	// std::remove_if moves all elements to be deleted to the end of the vector
+	// and returns an iterator to the first of those elements.
+	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj)
+		{
+			// Try to cast the object to a Present*
+			if (Present* present = dynamic_cast<Present*>(obj.get()))
+			{
+				// If it is a present and it's been collected, mark it for removal
+				return present->isCollected();
+			}
+			return false; // Not a present, don't remove
+		});
+
+	// .erase() then actually removes the elements from the vector.
+	m_allGameObjects.erase(it, m_allGameObjects.end());
 }
 
 void GameController::handle()

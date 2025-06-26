@@ -119,9 +119,77 @@ void Wall::setPosition(const sf::Vector2f& position)
 //		kirby->setPosition({ kirby->getPosition().x, wallBounds.top + wallBounds.height + kirbyBounds.height / 2.f });
 //	}
 //}
+
+//#include "GameObj/FixedObj/Wall.h"
+//#include "GameObj/MovingObj/Kirby.h"
+//#include "GameObjectFactory.h"
+//#include "GlobalSizes.h"
+//#include <cmath>
 //
-////// Implement the override for the pure virtual function
-////void Wall::handleCollision(Door* door)
-////{
-////	// A wall doesn't interact with a door, so this is empty.
-////}
+//// Make sure you have this in GlobalSizes.h and that it's a bit larger than ENTITY_SIZE
+//// const float MAX_STEP_HEIGHT = 25.0f;
+//
+//// Static lambda to register the Wall object type with the factory
+//static bool isWallRegistered = GameObjectFactory::instance().registerType(
+//	WALL,
+//	[](sf::Vector2f position) -> std::unique_ptr<GameObject>
+//	{
+//		return std::make_unique<Wall>();
+//	}
+//);
+//
+//
+//void Wall::handleCollision(Kirby* kirby)
+//{
+//	sf::FloatRect kirbyBounds = kirby->getBounds();
+//	sf::FloatRect wallBounds = getBounds();
+//	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
+//	sf::FloatRect kirbyPrevBounds(
+//		kirbyPrevPos - sf::Vector2f(kirbyBounds.width / 2.f, kirbyBounds.height / 2.f),
+//		kirbyBounds.getSize()
+//	);
+//
+//	// --- 1. RAMP/STEP-UP LOGIC (HIGHEST PRIORITY) ---
+//	// First, determine if Kirby was moving into the wall horizontally from the side.
+//	bool hitFromLeft = kirbyPrevBounds.left + kirbyPrevBounds.width <= wallBounds.left + 1.f; // add tolerance
+//	bool hitFromRight = kirbyPrevBounds.left >= wallBounds.left + wallBounds.width - 1.f; // add tolerance
+//
+//	// Next, determine if the top of the wall qualifies as a "step".
+//	float kirbyFeetY = kirbyPrevBounds.top + kirbyPrevBounds.height; // Kirby's feet in the last frame.
+//	float wallTopY = wallBounds.top;
+//	// A "step" is a ledge whose top is slightly above Kirby's previous foot position,
+//	// but not higher than he can step up.
+//	bool isAValidStep = (kirbyFeetY >= wallTopY) && (kirbyFeetY - wallTopY < MAX_STEP_HEIGHT);
+//
+//	// CONDITION: If Kirby hit the side of a wall AND that wall is a valid step...
+//	if ((hitFromLeft || hitFromRight) && isAValidStep)
+//	{
+//		// ...then treat it as a ramp and pop Kirby on top.
+//		kirby->setGrounded(true);
+//		kirby->setVelocity({ kirby->getVelocity().x, 0.f });
+//		kirby->setPosition({ kirby->getPosition().x, wallBounds.top - kirbyBounds.height / 2.f });
+//	}
+//	// --- 2. STANDARD COLLISION (FALLBACK) ---
+//	// If it wasn't a step, proceed with normal collision checks.
+//	else if (kirbyPrevBounds.top + kirbyPrevBounds.height <= wallBounds.top + 1.f) // Land on top
+//	{
+//		kirby->setGrounded(true);
+//		kirby->setVelocity({ kirby->getVelocity().x, 0.f });
+//		kirby->setPosition({ kirby->getPosition().x, wallBounds.top - kirbyBounds.height / 2.f });
+//	}
+//	else if (kirbyPrevBounds.top >= wallBounds.top + wallBounds.height - 1.f) // Hit head on bottom
+//	{
+//		kirby->setVelocity({ kirby->getVelocity().x, 0.f });
+//		kirby->setPosition({ kirby->getPosition().x, wallBounds.top + wallBounds.height + kirbyBounds.height / 2.f });
+//	}
+//	else if (hitFromLeft) // Hit a tall wall from the left
+//	{
+//		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
+//		kirby->setPosition({ wallBounds.left - kirbyBounds.width / 2.f, kirby->getPosition().y });
+//	}
+//	else if (hitFromRight) // Hit a tall wall from the right
+//	{
+//		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
+//		kirby->setPosition({ wallBounds.left + wallBounds.width + kirbyBounds.width / 2.f, kirby->getPosition().y });
+//	}
+//}
