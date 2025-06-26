@@ -1,7 +1,10 @@
 // Enemy.cpp
-#include "GameObj/MovingObj/Enemy.h"
-#include "GameObjectFactory.h"
 #include <SFML/Graphics.hpp>
+#include "GameObjectFactory.h"
+#include "GameObj/MovingObj/Enemy.h"
+#include "GameObj/Behaviors/PatrolMove.h"
+#include "GameObj/Behaviors/FlyingMove.h"
+#include "GameObj/Behaviors/SimpleAttack.h"
 
 sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key
 
@@ -13,6 +16,9 @@ static bool isWaddleDeeRegistered = GameObjectFactory::instance().registerType(
 		   throw std::runtime_error("Failed to load Waddle Dee texture");
 	   }
        auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+	   enemy->setMoveBehavior(std::make_unique<PatrolMove>());
+	   enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
+	   enemy->setName("WaddleDee"); // Set type for debugging
        // enemy->setPosition(position);  
 	   //enemy->setTexture(enemyTexture);
        return enemy;  
@@ -27,6 +33,9 @@ static bool isTwizzyRegistered = GameObjectFactory::instance().registerType(
 		   throw std::runtime_error("Failed to load Twizzy texture");
 	   }
        auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+	   enemy->setMoveBehavior(std::make_unique<FlyingMove>());
+	   enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
+	   enemy->setName("Twizzy"); // Set type for debugging
        //enemy->setPosition(position);  
 	   //enemy->setTexture(enemyTexture);
        return enemy;  
@@ -56,16 +65,39 @@ Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosit
 	m_speed = 180.0f;
 }
 
-
-void Enemy::move(float deltaTime)
+void Enemy::update(float deltaTime)
 {
-	;
+	std::cout << getName() << ":\n";
+	move(deltaTime);
+	attack(deltaTime);
+	std::cout << "\n";
 }
-
 
 // Handle collision with walls by reversing direction
 void Enemy::handleCollision(Wall* wall)
 {
 	m_direction = -m_direction;
 	setPosition(m_oldPosition);
+}
+
+void Enemy::move(float deltaTime)
+{
+	if (m_moveBehavior)
+		m_moveBehavior->move(deltaTime);
+}
+
+void Enemy::attack(float deltaTime)
+{
+	if (m_attackBehavior)
+		m_attackBehavior->attack(deltaTime);
+}
+
+void Enemy::setMoveBehavior(std::unique_ptr<MoveBehavior> moveBehavior)
+{
+	m_moveBehavior = std::move(moveBehavior);
+}
+
+void Enemy::setAttackBehavior(std::unique_ptr<AttackBehavior> attackBehavior)
+{
+	m_attackBehavior = std::move(attackBehavior);
 }

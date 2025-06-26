@@ -32,11 +32,12 @@ GameController::GameController():
 	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 
 	//TEMP: direct non-factory loading for enemies
-	auto enemyTexture = std::make_shared<sf::Texture>();
-	if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-		throw std::runtime_error("Failed to load Waddle Dee texture");
-	}
-	m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f)));
+	//auto enemyTexture = std::make_shared<sf::Texture>();
+	//if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
+	//	throw std::runtime_error("Failed to load Waddle Dee texture");
+	//}
+	//m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f))); // missing strategy
+	std::cout << "Loaded " << m_enemies.size() << " enemies.\n";
 }
 
 void GameController::run()
@@ -137,13 +138,16 @@ void GameController::update(float deltaTime)
 		obj->update(deltaTime);
 	}
 
+	static bool testUpdate = true;
 	for (auto& enemy : m_enemies)
 	{
-		enemy->update(deltaTime);
+		if (testUpdate)
+			enemy->update(deltaTime);
 	}
+	testUpdate = false;
 
 	checkCollisions();
-	updateView(); // Update the camera's position every frame
+	updateView(); // Update the camera's position every frame 
 }
 
 void GameController::handle()
