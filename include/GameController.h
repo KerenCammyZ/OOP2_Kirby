@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
-#include "GameObj/FixedObj/Floor.h"
 #include "WorldMap.h"
 #include "GlobalSizes.h"
 #include <vector>
@@ -23,6 +22,7 @@ private:
 	void updateView();
 
 	void loadTextures();
+	void loadCollisionMap(std::string collisionMap);
 
 	float m_levelBlockHeight;
 	float m_deltaTime;
