@@ -30,7 +30,7 @@ public:
 	void setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBehavior);
 	
 	void setDirection(const sf::Vector2f& direction) { m_direction = direction; }
-	
+	void setDamageAmount(int damage) { m_damageAmount = damage; }
 
 	// for debugging
 	//std::string name; // for debugging
@@ -53,6 +53,7 @@ private:
 	sf::Vector2f m_direction;
 	float m_stunTimer{ 0.0f }; // enemy stunned
 	float m_spawnTimer{ 1.25f };
+	int m_damageAmount;
 
 	// Static registration for the Enemy type
 	static bool m_registerTwizzy;

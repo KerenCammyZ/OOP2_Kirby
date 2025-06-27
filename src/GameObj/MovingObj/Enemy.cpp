@@ -23,6 +23,7 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
+		enemy->setDamageAmount(1); // Set damage amount for Waddle Dee
 		return enemy;
 	}  
 );  
@@ -39,6 +40,7 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 		enemy->setCollisionBehavior(std::make_unique<IgnoreWalls>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
+		enemy->setDamageAmount(3); // Set damage amount for Twizzy
 		return enemy;  
 	}  
 );  
@@ -103,14 +105,24 @@ void Enemy::update(float deltaTime)
 	GameObject::update(deltaTime);
 }
 
-
+// Stun the enemy for a specified duration
 void Enemy::stun(float duration)
 {
 	m_state = EnemyState::STUNNED;
 	m_stunTimer = duration;
 }
 
+// Handle collision with Kirby
+void Enemy::handleCollision(Kirby* kirby)
+{
+	stun(1.0f); // Stun the enemy for 1 second on collision with Kirby
+	if (!kirby->isInvincible())
+	{
+		kirby->takeDamage(m_damageAmount);
+	}
+}
 
+// Handle collision with other game objects
 void Enemy::handleCollision(GameObject* other)
 {
 	if (m_collisionBehavior) { // owner has special collision behavior
@@ -135,12 +147,6 @@ void Enemy::handleCollision(GameObject* other)
 			setPosition(m_oldPosition);
 		}
 	}
-}
-
-
-void Enemy::handleCollision(Kirby* kirby)
-{
-	stun(1.0f); // Stun the enemy for 1 second on collision with Kirby
 }
 
 void Enemy::move(float deltaTime)

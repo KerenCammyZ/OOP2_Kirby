@@ -37,6 +37,14 @@ public:
 	void handleCollision(Kirby* kirby) override {};
 	void handleCollision(Door* door) override;
 
+	// Kirby's health and lives management
+	void takeDamage(int damageAmount);
+	void heal(int healAmount);
+	void loseLife();
+	int getHealth() const { return m_health; }
+	int getMaxHealth() const { return m_maxHealth; }
+	bool isInvincible() const { return m_isInvincible; }
+
 private:
 	std::unique_ptr<KirbyState> m_state;
 
@@ -46,4 +54,10 @@ private:
 	// --- NEW PHYSICS MEMBERS ---
 	sf::Vector2f m_velocity;
 	bool m_isGrounded;
+
+	int m_health = 6;
+	int m_maxHealth = 6;
+	int m_lives = 3;
+	bool m_isInvincible = false;
+	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
 };
