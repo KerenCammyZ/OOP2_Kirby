@@ -5,6 +5,11 @@
 // The 'static' keyword here is crucial. It ensures that the 'instance'
 // variable is created only once, the very first time this function is called.
 // Every subsequent call will return a reference to that same, single instance.
+// 
+/* --- NOTE: code was modified to remove the singleton pattern ---
+   ---      take into consideration when reading documentation ---
+*/
+
 
 
 //GameObjectFactory& GameObjectFactory::instance()
