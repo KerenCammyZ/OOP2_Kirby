@@ -31,4 +31,4 @@ const float JUMP_STRENGTH = 120.0f;
 //
 //static int VIEW_WIDTH = 300; // originally 800
 //static int VIEW_HEIGHT = 150; // originally 600
-//
+

@@ -3,9 +3,9 @@
 #include <memory>
 #include "GameObj/MovingObj/MovingObject.h"
 #include "GameObj/FixedObj/Wall.h"
-
 #include "GameObj/Behaviors/MoveBehavior.h"
 #include "GameObj/Behaviors/AttackBehavior.h"
+#include "GameObj/Behaviors/CollisionBehavior.h"
 
 enum class EnemyState { SPAWNING, ACTIVE, STUNNED };
 
@@ -20,14 +20,15 @@ public:
 	void attack(float deltaTime);
 	void stun(float duration);
 
-	void handleCollision(GameObject* other) override {};
+	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override {};
 	void handleCollision(Door* door) override {};
-	void handleCollision(Wall* wall);
+	//void handleCollision(Wall* wall);
 
 	// Setters for strategies
 	void setMoveBehavior(std::unique_ptr<MoveBehavior> moveBehavior);
 	void setAttackBehavior(std::unique_ptr<AttackBehavior> attackBehavior);
+	void setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBehavior);
 	
 	void setDirection(const sf::Vector2f& direction) { m_direction = direction; }
 	// for debugging
@@ -45,15 +46,15 @@ public:
 private:
 	std::unique_ptr <MoveBehavior> m_moveBehavior;
 	std::unique_ptr <AttackBehavior> m_attackBehavior;
+	std::unique_ptr <CollisionBehavior> m_collisionBehavior;
 
-	sf::Vector2f m_direction{ -1.0f, 0.0f };
-	EnemyState m_state = EnemyState::SPAWNING; // Initial state
-	float m_spawnTimer = 0.75f; // Time to wait before becoming active
-	float m_stunTimer = 0.0f;
+	EnemyState m_state;
+	sf::Vector2f m_direction;
+	float m_stunTimer{ 0.0f }; // enemy stunned
+	float m_spawnTimer{ 1.25f };
+
 	// Static registration for the Enemy type
 	static bool m_registerTwizzy;
 	static bool m_registerWaddleDee;
-	//static bool isGreenEnemyRegistered;
-	//static bool m_registeritem;
-	
+	//static bool m_registerEnemy;
 };

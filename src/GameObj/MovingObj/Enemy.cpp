@@ -5,46 +5,41 @@
 #include "GameObj/Behaviors/PatrolMove.h"
 #include "GameObj/Behaviors/FlyingMove.h"
 #include "GameObj/Behaviors/SimpleAttack.h"
+#include "GameObj/Behaviors/IgnoreWalls.h"
 
-//sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key
+sf::Color WaddleDeeColor(0, 0, 40); // Define Waddle Dee's color key
+sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key
 
+// Static registration for WaddleDee
 bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
-   sf::Color(0, 0, 40), // Color key for WaddleDee
-   [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
-	   auto enemyTexture = std::make_shared<sf::Texture>();
-	   if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-		   throw std::runtime_error("Failed to load Waddle Dee texture");
-	   }
-       //auto enemy = std::make_unique<Enemy>(enemyTexture, position);
-	   auto enemy = std::make_unique<Enemy>();
-	   enemy->setMoveBehavior(std::make_unique<PatrolMove>());
-	   enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
-	   enemy->setTexture(enemyTexture);
-	   enemy->setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
-       enemy->setPosition(position);  
-	   enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
-	   enemy->setDirection(sf::Vector2f(-1.f, 0.f));
-       return enemy;  
-   }  
+	WaddleDeeColor, [](sf::Vector2f position) -> std::unique_ptr<GameObject> {
+		auto enemyTexture = std::make_shared<sf::Texture>();
+		if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
+			throw std::runtime_error("Failed to load Waddle Dee texture");
+		}
+		auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+		enemy->setMoveBehavior(std::make_unique<PatrolMove>());
+		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
+		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
+		enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
+		return enemy;
+	}  
 );  
 
+// Static registration for Twizzy 
 bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
-   sf::Color(0, 0, 80),  // Color key for Twizzy
-   [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
-	   auto enemyTexture = std::make_shared<sf::Texture>();
-	   if (!enemyTexture->loadFromFile("TwizzySprite.png")) {
-		   throw std::runtime_error("Failed to load Twizzy texture");
-	   }
-       //auto enemy = std::make_unique<Enemy>(enemyTexture, position);
-	   auto enemy = std::make_unique<Enemy>();
-	   enemy->setMoveBehavior(std::make_unique<FlyingMove>());
-	   enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
-	   enemy->setTexture(enemyTexture);
-	   enemy->setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
-       enemy->setPosition(position);
-	   enemy->setDirection(sf::Vector2f(-1.f, 0.f));
-       return enemy;  
-   }  
+	TwizzyColor, [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
+		auto enemyTexture = std::make_shared<sf::Texture>();
+		if (!enemyTexture->loadFromFile("TwizzySprite.png")) {
+			throw std::runtime_error("Failed to load Twizzy texture");
+		}
+		auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+		enemy->setMoveBehavior(std::make_unique<FlyingMove>());
+		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
+		enemy->setCollisionBehavior(std::make_unique<IgnoreWalls>());
+		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
+		return enemy;  
+	}  
 );  
 
 //bool Enemy::isGreenEnemyRegistered = GameObjectFactory::registerType(  
@@ -57,18 +52,17 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 //   }  
 //);
 
-Enemy::Enemy()
-{
-}
+Enemy::Enemy() = default; // Default constructor
 
 Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition)
-	//: m_texture(enemyTexture), m_position(startPosition)
+	: m_state(EnemyState::SPAWNING), m_direction(sf::Vector2f(0.f, 0.f))
 {
 	setTexture(enemyTexture); // initialize m_texture, m_sprite
 	setPosition(startPosition);
 	setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
 	m_speed = 180.0f;
 }
+
 
 void Enemy::update(float deltaTime)
 {
@@ -80,7 +74,6 @@ void Enemy::update(float deltaTime)
 		if (m_spawnTimer <= 0.0f)
 		{
 			m_state = EnemyState::ACTIVE;
-			m_direction = sf::Vector2f(-1.f, 0.f); // Set initial direction
 		}
 		GameObject::update(deltaTime);
 		return;
@@ -117,15 +110,30 @@ void Enemy::stun(float duration)
 }
 
 
-// Handle collision with walls by reversing direction
-void Enemy::handleCollision(Wall* wall)
+void Enemy::handleCollision(GameObject* other)
 {
-    sf::Vector2f currentScale = m_sprite.getScale();
-    m_sprite.setScale(-currentScale.x, currentScale.y);
-    
-	m_direction = -m_direction; // Reverse direction on collision
-    
-	setPosition(m_oldPosition);
+	if (m_collisionBehavior) { // owner has special collision behavior
+		m_collisionBehavior->handleCollision(other);
+		return;
+	}
+	else { // Default collision handling
+		if (other->getType() == ObjectType::WALL)
+		{
+			// Handle collision with walls by reversing direction
+			sf::Vector2f currentScale = m_sprite.getScale();
+			m_sprite.setScale(-currentScale.x, currentScale.y);
+			m_direction = -m_direction; // Reverse direction on collision
+			setPosition(m_oldPosition);
+		}
+		else if (other->getType() == ObjectType::ENEMY)
+		{
+			// Handle collision by reversing direction
+			sf::Vector2f currentScale = m_sprite.getScale();
+			m_sprite.setScale(-currentScale.x, currentScale.y);
+			m_direction = -m_direction; // Reverse direction on collision
+			setPosition(m_oldPosition);
+		}
+	}
 }
 
 void Enemy::move(float deltaTime)
@@ -148,5 +156,15 @@ void Enemy::setMoveBehavior(std::unique_ptr<MoveBehavior> moveBehavior)
 
 void Enemy::setAttackBehavior(std::unique_ptr<AttackBehavior> attackBehavior)
 {
+	attackBehavior->setOwner(this);
 	m_attackBehavior = std::move(attackBehavior);
+}
+
+void Enemy::setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBehavior)
+{
+	if (collisionBehavior)
+	{
+		collisionBehavior->setOwner(this);
+	}
+	m_collisionBehavior = std::move(collisionBehavior);
 }
