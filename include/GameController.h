@@ -3,6 +3,9 @@
 #include <SFML/Graphics.hpp>
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
+#include "GameObj/FixedObj/Floor.h"
+#include "GameObj/FixedObj/Wall.h"
+#include "GameObj/FixedObj/Present.h"
 #include "WorldMap.h"
 #include "GlobalSizes.h"
 #include <vector>

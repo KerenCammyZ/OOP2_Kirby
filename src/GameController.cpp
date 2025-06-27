@@ -11,7 +11,7 @@ GameController::GameController():
 	m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
 
 	loadTextures(); // Load Textures of Kirby and Visual World
-	loadCollisionMap("Level1Collisions-Copy.png"); // Load the collision map for fixed objects and enemies
+	loadCollisionMap("Level1Collisions.png"); // Load the collision map for fixed objects and enemies
 
 	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 }
@@ -160,6 +160,24 @@ void GameController::update(float deltaTime)
 
 	checkCollisions();
 	updateView(); // Update the camera's position every frame 
+
+	// --- NEW: Remove collected presents ---Add commentMore actions
+	// std::remove_if moves all elements to be deleted to the end of the vector
+	// and returns an iterator to the first of those elements.
+	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj)
+		{
+			// Try to cast the object to a Present*
+			if (Present* present = dynamic_cast<Present*>(obj.get()))
+			{
+				// If it is a present and it's been collected, mark it for removal
+				return present->isCollected();
+			}
+			return false; // Not a present, don't remove
+		});
+
+	// .erase() then actually removes the elements from the vector.
+	m_allGameObjects.erase(it, m_allGameObjects.end());
 }
 
 void GameController::handle()

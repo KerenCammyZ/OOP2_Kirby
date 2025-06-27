@@ -2,6 +2,7 @@
 #include "WorldMap.h"
 #include "GameObjectFactory.h"
 #include "GameObj/FixedObj/Door.h"
+#include "GameObj/FixedObj/Wall.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GlobalSizes.h"
 
@@ -79,6 +80,10 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
 				newObject->setPosition(position);
 				if(newObject.get()->getType() == ObjectType::ENEMY)
 				{					
+					newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
+				}
+				if (newObject.get()->getType() == ObjectType::SPEED_PRESENT)
+				{
 					newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
 				}
 				createdObjects.push_back(std::move(newObject));

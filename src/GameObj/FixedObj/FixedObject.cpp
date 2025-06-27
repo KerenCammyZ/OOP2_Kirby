@@ -30,6 +30,15 @@ void FixedObject::setPosition(const sf::Vector2f& position)
 {
 	GameObject::setPosition(position); // Sets m_position
 	m_collisionShape.setPosition(position);
+
+	// adjust the sprite's origin and position
+	if (m_texture) {
+		sf::Vector2u texSize = m_texture->getSize();      // 16×16
+		m_sprite.setOrigin(texSize.x / 2.f, texSize.y / 2.f);  // Origin at (8, 8)
+	}
+	m_sprite.setPosition(m_position);
+
+	
 }
 
 // Override: Return the bounds of the debug shape, not the empty sprite
