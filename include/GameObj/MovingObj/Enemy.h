@@ -21,9 +21,8 @@ public:
 	void stun(float duration);
 
 	void handleCollision(GameObject* other) override;
-	void handleCollision(Kirby* kirby) override {};
+	void handleCollision(Kirby* kirby) override;
 	void handleCollision(Door* door) override {};
-	//void handleCollision(Wall* wall);
 
 	// Setters for strategies
 	void setMoveBehavior(std::unique_ptr<MoveBehavior> moveBehavior);
@@ -31,6 +30,8 @@ public:
 	void setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBehavior);
 	
 	void setDirection(const sf::Vector2f& direction) { m_direction = direction; }
+	
+
 	// for debugging
 	//std::string name; // for debugging
 	//std::string getName() const { return name; }

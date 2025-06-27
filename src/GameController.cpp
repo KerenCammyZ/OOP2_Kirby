@@ -37,13 +37,22 @@ void GameController::run()
 
 void GameController::checkCollisions()  
 {  
-	// Check collisions between Kirby and all other game objects
+	// Check collisions between Kirby and fixed objects
 	for (const auto& otherObject : m_allGameObjects)
 	{
 		if (m_kirby->collidesWith(*otherObject))
 		{
 			// Double dispatch will handle the specific collision type  
 			m_kirby->handleCollision(otherObject.get());
+		}
+	}
+
+	// Check collisions between Kirby and enemies
+	for (const auto& enemy : m_enemies)
+	{
+		if (m_kirby->collidesWith(*enemy))
+		{
+			m_kirby->handleCollision(enemy.get());
 		}
 	}
 

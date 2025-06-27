@@ -1,4 +1,5 @@
 #include "GameObj/MovingObj/Kirby.h"
+#include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Door.h"
 #include "States/KirbyStandingState.h"
 #include "GlobalSizes.h"
@@ -53,18 +54,28 @@ void Kirby::update(float deltaTime)
 
 void Kirby::handleCollision(GameObject* other)
 {
-	other->handleCollision(this);
+	if (other->getType() == ObjectType::WALL)
+	{
+		setPosition(getOldPosition());
+		setVelocity(sf::Vector2f(0, 0));
+	}
+	else if (other->getType() == ObjectType::ENEMY)
+	{
+		static_cast<Enemy*>(other)->handleCollision(this);
+	}
+	//else if (other->getType() == ObjectType::DOOR)
+	//{
+	//	handleCollision(static_cast<Door*>(other));
+	//	return;
+	//}
+	else {
+		other->handleCollision(this);
+	}
 }
 
 void Kirby::handleCollision(Door* door)
 {
 	door->handleCollision(this);
-}
-
-void Kirby::handleCollision(Wall* wall)
-{
-	setPosition(getOldPosition());
-	setVelocity(sf::Vector2f(0, 0));
 }
 
 float Kirby::getSpeed() const

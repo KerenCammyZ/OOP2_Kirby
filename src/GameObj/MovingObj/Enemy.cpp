@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "GameObjectFactory.h"
 #include "GameObj/MovingObj/Enemy.h"
+#include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/Behaviors/PatrolMove.h"
 #include "GameObj/Behaviors/FlyingMove.h"
 #include "GameObj/Behaviors/SimpleAttack.h"
@@ -134,6 +135,12 @@ void Enemy::handleCollision(GameObject* other)
 			setPosition(m_oldPosition);
 		}
 	}
+}
+
+
+void Enemy::handleCollision(Kirby* kirby)
+{
+	stun(1.0f); // Stun the enemy for 1 second on collision with Kirby
 }
 
 void Enemy::move(float deltaTime)
