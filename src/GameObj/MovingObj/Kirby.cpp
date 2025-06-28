@@ -1,4 +1,5 @@
 #include "GameObj/MovingObj/Kirby.h"
+#include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Door.h"
 #include "States/KirbyStandingState.h"
 #include "GlobalSizes.h"
@@ -30,6 +31,30 @@ void Kirby::update(float deltaTime)
 	// Manager handles all item effect timing and logic
 	m_presentManager.update(deltaTime, *this);
 
+	// Handle invincibility frames
+	if (m_isInvincible)
+	{
+		m_invincibilityTimer -= deltaTime;
+		if (m_invincibilityTimer <= 0.0f)
+		{
+			m_isInvincible = false;
+		}
+
+		// Optional: Make sprite flash during invincibility
+		static float flashTimer = 0.0f;
+		flashTimer += deltaTime;
+		if (flashTimer > 0.1f) // Flash every 0.1 seconds
+		{
+			sf::Color currentColor = m_sprite.getColor();
+			m_sprite.setColor(currentColor.a == 255 ? sf::Color(255, 255, 255, 128) : sf::Color::White);
+			flashTimer = 0.0f;
+		}
+	}
+	else
+	{
+		m_sprite.setColor(sf::Color::White); // Ensure normal color when not invincible
+	}
+
 	// Assume we are not on the ground at the start of the frame.
 	setGrounded(false);
 
@@ -53,7 +78,23 @@ void Kirby::update(float deltaTime)
 
 void Kirby::handleCollision(GameObject* other)
 {
-	other->handleCollision(this);
+	if (other->getType() == ObjectType::WALL)
+	{
+		setPosition(getOldPosition());
+		setVelocity(sf::Vector2f(0, 0));
+	}
+	else if (other->getType() == ObjectType::ENEMY)
+	{
+		static_cast<Enemy*>(other)->handleCollision(this);
+	}
+	//else if (other->getType() == ObjectType::DOOR)
+	//{
+	//	handleCollision(static_cast<Door*>(other));
+	//	return;
+	//}
+	else {
+		other->handleCollision(this);
+	}
 }
 
 void Kirby::handleCollision(Door* door)
@@ -61,10 +102,40 @@ void Kirby::handleCollision(Door* door)
 	door->handleCollision(this);
 }
 
-void Kirby::handleCollision(Wall* wall)
+void Kirby::takeDamage(int damageAmount)
 {
-	setPosition(getOldPosition());
-	setVelocity(sf::Vector2f(0, 0));
+	if (m_isInvincible || m_lives <= 0) return;
+
+	m_health -= damageAmount;
+
+	if (m_health <= 0)
+	{
+		loseLife();
+		m_health = m_maxHealth; // Reset health after losing a life
+	}
+
+	// start invincibility period
+	m_isInvincible = true;
+	m_invincibilityTimer = 1.0f; // 1 second of invincibility
+
+	std::cout << "Kirby took damage! Health: " << m_health << ", Lives: " << m_lives << std::endl;
+}
+
+void Kirby::heal(int healAmount)
+{
+	m_health = std::min(m_health + healAmount, m_maxHealth);
+	std::cout << "Kirby healed! Health: " << m_health << std::endl;
+}
+
+void Kirby::loseLife()
+{
+	m_lives--;
+	std::cout << "Life lost! Lives remaining: " << m_lives << std::endl;
+
+	if (m_lives <= 0)
+	{
+		std::cout << "Game Over!" << std::endl;
+	}
 }
 
 float Kirby::getSpeed() const
