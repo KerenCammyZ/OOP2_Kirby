@@ -1,4 +1,5 @@
 #include "GameObj/GameObject.h"
+#include <iostream> 
 
 GameObject::GameObject()
 {
@@ -22,14 +23,14 @@ void GameObject::draw(sf::RenderTarget& target) const
 	}
 }
 
-// update method is called every frame to update the position of the sprite?
+
 void GameObject::update(float dt)
 {
 	if (m_texture) {
 		sf::Vector2u texSize = m_texture->getSize();      // 16×16
 		m_sprite.setOrigin(texSize.x / 2.f, texSize.y / 2.f);  // Origin at (8, 8)
 	}
-	m_sprite.setPosition(m_position); // NOTICE: relevant to moving objects only
+	m_sprite.setPosition(m_position);
 }
 
 void GameObject::setPosition(const sf::Vector2f& position)

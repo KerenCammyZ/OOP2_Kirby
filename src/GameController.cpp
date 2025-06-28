@@ -1,45 +1,23 @@
 // GameController.cpp
 #include "GameController.h"
+#include <iostream> // for debugging
 
 GameController::GameController():
-	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_deltaTime(0.f)
+	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby")
 {
 	// camera setup
 	m_view.setSize(VIEW_WIDTH, VIEW_HEIGHT);
 	m_levelBlockHeight = VIEW_HEIGHT; // The height of a level section is one view height
 	m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
 
-	loadTextures(); // TODO: move to resource manager
-	m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
-	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
-	
-	// load game objects from the world map
-	auto objects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
-	// separate enemies from fixed objects (load enemies)
-	for (auto it = objects.begin(); it != objects.end(); )
-	{
-		if (auto enemy = dynamic_cast<Enemy*>(it->get()))
-		{
-			m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(it->release())));
-			it = objects.erase(it);
-		} else {
-			++it;
-		}
-	}
-	m_allGameObjects = std::move(objects);
-	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
+	loadTextures(); // Load Textures of Kirby and Visual World
+	loadCollisionMap("Level1Collisions.png"); // Load the collision map for fixed objects and enemies
 
-	//TEMP: direct non-factory loading for enemies
-	//auto enemyTexture = std::make_shared<sf::Texture>();
-	//if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-	//	throw std::runtime_error("Failed to load Waddle Dee texture");
-	//}
-	//m_enemies.push_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(550.f, 210.f)));
+	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 }
 
 void GameController::run()
 {	
-
 	while (m_window.isOpen())
 	{
 		m_deltaTime = m_deltaClock.restart().asSeconds();
@@ -59,12 +37,26 @@ void GameController::run()
 
 void GameController::checkCollisions()  
 {  
+	// Check collisions between Kirby and all other game objects
 	for (const auto& otherObject : m_allGameObjects)
 	{
 		if (m_kirby->collidesWith(*otherObject))
 		{
 			// Double dispatch will handle the specific collision type  
 			m_kirby->handleCollision(otherObject.get());
+		}
+	}
+
+	// Check enemy collisions with fixed objects
+	for (const auto& enemy : m_enemies)
+	{
+		for (const auto& otherObject : m_allGameObjects) {
+			if (otherObject->getType() == ObjectType::WALL &&
+				enemy->collidesWith(*otherObject))
+			{
+				// Double dispatch will handle the specific collision type  
+				enemy->handleCollision(static_cast<Wall*>(otherObject.get()));
+			}
 		}
 	}
 }
@@ -107,7 +99,7 @@ void GameController::updateView()
 	m_view.setCenter(viewX, viewY);
 }
 
-// Load kirby and worldmap textures
+// Load Kirby and Worldmap Textures
 void GameController::loadTextures()
 {
 	m_kirbyTexture = std::make_shared<sf::Texture>();
@@ -122,19 +114,70 @@ void GameController::loadTextures()
 	{
 		throw std::runtime_error("Failed to load world map texture");
 	}
+
+	m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
+	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
 }
 
+// Load the collision map for fixed objects and enemies
+void GameController::loadCollisionMap(std::string collisionMap)
+{
+	// Load all objects from the collision map file
+	auto objects = m_worldMap->loadObjectsFromFile(collisionMap);
+
+	// separate enemies from fixed objects (load enemies)
+	for (auto it = objects.begin(); it != objects.end(); )
+	{   
+		if (auto enemy = dynamic_cast<Enemy*>(it->get()))
+		{
+			m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(it->release())));
+			it = objects.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+	m_allGameObjects = std::move(objects); // contains only fixed objects (no enemies)
+	std::cout << "Loaded " << m_enemies.size() << " enemies.\n";
+}
+
+// Update all game objects, including Kirby and enemies
 void GameController::update(float deltaTime)
 {
 	m_kirby->update(deltaTime);
+	
 	// Update all other objects loaded from the map
 	for (auto& obj : m_allGameObjects)
 	{
 		// Polymorphism calls the correct update (MovingObject vs FixedObject)
 		obj->update(deltaTime);
 	}
+
+	for (auto& enemy : m_enemies)
+	{
+		enemy->update(deltaTime);
+	}
+
 	checkCollisions();
-	updateView(); // Update the camera's position every frame
+	updateView(); // Update the camera's position every frame 
+
+	// --- NEW: Remove collected presents ---Add commentMore actions
+	// std::remove_if moves all elements to be deleted to the end of the vector
+	// and returns an iterator to the first of those elements.
+	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj)
+		{
+			// Try to cast the object to a Present*
+			if (Present* present = dynamic_cast<Present*>(obj.get()))
+			{
+				// If it is a present and it's been collected, mark it for removal
+				return present->isCollected();
+			}
+			return false; // Not a present, don't remove
+		});
+
+	// .erase() then actually removes the elements from the vector.
+	m_allGameObjects.erase(it, m_allGameObjects.end());
 }
 
 void GameController::handle()
@@ -149,6 +192,7 @@ void GameController::draw()
 {
 	m_window.clear(sf::Color::Black);
 	m_window.setView(m_view);
+
 	m_worldMap->draw(m_window);
 	m_kirby->draw(m_window);
 
@@ -164,6 +208,7 @@ void GameController::draw()
 		enemy->draw(m_window);
 	}
 
+	
 	// NOTE: If you were to draw UI elements (like a score or health bar),
 	// you would switch back to the default view here so they stay fixed on the screen:
 	// m_window.setView(m_window.getDefaultView());

@@ -21,16 +21,19 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	// Set the initial state to StandingState
 	m_state = std::make_unique<KirbyStandingState>();
 	m_state->enter(*this);
+
+	m_originalSpeed = m_speed;
 };
 
-// This is the main update function and the ONLY one that should contain this logic.
 void Kirby::update(float deltaTime)
 {
-	// 1. Assume we are not on the ground at the start of the frame.
-	//    The collision check later will correct this if we are.
-	//setGrounded(false);
+	// Manager handles all item effect timing and logic
+	m_presentManager.update(deltaTime, *this);
 
-	// 2. Let the current state handle transitions and modify velocity.
+	// Assume we are not on the ground at the start of the frame.
+	setGrounded(false);
+
+	// Current state handle transitions and modify velocity.
 	auto newState = m_state->handleInput(*this);
 	if (newState)
 	{
@@ -39,8 +42,7 @@ void Kirby::update(float deltaTime)
 	}
 	m_state->update(*this, deltaTime);
 
-	// 3. Apply the final velocity to our position.
-	//    This is where all movement actually happens.
+	// Apply the final velocity to our position.
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
 	GameObject::update(deltaTime);
@@ -49,9 +51,9 @@ void Kirby::update(float deltaTime)
 }
 
 
-void Kirby::handleCollision(GameObject* other)  
-{  
-	other->handleCollision(this);  
+void Kirby::handleCollision(GameObject* other)
+{
+	other->handleCollision(this);
 }
 
 void Kirby::handleCollision(Door* door)
@@ -68,6 +70,21 @@ void Kirby::handleCollision(Wall* wall)
 float Kirby::getSpeed() const
 {
 	return m_speed;
+}
+
+void Kirby::setSpeed(float speed)
+{
+	m_speed = speed;
+}
+
+float Kirby::getOriginalSpeed() const
+{
+	return m_originalSpeed;
+}
+
+void Kirby::addPresentEffect(std::unique_ptr<PresentCommand> command)
+{
+	m_presentManager.add(std::move(command), *this);
 }
 
 // --- NEW PHYSICS METHOD DEFINITIONS ---

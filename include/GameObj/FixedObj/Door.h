@@ -12,4 +12,5 @@ public:
 
 private:
 	sf::Vector2f m_destination; // Where this door leads
+	static bool m_registeritem; // Static member to register this type with the factory
 };
