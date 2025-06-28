@@ -15,26 +15,6 @@ GameController::GameController():
 
 }
 
-//void GameController::run()
-//{	
-//	loadLevel(1); // Load the first level
-//	while (m_window.isOpen())
-//	{
-//		m_deltaTime = m_deltaClock.restart().asSeconds();
-//		sf::Event event;
-//		while (m_window.pollEvent(event))
-//		{
-//			if (event.type == sf::Event::Closed)
-//				m_window.close();
-//		}
-//
-//		handle();
-//		update(m_deltaTime);
-//		draw();
-//		m_window.display();
-//	}
-//}
-
 void GameController::run()
 {
 	// This is the main outer loop that controls the entire game session.
@@ -75,19 +55,66 @@ void GameController::run()
 	// Optional: Add a "You Win!" screen here after the loop finishes.
 }
 
-void GameController::checkCollisions()  
-{  
-	// Check collisions between Kirby and fixed objects
+//void GameController::checkCollisions()  
+//{  
+//	// Check collisions between Kirby and fixed objects
+//	for (const auto& otherObject : m_allGameObjects)
+//	{
+//		if (m_kirby->collidesWith(*otherObject))
+//		{
+//			// Double dispatch will handle the specific collision type  
+//			m_kirby->handleCollision(otherObject.get());
+//		}
+//	}
+//
+//	// Check collisions between Kirby and enemies
+//	for (const auto& enemy : m_enemies)
+//	{
+//		if (m_kirby->collidesWith(*enemy))
+//		{
+//			m_kirby->handleCollision(enemy.get());
+//		}
+//	}
+//
+//	// Check enemy collisions with fixed objects
+//	for (const auto& enemy : m_enemies)
+//	{
+//		for (const auto& otherObject : m_allGameObjects) {
+//			if (otherObject->getType() == ObjectType::WALL &&
+//				enemy->collidesWith(*otherObject))
+//			{
+//				// Double dispatch will handle the specific collision type  
+//				enemy->handleCollision(static_cast<Wall*>(otherObject.get()));
+//			}
+//		}
+//	}
+//}
+
+void GameController::checkCollisions()
+{
+	// Check collisions between Kirby and all other game objects
 	for (const auto& otherObject : m_allGameObjects)
 	{
 		if (m_kirby->collidesWith(*otherObject))
 		{
-			// Double dispatch will handle the specific collision type  
+			// --- NEW: Check for collision with the Exit ---
+			// Before doing normal collision handling, check if Kirby hit the exit.
+			if (otherObject->getType() == ObjectType::EXIT)
+			{
+				// If it's an exit, tell the level it's complete.
+				m_level->setCompleted(true);
+
+				// Return immediately. We don't need to check other collisions
+				// for this frame, as a level transition is about to happen.
+				return;
+			}
+
+			// If it wasn't an exit, handle the collision normally.
 			m_kirby->handleCollision(otherObject.get());
 		}
 	}
 
-	// Check collisions between Kirby and enemies
+	// The rest of the collision checks (Kirby vs. Enemies, etc.) remain the same.
 	for (const auto& enemy : m_enemies)
 	{
 		if (m_kirby->collidesWith(*enemy))
@@ -96,14 +123,12 @@ void GameController::checkCollisions()
 		}
 	}
 
-	// Check enemy collisions with fixed objects
 	for (const auto& enemy : m_enemies)
 	{
 		for (const auto& otherObject : m_allGameObjects) {
 			if (otherObject->getType() == ObjectType::WALL &&
 				enemy->collidesWith(*otherObject))
 			{
-				// Double dispatch will handle the specific collision type  
 				enemy->handleCollision(static_cast<Wall*>(otherObject.get()));
 			}
 		}
@@ -170,33 +195,12 @@ void GameController::loadTextures()
 
 void GameController::loadLevel(int levelNum)
 {
+	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position at the start of each level
 	m_level = std::make_unique<Level>(levelNum);
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
 }
-
-//// Load the collision map for fixed objects and enemies
-//void GameController::loadCollisionMap(std::string collisionMap)
-//{
-//	// Load all objects from the collision map file
-//	auto objects = m_worldMap->loadObjectsFromFile(collisionMap);
-//
-//	// separate enemies from fixed objects (load enemies)
-//	for (auto it = objects.begin(); it != objects.end(); )
-//	{   
-//		if (auto enemy = dynamic_cast<Enemy*>(it->get()))
-//		{
-//			m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(it->release())));
-//			it = objects.erase(it);
-//		}
-//		else {
-//			++it;
-//		}
-//	}
-//	m_allGameObjects = std::move(objects); // contains only fixed objects (no enemies)
-//	std::cout << "Loaded " << m_enemies.size() << " enemies.\n";
-//}
 
 // Update all game objects, including Kirby and enemies
 void GameController::update(float deltaTime)

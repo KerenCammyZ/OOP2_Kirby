@@ -5,8 +5,10 @@
 #include "GameObjectFactory.h"
 #include "GlobalSizes.h"
 
+const sf::Color floorColor(76, 255, 0);
+
 bool Floor::m_registeritem = GameObjectFactory::registerType(
-	sf::Color(76, 255, 0), // The color key for a Floor object
+	floorColor, // The color key for a Floor object
 	[](sf::Vector2f position) -> std::unique_ptr<GameObject> // The blueprint
 	{
 		// This lambda function creates and returns a new Floor object

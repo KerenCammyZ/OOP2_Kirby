@@ -2,9 +2,11 @@
 #include "Commands/SpeedBoostCommand.h" // Include the command it will issue
 #include <iostream>
 
+const sf::Color speedPresentColor(255, 216, 0);
+
 // Static lambda to register this present with the factory
 bool SpeedPresent::m_registerSpeedPresent = GameObjectFactory::registerType(
-	SPEED_PRESENT_COLOR,
+	speedPresentColor,
 	[](sf::Vector2f position) -> std::unique_ptr<GameObject>
 	{
 		auto present = std::make_unique<SpeedPresent>();
