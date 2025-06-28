@@ -3,36 +3,76 @@
 #include <iostream> // for debugging
 
 GameController::GameController():
-	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby")
+	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1)
 {
 	// camera setup
 	m_view.setSize(VIEW_WIDTH, VIEW_HEIGHT);
-	m_levelBlockHeight = VIEW_HEIGHT; // The height of a level section is one view height
+	m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
 	m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
 
 	loadTextures(); // Load Textures of Kirby and Visual World
-	loadCollisionMap("Level1Collisions.png"); // Load the collision map for fixed objects and enemies
+	//loadCollisionMap("Level1Collisions.png"); // Load the collision map for fixed objects and enemies
 
-	//m_allGameObjects = m_worldMap->loadObjectsFromFile("Level1Collisions.png");
 }
 
+//void GameController::run()
+//{	
+//	loadLevel(1); // Load the first level
+//	while (m_window.isOpen())
+//	{
+//		m_deltaTime = m_deltaClock.restart().asSeconds();
+//		sf::Event event;
+//		while (m_window.pollEvent(event))
+//		{
+//			if (event.type == sf::Event::Closed)
+//				m_window.close();
+//		}
+//
+//		handle();
+//		update(m_deltaTime);
+//		draw();
+//		m_window.display();
+//	}
+//}
+
 void GameController::run()
-{	
-	while (m_window.isOpen())
+{
+	// This is the main outer loop that controls the entire game session.
+	while (m_currentLevel <= m_maxLevels)
 	{
-		m_deltaTime = m_deltaClock.restart().asSeconds();
-		sf::Event event;
-		while (m_window.pollEvent(event))
+		// --- Load all assets for the current level ---
+		loadLevel(m_currentLevel);
+
+		// This is the inner loop that runs the current level until it's complete.
+		while (m_window.isOpen() && !m_level->getCompleted())
 		{
-			if (event.type == sf::Event::Closed)
-				m_window.close();
+			m_deltaTime = m_deltaClock.restart().asSeconds();
+			sf::Event event;
+			while (m_window.pollEvent(event))
+			{
+				if (event.type == sf::Event::Closed)
+				{
+					// If the window is closed, exit the game entirely.
+					m_currentLevel = m_maxLevels + 1; // Set level to exit outer loop
+					m_window.close();
+				}
+			}
+
+			if (!m_window.isOpen()) break;
+
+			handle();
+			update(m_deltaTime);
+			draw();
+			m_window.display();
 		}
 
-		handle();
-		update(m_deltaTime);
-		draw();
-		m_window.display();
+		// If the level was completed (and the window wasn't closed), advance to the next level.
+		if (m_window.isOpen())
+		{
+			m_currentLevel++;
+		}
 	}
+	// Optional: Add a "You Win!" screen here after the loop finishes.
 }
 
 void GameController::checkCollisions()  
@@ -77,9 +117,9 @@ void GameController::updateView()
 
 	// vertical movement
 	//The floor division gives us an integer index (0 for the top block, 1 for the middle, etc.)
-	int verticalBlockIndex = static_cast<int>(m_kirby->getPosition().y / m_levelBlockHeight);
+	int verticalBlockIndex = static_cast<int>(m_kirby->getPosition().y / m_levelAreaHeight);
 	//Calculate the Y-center of that block to lock the camera to it.
-	float viewY = (verticalBlockIndex * m_levelBlockHeight) + (m_levelBlockHeight / 2.f);
+	float viewY = (verticalBlockIndex * m_levelAreaHeight) + (m_levelAreaHeight / 2.f);
 
 
 	// boundry checks
@@ -112,43 +152,51 @@ void GameController::updateView()
 void GameController::loadTextures()
 {
 	m_kirbyTexture = std::make_shared<sf::Texture>();
-	m_worldMapTexture = std::make_shared<sf::Texture>();
+	//m_worldMapTexture = std::make_shared<sf::Texture>();
 	
 	if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
 	{
 		throw std::runtime_error("Failed to load Kirby texture");
 	}
 
-	if (!m_worldMapTexture->loadFromFile("Level1.png"))
+	/*if (!m_worldMapTexture->loadFromFile("Level1.png"))
 	{
 		throw std::runtime_error("Failed to load world map texture");
-	}
+	}*/
 
 	m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
-	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
+	//m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
 }
 
-// Load the collision map for fixed objects and enemies
-void GameController::loadCollisionMap(std::string collisionMap)
+void GameController::loadLevel(int levelNum)
 {
-	// Load all objects from the collision map file
-	auto objects = m_worldMap->loadObjectsFromFile(collisionMap);
-
-	// separate enemies from fixed objects (load enemies)
-	for (auto it = objects.begin(); it != objects.end(); )
-	{   
-		if (auto enemy = dynamic_cast<Enemy*>(it->get()))
-		{
-			m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(it->release())));
-			it = objects.erase(it);
-		}
-		else {
-			++it;
-		}
-	}
-	m_allGameObjects = std::move(objects); // contains only fixed objects (no enemies)
-	std::cout << "Loaded " << m_enemies.size() << " enemies.\n";
+	m_level = std::make_unique<Level>(levelNum);
+	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
+	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
+	m_enemies = m_level->getEnemies(); // Load all enemies from the level
 }
+
+//// Load the collision map for fixed objects and enemies
+//void GameController::loadCollisionMap(std::string collisionMap)
+//{
+//	// Load all objects from the collision map file
+//	auto objects = m_worldMap->loadObjectsFromFile(collisionMap);
+//
+//	// separate enemies from fixed objects (load enemies)
+//	for (auto it = objects.begin(); it != objects.end(); )
+//	{   
+//		if (auto enemy = dynamic_cast<Enemy*>(it->get()))
+//		{
+//			m_enemies.push_back(std::unique_ptr<Enemy>(static_cast<Enemy*>(it->release())));
+//			it = objects.erase(it);
+//		}
+//		else {
+//			++it;
+//		}
+//	}
+//	m_allGameObjects = std::move(objects); // contains only fixed objects (no enemies)
+//	std::cout << "Loaded " << m_enemies.size() << " enemies.\n";
+//}
 
 // Update all game objects, including Kirby and enemies
 void GameController::update(float deltaTime)
