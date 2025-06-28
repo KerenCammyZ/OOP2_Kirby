@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObj/Behaviors/MoveBehavior.h"
+#include "Behaviors/MoveBehavior.h"
 #include "GameObj/MovingObj/Enemy.h"
 
 class FlyingMove : public MoveBehavior

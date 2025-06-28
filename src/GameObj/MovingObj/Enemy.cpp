@@ -3,10 +3,10 @@
 #include "GameObjectFactory.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/MovingObj/Kirby.h"
-#include "GameObj/Behaviors/PatrolMove.h"
-#include "GameObj/Behaviors/FlyingMove.h"
-#include "GameObj/Behaviors/SimpleAttack.h"
-#include "GameObj/Behaviors/IgnoreWalls.h"
+#include "Behaviors/PatrolMove.h"
+#include "Behaviors/FlyingMove.h"
+#include "Behaviors/SimpleAttack.h"
+#include "Behaviors/IgnoreWalls.h"
 
 sf::Color WaddleDeeColor(0, 0, 40); // Define Waddle Dee's color key
 sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key

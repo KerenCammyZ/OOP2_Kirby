@@ -1,4 +1,4 @@
-#include "GameObj/Behaviors/AttackBehavior.h"
+#include "Behaviors/AttackBehavior.h"
 #include <iostream>
 
 class SimpleAttack : public AttackBehavior

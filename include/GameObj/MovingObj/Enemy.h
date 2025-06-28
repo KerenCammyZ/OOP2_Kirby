@@ -3,9 +3,9 @@
 #include <memory>
 #include "GameObj/MovingObj/MovingObject.h"
 #include "GameObj/FixedObj/Wall.h"
-#include "GameObj/Behaviors/MoveBehavior.h"
-#include "GameObj/Behaviors/AttackBehavior.h"
-#include "GameObj/Behaviors/CollisionBehavior.h"
+#include "Behaviors/MoveBehavior.h"
+#include "Behaviors/AttackBehavior.h"
+#include "Behaviors/CollisionBehavior.h"
 
 enum class EnemyState { SPAWNING, ACTIVE, STUNNED };
 

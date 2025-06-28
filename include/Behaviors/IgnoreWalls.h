@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObj/Behaviors/CollisionBehavior.h"
+#include "Behaviors/CollisionBehavior.h"
 #include "GameObj/MovingObj/Enemy.h"
 
 class IgnoreWalls : public CollisionBehavior
