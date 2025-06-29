@@ -53,6 +53,7 @@ void GameController::run()
 		}
 	}
 	// Optional: Add a "You Win!" screen here after the loop finishes.
+	std::cout << "Game Over! Thanks for playing!" << std::endl;
 }
 
 void GameController::checkCollisions()

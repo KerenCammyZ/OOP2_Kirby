@@ -1,7 +1,7 @@
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Door.h"
-#include "States/KirbyStandingState.h"
+#include "States/KirbyWalkingState.h"
 #include "GlobalSizes.h"
 #include "GameObj/FixedObj/Wall.h"
 #include <iostream>
@@ -20,7 +20,7 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	setPosition(startPosition);
 
 	// Set the initial state to StandingState
-	m_state = std::make_unique<KirbyStandingState>();
+	m_state = std::make_unique<KirbyWalkingState>();
 	m_state->enter(*this);
 
 	m_originalSpeed = m_speed;
