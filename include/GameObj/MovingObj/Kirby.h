@@ -32,6 +32,10 @@ public:
 	void setGrounded(bool grounded);
 	bool isGrounded() const;
 
+	// --- NEW: Water state management ---
+	void setInWater(bool inWater);
+	bool isInWater() const;
+
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override {};
@@ -60,4 +64,5 @@ private:
 	int m_lives = 3;
 	bool m_isInvincible = false;
 	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
+	bool m_inWater = false;
 };

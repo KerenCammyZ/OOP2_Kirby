@@ -28,6 +28,12 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 
 void Kirby::update(float deltaTime)
 {
+	// --- THIS IS THE FIX ---
+	// At the start of his turn, Kirby assumes he is in the air and not in water.
+	// The collision check that runs BEFORE this function will correct these flags if needed.
+	m_isGrounded = false;
+	m_inWater = false;
+
 	// Manager handles all item effect timing and logic
 	m_presentManager.update(deltaTime, *this);
 
@@ -55,10 +61,28 @@ void Kirby::update(float deltaTime)
 		m_sprite.setColor(sf::Color::White); // Ensure normal color when not invincible
 	}
 
-	// Assume we are not on the ground at the start of the frame.
-	setGrounded(false);
+	//// Assume we are not on the ground at the start of the frame.
+	//setGrounded(false);
+	//
 
-	// Current state handle transitions and modify velocity.
+	//// Current state handle transitions and modify velocity.
+	//auto newState = m_state->handleInput(*this);
+	//if (newState)
+	//{
+	//	m_state = std::move(newState);
+	//	m_state->enter(*this);
+	//}
+	//m_state->update(*this, deltaTime);
+
+	//// Apply the final velocity to our position.
+	//m_oldPosition = m_position;
+	//setPosition(m_position + m_velocity * deltaTime);
+	//GameObject::update(deltaTime);
+
+	//setGrounded(false);
+
+	// Now, the state machine can correctly check the flags that were set by
+	// GameController::checkCollisions() right before this function was called.
 	auto newState = m_state->handleInput(*this);
 	if (newState)
 	{
@@ -67,12 +91,9 @@ void Kirby::update(float deltaTime)
 	}
 	m_state->update(*this, deltaTime);
 
-	// Apply the final velocity to our position.
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
 	GameObject::update(deltaTime);
-
-	setGrounded(false);
 }
 
 
@@ -163,3 +184,13 @@ void Kirby::setVelocity(const sf::Vector2f& velocity) { m_velocity = velocity; }
 sf::Vector2f Kirby::getVelocity() const { return m_velocity; }
 void Kirby::setGrounded(bool grounded) { m_isGrounded = grounded; }
 bool Kirby::isGrounded() const { return m_isGrounded; }
+
+void Kirby::setInWater(bool inWater)
+{
+	m_inWater = inWater;
+}
+
+bool Kirby::isInWater() const
+{
+	return m_inWater;
+}
