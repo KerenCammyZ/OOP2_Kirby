@@ -15,6 +15,9 @@ public:
     // Load and setup the spritesheet for HUD elements
     bool loadSpriteSheet(const std::string& filePath);
 
+    // Update HUD with current game state data
+    void updateGameData(int health, int lives, int score, const std::string& kirbyState);
+
     // Draw the HUD stretched across the display area
     void draw(sf::RenderTarget& target);
 
@@ -23,8 +26,8 @@ public:
 
     // Example HUD element drawing functions
     void drawScore(sf::RenderTarget& target, int score, float x, float y);
-    void drawLives(sf::RenderTarget& target, int lives, float x, float y);
-    void drawHealthBar(sf::RenderTarget& target, int health, float x, float y);
+    void drawLives(sf::RenderTarget& target, float x, float y);
+    void drawHealthBar(sf::RenderTarget& target, float x, float y);
 
 private:
     std::shared_ptr<sf::Texture> m_hudTexture;
@@ -44,4 +47,11 @@ private:
 
     // Helper to get the scale factors for sprites to match HUD stretching
     sf::Vector2f getHUDScale();
+
+    // Game state data (updated each frame)
+    int m_currentHealth;
+    int m_maxHealth;
+    int m_lives;
+    int m_score;
+	std::string m_kirbyState; // special powers or states ("normal", "hyper", "spark", "invincible", etc.)
 };

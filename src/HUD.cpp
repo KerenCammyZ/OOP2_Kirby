@@ -3,7 +3,9 @@
 #include "GlobalSizes.h"
 #include <iostream>
 
-HUD::HUD() {
+HUD::HUD()
+    : m_currentHealth(6), m_maxHealth(6), m_lives(5), m_score(0), m_kirbyState("normal")
+{
     // Initialize display area to bottom of screen by default
     setDisplayArea(0, 0, SCREEN_WIDTH, HUD_HEIGHT);
 
@@ -53,15 +55,26 @@ bool HUD::loadSpriteSheet(const std::string& filePath) {
 
 	m_spriteSheet->addSprite("normal", 0, 30, 32, 40); // sprite for normal state
     m_spriteSheet->addSprite("hyper", 32, 30, 32, 40); // sprite for hyper state
+    //m_spriteSheet->addSprite("invincible", 64, 30, 32, 40); // sprite for invincible state
 
-    m_spriteSheet->addSprite("kirby", 0, 0, 50, 10); // kirby title
-    m_spriteSheet->addSprite("score", 0, 10, 50, 10); // score title
+    m_spriteSheet->addSprite("kirbyText", 0, 0, 50, 10); // kirby title
+    m_spriteSheet->addSprite("scoreText", 0, 10, 50, 10); // score title
 
-	m_spriteSheet->addSpriteGrid("digit", 0, 110, 8, 8, 10); // digits 0-9
+	m_spriteSheet->addSpriteGrid("digit", 0, 110, 8, 8, 10, 10); // digits 0-9
     m_spriteSheet->addSpriteGrid("capsule", 100, 0, 8, 14, 3, 3);
+
+	m_spriteSheet->addSprite("kirbyIcon", 152, 0, 13, 12); // sprite for kirby lives
 
 
     return true;
+}
+
+void HUD::updateGameData(int health, int lives, int score, const std::string& state)
+{
+    m_currentHealth = health;
+    m_lives = lives;
+    m_score = score;
+    m_kirbyState = state;
 }
 
 
@@ -81,8 +94,9 @@ void HUD::draw(sf::RenderTarget& target) {
     // draw state 'normal state' at HUD coordinate (577, 33)
 	sf::Vector2f scale = getHUDScale();
     sf::Vector2f statePos = hudToScreen(144, 8);
-    m_spriteSheet->drawSprite(target, "normal", statePos.x, statePos.y, scale.x, scale.y);
-    drawHealthBar(target, 6, 72, 13);
+    m_spriteSheet->drawSprite(target, m_kirbyState, statePos.x, statePos.y, scale.x, scale.y);
+    drawHealthBar(target, 72, 13);
+	drawLives(target, 187, 20);
 
 }
 
@@ -108,28 +122,42 @@ void HUD::drawScore(sf::RenderTarget& target, int score, float x, float y) {
 }
 
 
-void HUD::drawLives(sf::RenderTarget& target, int lives, float x, float y) {
-    // Draw lives/stars sprites
+void HUD::drawLives(sf::RenderTarget& target, float x, float y) {
+    // Draw number of lives
 	sf::Vector2f scale = getHUDScale();
-    for (int i = 0; i < lives; i++) {
-        sf::Vector2f screenPos = hudToScreen(x + (i * 15), y); // 15 pixel spacing
-        m_spriteSheet->drawSprite(target, "lives0", screenPos.x, screenPos.y, scale.x, scale.y); // Assuming "lives0" sprite
+
+    sf::Vector2f iconPos = hudToScreen(x, y);
+	m_spriteSheet->drawSprite(target, "kirbyIcon", iconPos.x, iconPos.y, scale.x, scale.y);
+        
+    std::string livesStr = std::to_string(m_lives);
+        
+    if (livesStr.length() == 1) {
+        livesStr = "0" + livesStr; // Ensure two digits for single-digit lives
+    }
+    float digitPosX = 208;
+    float digitPosY = 24;
+        
+    for (char digit : livesStr)
+    {
+        int digitValue = digit - '0'; // Convert char to int
+        sf::Vector2f digitPos = hudToScreen(digitPosX, digitPosY);
+        m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, digitPos.x, digitPos.y, scale.x, scale.y);
+		digitPosX += 8; // Move to next digit position
     }
 }
 
 
-void HUD::drawHealthBar(sf::RenderTarget& target, int health, float x, float y) {
+void HUD::drawHealthBar(sf::RenderTarget& target, float x, float y) {
     // Draw health bar segments
 	sf::Vector2f scale = getHUDScale();
-    int maxHealth = 6; // Maximum health segments to display
 
-    for (int i = 0; i < maxHealth; i++)
+    for (int i = 0; i < m_maxHealth; i++)
     {
         sf::Vector2f segmentPos = hudToScreen(x + (i * 8), y);
 
         // Choose which capsuleSprite to draw based on health
         std::string capsuleSprite;
-        if (i < health) {
+        if (i < m_currentHealth) {
             capsuleSprite = "capsule1"; // capsule1 = full capsule
         } // capsule0 = empty_capsule, for animated HUD ('blinking' capsules) 
         else {

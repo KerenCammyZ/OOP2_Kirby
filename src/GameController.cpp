@@ -272,6 +272,22 @@ void GameController::drawHUD()
 {
 	// Set the HUD view for the bottom section
 	m_window.setView(m_hudView);
+	
+	// Update HUD with current game data
+	int kirbyHealth = m_kirby->getHealth();
+	int lives = m_kirby->getLives();
+	int score = 0;    // TODO: Replace with getScore()
+	
+	std::string state;
+	//if (m_kirby->isInvincible())
+		//state = "invincible"; // TODO: Replace with a m_kirby->get() function
+	if (m_kirby->isHyper())
+		state = "hyper";      // maybe getCurrentPower() / getCurrentState() / getStateDisplay(), ..
+	else
+		state = "normal";
+
+	m_hud->updateGameData(kirbyHealth, lives, score, state);
+
 	// Draw the HUD stretched across the bottom
 	m_hud->draw(m_window);
 }

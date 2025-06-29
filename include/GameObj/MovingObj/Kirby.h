@@ -43,7 +43,11 @@ public:
 	void loseLife();
 	int getHealth() const { return m_health; }
 	int getMaxHealth() const { return m_maxHealth; }
+	int getLives() const { return m_lives; }
 	bool isInvincible() const { return m_isInvincible; }
+	bool isHyper() const { return m_isHyper; }
+	void setHyper(bool hyper) { m_isHyper = hyper; }
+	
 
 private:
 	std::unique_ptr<KirbyState> m_state;
@@ -57,7 +61,8 @@ private:
 
 	int m_health = 6;
 	int m_maxHealth = 6;
-	int m_lives = 3;
+	int m_lives = 5;
 	bool m_isInvincible = false;
+	bool m_isHyper = false;
 	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
 };
