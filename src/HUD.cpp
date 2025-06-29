@@ -94,13 +94,15 @@ void HUD::draw(sf::RenderTarget& target) {
     // draw state 'normal state' at HUD coordinate (577, 33)
 	sf::Vector2f scale = getHUDScale();
     sf::Vector2f statePos = hudToScreen(144, 8);
-    m_spriteSheet->drawSprite(target, m_kirbyState, statePos.x, statePos.y, scale.x, scale.y);
-    drawHealthBar(target, 72, 13);
+    m_spriteSheet->drawSprite(target, m_kirbyState, statePos.x, statePos.y, scale.x, scale.y); // kirby state display
+
 	drawLives(target, 187, 20);
+    drawScore(target, m_score, 72, 32);
+    drawHealthBar(target, 72, 13);
 
 }
 
-// Set the area where HUD should be drawn (usually bottom of screen)
+// Set the area where HUD should be drawn
 void HUD::setDisplayArea(float x, float y, float width, float height) {
     m_displayArea = sf::FloatRect(x, y, width, height);
     updateSprite();
@@ -113,11 +115,17 @@ void HUD::drawScore(sf::RenderTarget& target, int score, float x, float y) {
     float currentX = x;
     sf::Vector2f scale = getHUDScale();
 
+    int i = scoreStr.length();
+    while (i < 7){
+        scoreStr = "0" + scoreStr; // Pad with leading zeros if less than 7 digits
+        i++;
+	}
+
     for (char digit : scoreStr) {
         int digitValue = digit - '0'; // Convert char to int
         sf::Vector2f screenPos = hudToScreen(currentX, y);
         m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, screenPos.x, screenPos.y, scale.x, scale.y);
-        currentX += 10; // Move to next digit position (adjust spacing as needed)
+        currentX += 8; // Move to next digit position (adjust spacing as needed)
     }
 }
 
@@ -168,7 +176,7 @@ void HUD::drawHealthBar(sf::RenderTarget& target, float x, float y) {
     }
 }
 
-
+// Update the sprite to stretch it across the display area
 void HUD::updateSprite()
 {
     if (!m_hudTexture) {

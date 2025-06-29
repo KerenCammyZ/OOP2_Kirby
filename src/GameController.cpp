@@ -5,40 +5,19 @@
 GameController::GameController():
 	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1)
 {
-	// camera setup
+	// camera setup -- NOTE: camera setup is now handled by loadHUD()
+	
 	//m_view.setSize(VIEW_WIDTH, VIEW_HEIGHT);
 	//m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
 	//m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
-
+	
 	loadTextures(); // Load Textures of Kirby and Visual World
-	loadHUD();
+	loadHUD(); // Load the HUD and set up the views for the game and HUD
+	
 	//loadCollisionMap("Level1Collisions.png"); // Load the collision map for fixed objects and enemies
 
 }
 
-void GameController::loadHUD()
-{
-	// Game view - takes up the top portion of the screen
-	m_gameView.setSize(VIEW_WIDTH, VIEW_HEIGHT);
-	m_gameView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, float(GAME_HEIGHT) / SCREEN_HEIGHT));
-	m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
-	m_gameView.setCenter(m_gameView.getSize().x / 2.f, m_gameView.getSize().y / 2.f);
-
-	// HUD view - takes up the bottom portion of the screen
-	m_hudView.setSize(SCREEN_WIDTH, HUD_HEIGHT);
-	m_hudView.setViewport(sf::FloatRect(0.f, (float)GAME_HEIGHT / SCREEN_HEIGHT, 1.f, (float)HUD_HEIGHT / SCREEN_HEIGHT)); // ?
-	m_hudView.setCenter(SCREEN_WIDTH / 2.f, HUD_HEIGHT / 2.f);
-
-	// Initialize HUD
-	m_hud = std::make_unique<HUD>();
-	if (!m_hud->loadTexture("HUD.png")) {
-		std::cout << "Warning: Could not load HUD.png\n";
-	}
-
-	if (!m_hud->loadSpriteSheet("HUDSpriteSheet.png")) {
-		std::cout << "Warning: Could not load spritesheet.png\n";
-	}
-}
 
 void GameController::run()
 {
@@ -58,7 +37,7 @@ void GameController::run()
 				if (event.type == sf::Event::Closed)
 				{
 					// If the window is closed, exit the game entirely.
-					m_currentLevel = m_maxLevels + 1; // Set level to exit outer loop
+					m_currentLevel = m_maxLevels + 1; // Set level to exit outer loop. Q: unnecessary? (window is being closed anyway).
 					m_window.close();
 				}
 			}
@@ -72,13 +51,14 @@ void GameController::run()
 		}
 
 		// If the level was completed (and the window wasn't closed), advance to the next level.
-		if (m_window.isOpen())
+		if (m_window.isOpen()) // Q: "if" is unncessary? (window is necessarily open if we are here)
 		{
 			m_currentLevel++;
 		}
 	}
 	// Optional: Add a "You Win!" screen here after the loop finishes.
 }
+
 
 void GameController::checkCollisions()
 {
@@ -272,6 +252,34 @@ void GameController::draw()
 	drawHUD();
 }
 
+
+// Load the HUD and set up the views for the game and HUD
+void GameController::loadHUD()
+{
+	// Game view - takes up the top portion of the screen
+	m_gameView.setSize(VIEW_WIDTH, VIEW_HEIGHT);
+	m_gameView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, float(GAME_HEIGHT) / SCREEN_HEIGHT));
+	m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
+	m_gameView.setCenter(m_gameView.getSize().x / 2.f, m_gameView.getSize().y / 2.f);
+
+	// HUD view - takes up the bottom portion of the screen
+	m_hudView.setSize(SCREEN_WIDTH, HUD_HEIGHT);
+	m_hudView.setViewport(sf::FloatRect(0.f, (float)GAME_HEIGHT / SCREEN_HEIGHT, 1.f, (float)HUD_HEIGHT / SCREEN_HEIGHT)); // ?
+	m_hudView.setCenter(SCREEN_WIDTH / 2.f, HUD_HEIGHT / 2.f);
+
+	// Initialize HUD
+	m_hud = std::make_unique<HUD>();
+	if (!m_hud->loadTexture("HUD.png")) {
+		std::cout << "Warning: Could not load HUD.png\n";
+	}
+
+	if (!m_hud->loadSpriteSheet("HUDSpriteSheet.png")) {
+		std::cout << "Warning: Could not load spritesheet.png\n";
+	}
+}
+
+
+// Draw the HUD at the bottom of the screen
 void GameController::drawHUD()
 {
 	// Set the HUD view for the bottom section
