@@ -5,6 +5,19 @@
 GameController::GameController():
 	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1)
 {
+	// camera setup
+	//m_view.setSize(VIEW_WIDTH, VIEW_HEIGHT);
+	//m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
+	//m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
+
+	loadTextures(); // Load Textures of Kirby and Visual World
+	loadHUD();
+	//loadCollisionMap("Level1Collisions.png"); // Load the collision map for fixed objects and enemies
+
+}
+
+void GameController::loadHUD()
+{
 	// Game view - takes up the top portion of the screen
 	m_gameView.setSize(VIEW_WIDTH, VIEW_HEIGHT);
 	m_gameView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, float(GAME_HEIGHT) / SCREEN_HEIGHT));
@@ -25,15 +38,6 @@ GameController::GameController():
 	if (!m_hud->loadSpriteSheet("HUDSpriteSheet.png")) {
 		std::cout << "Warning: Could not load spritesheet.png\n";
 	}
-
-	// camera setup
-	//m_view.setSize(VIEW_WIDTH, VIEW_HEIGHT);
-	//m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
-	//m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
-
-	loadTextures(); // Load Textures of Kirby and Visual World
-	//loadCollisionMap("Level1Collisions.png"); // Load the collision map for fixed objects and enemies
-
 }
 
 void GameController::run()
@@ -261,11 +265,11 @@ void GameController::draw()
 		enemy->draw(m_window);
 	}
 
-	drawHUD();
 	// NOTE: If you were to draw UI elements (like a score or health bar),
 	// you would switch back to the default view here so they stay fixed on the screen:
 	// m_window.setView(m_window.getDefaultView());
 	// ... draw UI ...
+	drawHUD();
 }
 
 void GameController::drawHUD()

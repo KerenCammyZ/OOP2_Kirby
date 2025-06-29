@@ -29,6 +29,7 @@ private:
 	void updateView();
 	void loadTextures();
 	void loadLevel(int levelNum);
+	void loadHUD();
 
 	float m_levelAreaHeight;
 	float m_deltaTime;
