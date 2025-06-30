@@ -58,53 +58,28 @@ void GameController::run()
 
 void GameController::checkCollisions()
 {
-	//// Check collisions between Kirby and all other game objects
-	//for (const auto& otherObject : m_allGameObjects)
-	//{
-	//	if (m_kirby->collidesWith(*otherObject))
-	//	{
-	//		// --- NEW: Check for collision with the Exit ---
-	//		// Before doing normal collision handling, check if Kirby hit the exit.
-	//		if (otherObject->getType() == ObjectType::EXIT)
-	//		{
-	//			// If it's an exit, tell the level it's complete.
-	//			m_level->setCompleted(true);
+	// --- THIS IS THE FIX ---
+	// At the start of the collision phase, assume Kirby is not in water and not on the ground.
+	m_kirby->setInWater(false);
+	m_kirby->setGrounded(false);
 
-	//			// Return immediately. We don't need to check other collisions
-	//			// for this frame, as a level transition is about to happen.
-	//			return;
-	//		}
-
-	//		// If it wasn't an exit, handle the collision normally.
-	//		m_kirby->handleCollision(otherObject.get());
-	//	}
-	//}
-
-	// --- PASS 1: Check for triggers like Water ---
-	// This pass must happen BEFORE solid collisions so that Kirby's
-	// 'isInWater' flag is correctly set for this frame.
+	// Loop through all objects to check for interactions with Kirby.
 	for (const auto& otherObject : m_allGameObjects)
 	{
-		if (otherObject->getType() == ObjectType::WATER && m_kirby->collidesWith(*otherObject))
-		{
-			// The water object will set Kirby's internal flag to true.
-			m_kirby->handleCollision(otherObject.get());
-		}
-	}
-
-	// --- PASS 2: Check for solid object collisions ---
-	for (const auto& otherObject : m_allGameObjects)
-	{
-		// Skip water zones in this pass, as they aren't solid.
-		if (otherObject->getType() == ObjectType::WATER) continue;
-
 		if (m_kirby->collidesWith(*otherObject))
 		{
+			// The double-dispatch call will handle everything.
+			// - If 'otherObject' is a Water tile, its handleCollision will call kirby->setInWater(true).
+			// - If 'otherObject' is a Floor tile, its handleCollision will call kirby->setGrounded(true).
+			// - If 'otherObject' is an Exit, we handle it specially.
+
 			if (otherObject->getType() == ObjectType::EXIT)
 			{
 				m_level->setCompleted(true);
-				return;
+				return; // Exit early, a level transition is happening.
 			}
+
+			// For all other objects, let them handle the collision.
 			m_kirby->handleCollision(otherObject.get());
 		}
 	}
@@ -196,86 +171,6 @@ void GameController::loadLevel(int levelNum)
 	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
 }
-
-//// Update all game objects, including Kirby and enemies
-//void GameController::update(float deltaTime)
-//{
-//	m_kirby->update(deltaTime);
-//	
-//	// Update all other objects loaded from the map
-//	for (auto& obj : m_allGameObjects)
-//	{
-//		// Polymorphism calls the correct update (MovingObject vs FixedObject)
-//		obj->update(deltaTime);
-//	}
-//
-//	for (auto& enemy : m_enemies)
-//	{
-//		enemy->update(deltaTime);
-//	}
-//
-//	checkCollisions();
-//	updateView(); // Update the camera's position every frame 
-//
-//	// --- NEW: Remove collected presents ---Add commentMore actions
-//	// std::remove_if moves all elements to be deleted to the end of the vector
-//	// and returns an iterator to the first of those elements.
-//	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
-//		[](const std::unique_ptr<GameObject>& obj)
-//		{
-//			// Try to cast the object to a Present*
-//			if (Present* present = dynamic_cast<Present*>(obj.get()))
-//			{
-//				// If it is a present and it's been collected, mark it for removal
-//				return present->isCollected();
-//			}
-//			return false; // Not a present, don't remove
-//		});
-//
-//	// .erase() then actually removes the elements from the vector.
-//	m_allGameObjects.erase(it, m_allGameObjects.end());
-//}
-
-// --- THIS IS THE FIX ---
-// The update function now has the correct order of operations.
-//void GameController::update(float deltaTime)
-//{
-//	// 1. Check for collisions first.
-//	// This sets all the flags on objects (isGrounded, isInWater, etc.)
-//	// based on their positions from the *previous* frame.
-//	checkCollisions();
-//
-//	// 2. Update all game logic.
-//	// Now, when Kirby's state machine runs inside his update(), it can correctly
-//	// read the flags that were just set by checkCollisions().
-//	m_kirby->update(deltaTime);
-//
-//	for (auto& obj : m_allGameObjects)
-//	{
-//		obj->update(deltaTime);
-//	}
-//	for (auto& enemy : m_enemies)
-//	{
-//		enemy->update(deltaTime);
-//	}
-//
-//	// 3. Update the camera based on the new positions.
-//	updateView();
-//
-//	// 4. Handle cleanup (removing collected/defeated objects).
-//	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
-//		[](const std::unique_ptr<GameObject>& obj)
-//		{
-//			if (Present* present = dynamic_cast<Present*>(obj.get()))
-//			{
-//				return present->isCollected();
-//			}
-//			return false;
-//		});
-//	m_allGameObjects.erase(it, m_allGameObjects.end());
-//
-//	// You would add enemy removal logic here as well.
-//}
 
 void GameController::update(float deltaTime)
 {

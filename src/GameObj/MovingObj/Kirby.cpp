@@ -1,14 +1,11 @@
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Door.h"
-#include "States/KirbyWalkingState.h"
+#include "States/KirbyStandingState.h"
+#include "States/KirbySwimmingState.h"
 #include "GlobalSizes.h"
 #include "GameObj/FixedObj/Wall.h"
 #include <iostream>
-
-// It's better to declare these constants where they are used,
-// but for now, we'll make them accessible via GlobalSizes.h
-// Make sure GlobalSizes.h is included in any file that needs them.
 
 Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	: m_velocity(0.f, 0.f), m_isGrounded(false) // Initialize physics members
@@ -20,7 +17,7 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	setPosition(startPosition);
 
 	// Set the initial state to StandingState
-	m_state = std::make_unique<KirbyWalkingState>();
+	m_state = std::make_unique<KirbyStandingState>();
 	m_state->enter(*this);
 
 	m_originalSpeed = m_speed;
@@ -28,11 +25,7 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 
 void Kirby::update(float deltaTime)
 {
-	// --- THIS IS THE FIX ---
-	// At the start of his turn, Kirby assumes he is in the air and not in water.
-	// The collision check that runs BEFORE this function will correct these flags if needed.
-	m_isGrounded = false;
-	m_inWater = false;
+	//m_isGrounded = false;
 
 	// Manager handles all item effect timing and logic
 	m_presentManager.update(deltaTime, *this);
@@ -46,7 +39,7 @@ void Kirby::update(float deltaTime)
 			m_isInvincible = false;
 		}
 
-		// Optional: Make sprite flash during invincibility
+		// Make sprite flash during invincibility
 		static float flashTimer = 0.0f;
 		flashTimer += deltaTime;
 		if (flashTimer > 0.1f) // Flash every 0.1 seconds
@@ -61,28 +54,11 @@ void Kirby::update(float deltaTime)
 		m_sprite.setColor(sf::Color::White); // Ensure normal color when not invincible
 	}
 
-	//// Assume we are not on the ground at the start of the frame.
-	//setGrounded(false);
-	//
+	if (isInWater())
+	{
+		m_state = std::make_unique<KirbySwimmingState>();
+	}
 
-	//// Current state handle transitions and modify velocity.
-	//auto newState = m_state->handleInput(*this);
-	//if (newState)
-	//{
-	//	m_state = std::move(newState);
-	//	m_state->enter(*this);
-	//}
-	//m_state->update(*this, deltaTime);
-
-	//// Apply the final velocity to our position.
-	//m_oldPosition = m_position;
-	//setPosition(m_position + m_velocity * deltaTime);
-	//GameObject::update(deltaTime);
-
-	//setGrounded(false);
-
-	// Now, the state machine can correctly check the flags that were set by
-	// GameController::checkCollisions() right before this function was called.
 	auto newState = m_state->handleInput(*this);
 	if (newState)
 	{
@@ -108,12 +84,8 @@ void Kirby::handleCollision(GameObject* other)
 	{
 		static_cast<Enemy*>(other)->handleCollision(this);
 	}
-	//else if (other->getType() == ObjectType::DOOR)
-	//{
-	//	handleCollision(static_cast<Door*>(other));
-	//	return;
-	//}
-	else {
+	else 
+	{
 		other->handleCollision(this);
 	}
 }
