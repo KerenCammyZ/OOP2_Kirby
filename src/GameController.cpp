@@ -173,7 +173,7 @@ void GameController::loadTextures()
 void GameController::loadLevel(int levelNum)
 {
 	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position at the start of each level
-	m_level = std::make_unique<Level>(levelNum);
+	m_level = std::make_unique<Level>(levelNum , m_kirby.get());
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
@@ -197,6 +197,13 @@ void GameController::loadLevel(int levelNum)
 // Update all game objects, including Kirby and enemies
 void GameController::update(float deltaTime)
 {
+	if (m_kirby->getLives() == 0 && m_kirby->getHealth() == 0)
+	{
+		// If Kirby has no health or lives left, end the game.
+		m_window.close();
+		std::cout << "Game Over! Kirby has no health or lives left." << std::endl;
+		exit(EXIT_SUCCESS);
+	}
 	// --- THIS IS THE CORRECT GAME LOOP ORDER ---
 
 	// 1. CHECK THE ENVIRONMENT

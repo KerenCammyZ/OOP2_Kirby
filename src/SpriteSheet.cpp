@@ -24,13 +24,13 @@ bool SpriteSheet::loadTexture(const std::string& filePath) {
 // Define a sprite type with its dimensions
 void SpriteSheet::defineSpriteType(const std::string& typeName, int width, int height) {
     // This is mainly for documentation/reference
-    std::cout << "Defined sprite type '" << typeName << "': " << width << "x" << height << std::endl;
+   // std::cout << "Defined sprite type '" << typeName << "': " << width << "x" << height << std::endl;
 }
 
 // Add a specific sprite to the catalog
 void SpriteSheet::addSprite(const std::string& spriteName, int x, int y, int width, int height) {
     m_sprites[spriteName] = SpriteInfo(x, y, width, height);
-    std::cout << "Added sprite '" << spriteName << "' at (" << x << "," << y << ") size " << width << "x" << height << std::endl;
+   // std::cout << "Added sprite '" << spriteName << "' at (" << x << "," << y << ") size " << width << "x" << height << std::endl;
 }
 
 

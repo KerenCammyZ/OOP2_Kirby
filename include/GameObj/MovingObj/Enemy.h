@@ -7,13 +7,16 @@
 #include "Behaviors/AttackBehavior.h"
 #include "Behaviors/CollisionBehavior.h"
 
-enum class EnemyState { SPAWNING, ACTIVE, STUNNED };
+class Kirby;
+
+enum class EnemyState { SPAWNING, ACTIVE, STUNNED, ATTACKING };
 
 class Enemy : public MovingObject
 {
 public:
-	Enemy();
-	Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
+	Enemy() = default;
+	//Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
+	Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby);
 
 	void update(float deltaTime) override;
 	void move(float deltaTime) override;
@@ -49,11 +52,17 @@ private:
 	std::unique_ptr <AttackBehavior> m_attackBehavior;
 	std::unique_ptr <CollisionBehavior> m_collisionBehavior;
 
+	const Kirby* m_kirby;
+
 	EnemyState m_state;
 	sf::Vector2f m_direction;
-	float m_stunTimer{ 0.0f }; // enemy stunned
+
+	// Timers for State Management
+	float m_stunTimer{ 0.0f };
 	float m_spawnTimer{ 1.25f };
 	int m_damageAmount;
+	float m_actionTimer{ 0.0f };
+	float m_attackDuration{ 0.0f };
 
 	// Static registration for the Enemy type
 	static bool m_registerTwizzy;

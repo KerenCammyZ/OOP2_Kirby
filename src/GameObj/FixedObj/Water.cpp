@@ -33,7 +33,7 @@ const sf::Color waterColor(0, 0, 200);
 // This will call the factory's registerType function once when the program starts.
 bool Water::m_register = GameObjectFactory::registerType(
 	waterColor,
-	[](sf::Vector2f position) -> std::unique_ptr<GameObject>
+	[](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject>
 	{
 		return std::make_unique<Water>();
 	}

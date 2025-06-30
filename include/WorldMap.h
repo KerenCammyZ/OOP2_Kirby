@@ -19,7 +19,7 @@ public:
 	void draw(sf::RenderTarget& target) const;
 
 	// The main function to load all objects from a collision map file
-	std::vector<std::unique_ptr<GameObject>> loadObjectsFromFile(const std::string& filePath);
+	std::vector<std::unique_ptr<GameObject>> loadObjectsFromFile(const std::string& filePath, const Kirby* kirby);
 
 	// Getters for world properties
 	sf::FloatRect getBounds() const;
