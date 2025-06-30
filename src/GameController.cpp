@@ -3,7 +3,7 @@
 #include <iostream> // for debugging
 
 GameController::GameController():
-	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1)
+	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1), m_score(0)
 {
 	// camera setup -- NOTE: camera setup is now handled by loadHUD()
 	

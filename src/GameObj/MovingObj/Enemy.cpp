@@ -24,7 +24,7 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
 		enemy->setDamageAmount(1); // Set damage amount for Waddle Dee
-		enemy->setScoreValue(1);
+		enemy->setScoreValue(1); // number of points awarded for defeating Waddle Dee
 		return enemy;
 	}  
 );  
@@ -41,7 +41,7 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 		enemy->setCollisionBehavior(std::make_unique<IgnoreWalls>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
-		enemy->setDamageAmount(2); // Set damage amount for Twizzy
+		enemy->setDamageAmount(1); // Set damage amount for Twizzy
 		enemy->setScoreValue(1);
 		return enemy;  
 	}  

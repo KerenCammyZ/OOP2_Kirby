@@ -24,15 +24,7 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	m_state->enter(*this);
 
 	m_originalSpeed = m_speed;
-	m_direction = sf::Vector2f(1.f, 0.f); // Kirby starts facing right
 };
-
-// set facing direction
-// @param direction -1 for left, 1 for right
-void Kirby::faceDirection(int direction)
-{
-	m_direction.x = direction;
-}
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
@@ -41,15 +33,21 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 	{
 		float distanceX = enemy->getPosition().x - getPosition().x;
 		float distanceY = enemy->getPosition().y - getPosition().y;
+		bool inRange = std::abs(distanceX) <= range && std::abs(distanceY) < 1.f;
 
 		if (collidesWith(*enemy))
-			; // do nothing
-		else if (facingLeft && (distanceX < -range) && std::abs(distanceY) < 1.f) {
+			continue; // do nothing
+
+		if (facingLeft && distanceX < 0 && inRange)
+		{
 			enemy->onSwallowed();
+			std::cout << "Swallowed enemy from the left!" << std::endl;
 			break;
 		}
-		else if (!facingLeft && distanceX < range && std::abs(distanceY) < 1.f) {
+		else if (distanceX > 0 && inRange)
+		{
 			enemy->onSwallowed();
+			std::cout << "Swallowed enemy from the right!" << std::endl;
 			break;
 		}
 	}

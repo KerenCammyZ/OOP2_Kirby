@@ -85,11 +85,6 @@ void HUD::draw(sf::RenderTarget& target) {
 
     // draw background first
     target.draw(m_hudSprite);
-
-    // Example: Draw some HUD elements using sprites
-    // (You can call these based on your game state)
-    // drawScore(target, 12345, 100, 20);
-    // drawLives(target, 3, 200, 20);
     
     // draw state 'normal state' at HUD coordinate (577, 33)
 	sf::Vector2f scale = getHUDScale();
@@ -103,15 +98,22 @@ void HUD::draw(sf::RenderTarget& target) {
 }
 
 // Set the area where HUD should be drawn
-void HUD::setDisplayArea(float x, float y, float width, float height) {
+void HUD::setDisplayArea(float x, float y, float width, float height)
+{
     m_displayArea = sf::FloatRect(x, y, width, height);
     updateSprite();
 }
 
 
-void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float y) {
-    // Convert score to string and draw each digit
+void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float y)
+{
     std::string scoreStr = std::to_string(score);
+
+    if (scoreStr.length() > 7) {
+        scoreStr = std::to_string(9999999);
+		std::cerr << "Score exceeds maximum display length, resetting to 9999999." << std::endl;
+	}
+
     sf::Vector2f scale = getHUDScale();
 
     while (scoreStr.length() < 7) {
@@ -121,14 +123,13 @@ void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float
     float digitPosX = x;
     float digitPosY = y;
 
-    for (char& digit : scoreStr) {
-        if (digit >= '0' && digit <= '9') {
-            int digitValue = digit - '0'; // Convert char to int
-
+    for (char digit : scoreStr) {
+        if (digit >= '0' && digit <= '9')
+        {
+            int digitValue = digit - '0';
             sf::Vector2f digitPos = hudToScreen(digitPosX, digitPosY);
             m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, digitPos.x, digitPos.y, scale.x, scale.y);
-            //print("Drawing digit: " + std::to_string(digitValue) + " at position (" + std::to_string(digitPos.x) + ", " + std::to_string(digitPos.y) + ")");
-            digitPosX += 8; // Move to next digit position (adjust spacing as needed)
+			digitPosX += 8; // each digit is 8 pixels wide
         }
     }
 }

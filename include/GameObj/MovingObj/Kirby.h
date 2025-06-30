@@ -16,6 +16,7 @@ public:
 
 	// We override MovingObject's update to handle our new physics logic
 	void update(float deltaTime) override;
+
 	void move(float deltaTime) override;
 	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
 
@@ -32,7 +33,6 @@ public:
 
 	void setGrounded(bool grounded);
 	bool isGrounded() const;
-	void faceDirection(int direction);
 
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
@@ -47,6 +47,7 @@ public:
 	int getMaxHealth() const { return m_maxHealth; }
 	int getLives() const { return m_lives; }
 	bool isInvincible() const { return m_isInvincible; }
+
 	bool isHyper() const { return m_isHyper; }
 	void setHyper(bool hyper) { m_isHyper = hyper; }
 
@@ -65,6 +66,5 @@ private:
 	int m_lives = 5;
 	bool m_isInvincible = false;
 	bool m_isHyper = false;
-	bool m_facingLeft = false;
 	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
 };
