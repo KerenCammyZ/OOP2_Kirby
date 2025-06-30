@@ -10,6 +10,7 @@
 
 sf::Color WaddleDeeColor(0, 0, 40); // Define Waddle Dee's color key
 sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key
+sf::Color sparkyColor(0, 0, 120);
 
 // Static registration for WaddleDee
 bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
@@ -45,14 +46,21 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 	}  
 );  
 
-//bool Enemy::isGreenEnemyRegistered = GameObjectFactory::registerType(  
-//   sf::Color(0, 0, 160), // Color key for Green Enemy  
-//   [](sf::Vector2f position) -> std::unique_ptr<GameObject> {  
-//       auto enemy = std::make_unique<Enemy>();  
-//       enemy->setPosition(position);  
-//       // Optionally set size, texture, etc.  
-//       return enemy;  
-//   }  
+//// Static registration for Sparky
+//bool Enemy::m_registerSparky = GameObjectFactory::registerType(
+//	sparkyColor,
+//	[](sf::Vector2f position) -> std::unique_ptr<GameObject> {
+//		auto enemyTexture = std::make_shared<sf::Texture>();
+//		if (!enemyTexture->loadFromFile("SparkySprite.png")) {
+//			throw std::runtime_error("Failed to load Sparky texture");
+//		}
+//		auto enemy = std::make_unique<Enemy>(enemyTexture, position);
+//		enemy->setMoveBehavior(std::make_unique<PatrolMove>());
+//		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
+//		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
+//		enemy->setDamageAmount(2); // Set damage amount for Sparky
+//		return enemy;
+//	}
 //);
 
 Enemy::Enemy() = default; // Default constructor

@@ -58,5 +58,6 @@ private:
 	// Static registration for the Enemy type
 	static bool m_registerTwizzy;
 	static bool m_registerWaddleDee;
+	static bool m_registerSparky;
 	//static bool m_registerEnemy;
 };
