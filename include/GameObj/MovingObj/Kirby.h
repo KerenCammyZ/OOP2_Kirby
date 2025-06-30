@@ -20,6 +20,7 @@ public:
 
 	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
 
+
 	float getSpeed() const;
 	void setSpeed(float speed);
 	float getOriginalSpeed() const;
@@ -33,6 +34,7 @@ public:
 
 	void setGrounded(bool grounded);
 	bool isGrounded() const;
+
 
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;

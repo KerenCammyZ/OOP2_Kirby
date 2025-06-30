@@ -52,12 +52,13 @@ void Kirby::update(float deltaTime)
 	{
 		// TODO: Consider moving this to a separate InvincibilityState
 		// possible challenges:
-		// - if Kirby is invincible, he can still be attacked, attack enemies, collect items etc'
-		// - caused by collision, not by keyboard input
+		// 1. it should not cancel other states
+		// 2. caused by collision, not by keyboard input
 		m_invincibilityTimer -= deltaTime;
 		if (m_invincibilityTimer <= 0.0f)
 		{
 			m_isInvincible = false;
+			m_sprite.setColor(sf::Color::White); // Ensure normal color once invinciblity is over
 		}
 
 		// Optional: Make sprite flash during invincibility
@@ -69,10 +70,6 @@ void Kirby::update(float deltaTime)
 			m_sprite.setColor(currentColor.a == 255 ? sf::Color(255, 255, 255, 128) : sf::Color::White);
 			flashTimer = 0.0f;
 		}
-	}
-	else
-	{
-		m_sprite.setColor(sf::Color::White); // Ensure normal color when not invincible
 	}
 
 	// Assume we are not on the ground at the start of the frame.
@@ -90,13 +87,22 @@ void Kirby::update(float deltaTime)
 	move(deltaTime); // Apply the final velocity to our position.
 	GameObject::update(deltaTime);
 
-	setGrounded(false);
+	setGrounded(false); // Q: redundant? setGrounded is reset to false as required
+						// in the next call to Kirby::Update() before modifying m_state 
 }
 
 void Kirby::move(float deltaTime)
 {
+	// If Kirby is not grounded, apply gravity
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
+
+	// Update Kirby's direction
+	if (m_velocity.x < 0)
+		m_direction.x = -1.f; // Facing left
+	else if (m_velocity.x > 0)
+		m_direction.x = 1.f; // Facing right
+	// If Kirby is not moving horizontally, keep the direction as it is.
 }
 
 void Kirby::handleCollision(GameObject* other)

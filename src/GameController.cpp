@@ -22,7 +22,9 @@ GameController::GameController():
 void GameController::run()
 {
 	// This is the main outer loop that controls the entire game session.
-	while (m_currentLevel <= m_maxLevels)
+	while (m_currentLevel <= m_maxLevels && m_window.isOpen())
+	// while (m_currentLevel <= m_maxLevels
+	// WARNING: continues to load objects after window is closed!
 	{
 		// --- Load all assets for the current level ---
 		loadLevel(m_currentLevel);
