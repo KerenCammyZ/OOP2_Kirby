@@ -12,14 +12,14 @@ public:
 	Level(int levelNumber);
 	~Level() = default;
 
-	std::vector<std::unique_ptr<GameObject>>&& getObjects();
-	std::vector<std::unique_ptr<Enemy>>&& getEnemies();
+	std::vector<std::unique_ptr<GameObject>>&& getObjects(); // Q: perhaps better to return by value
+	std::vector<std::unique_ptr<Enemy>>&& getEnemies();      //    instead of by reference?
 	std::unique_ptr<WorldMap> getWorldMap();
 	bool getCompleted() const;
 	void setCompleted(bool completed);
 private:
 	void loadObjects();
-	bool complete;
+	bool complete;  // TODO: by course conventions, class data members are prefixed 'm_'
 	int levelNumber;
 	std::string collisionMap;
 	std::string backgroundImage;

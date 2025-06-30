@@ -204,6 +204,7 @@ void GameController::update(float deltaTime)
 		{
 			// Try to cast the object to a Present*
 			if (Present* present = dynamic_cast<Present*>(obj.get()))
+			//if (obj.get()->getType() == ObjectType::PRESENT) // avoid dynamic casting
 			{
 				// If it is a present and it's been collected, mark it for removal
 				return present->isCollected();
@@ -213,6 +214,22 @@ void GameController::update(float deltaTime)
 
 	// .erase() then actually removes the elements from the vector.
 	m_allGameObjects.erase(it, m_allGameObjects.end());
+
+
+	// Update HUD with current game data
+	int kirbyHealth = m_kirby->getHealth();
+	int lives = m_kirby->getLives();
+	int score = getScore();    // TODO: Replace with getScore()
+
+	std::string state;
+	//if (m_kirby->isInvincible())
+		//state = "invincible"; // TODO: Replace with a m_kirby->get() function
+	if (m_kirby->isHyper())
+		state = "hyper";      // maybe getCurrentPower() / getCurrentState() / getStateDisplay(), ..
+	else
+		state = "normal";
+
+	m_hud->updateGameData(kirbyHealth, lives, score, state);
 }
 
 
@@ -249,6 +266,8 @@ void GameController::draw()
 	// you would switch back to the default view here so they stay fixed on the screen:
 	// m_window.setView(m_window.getDefaultView());
 	// ... draw UI ...
+	m_window.setView(m_hudView);
+	m_hud->draw(m_window);
 	drawHUD();
 }
 
@@ -283,23 +302,34 @@ void GameController::loadHUD()
 void GameController::drawHUD()
 {
 	// Set the HUD view for the bottom section
-	m_window.setView(m_hudView);
+	//m_window.setView(m_hudView);
 	
-	// Update HUD with current game data
-	int kirbyHealth = m_kirby->getHealth();
-	int lives = m_kirby->getLives();
-	int score = 0;    // TODO: Replace with getScore()
-	
-	std::string state;
-	//if (m_kirby->isInvincible())
-		//state = "invincible"; // TODO: Replace with a m_kirby->get() function
-	if (m_kirby->isHyper())
-		state = "hyper";      // maybe getCurrentPower() / getCurrentState() / getStateDisplay(), ..
-	else
-		state = "normal";
+	//// Update HUD with current game data
+	//int kirbyHealth = m_kirby->getHealth();
+	//int lives = m_kirby->getLives();
+	//int score = getScore();    // TODO: Replace with getScore()
+	//
+	//std::string state;
+	////if (m_kirby->isInvincible())
+	//	//state = "invincible"; // TODO: Replace with a m_kirby->get() function
+	//if (m_kirby->isHyper())
+	//	state = "hyper";      // maybe getCurrentPower() / getCurrentState() / getStateDisplay(), ..
+	//else
+	//	state = "normal";
 
-	m_hud->updateGameData(kirbyHealth, lives, score, state);
+	//m_hud->updateGameData(kirbyHealth, lives, score, state);
 
 	// Draw the HUD stretched across the bottom
-	m_hud->draw(m_window);
+	//m_hud->draw(m_window);
+}
+
+
+void GameController::addScore(unsigned int points)
+{
+	m_score += points;
+}
+
+unsigned int GameController::getScore() const
+{
+	return m_score;
 }

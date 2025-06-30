@@ -19,6 +19,8 @@ public:
 	GameController();
 	~GameController() = default;
 	void run();
+	unsigned int getScore() const;
+	void addScore(unsigned int);
 
 private:
 	void update(float deltaTime);
@@ -36,6 +38,7 @@ private:
 
 	int m_currentLevel;
 	const int m_maxLevels = 2;
+	int m_score;
 
 	sf::Clock m_deltaClock;
 	//sf::View m_view;
