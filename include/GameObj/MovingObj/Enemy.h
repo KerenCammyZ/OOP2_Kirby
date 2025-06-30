@@ -7,7 +7,7 @@
 #include "Behaviors/AttackBehavior.h"
 #include "Behaviors/CollisionBehavior.h"
 
-enum class EnemyState { SPAWNING, ACTIVE, STUNNED };
+enum class EnemyState { SPAWNING, ACTIVE, STUNNED, SWALLOWED };
 
 class Enemy : public MovingObject
 {
@@ -19,7 +19,8 @@ public:
 	void move(float deltaTime) override;
 	void attack(float deltaTime);
 	void stun(float duration);
-
+	void onSwallowed();
+	
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override;
 	void handleCollision(Door* door) override {};
@@ -29,20 +30,10 @@ public:
 	void setAttackBehavior(std::unique_ptr<AttackBehavior> attackBehavior);
 	void setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBehavior);
 	
-	void setDirection(const sf::Vector2f& direction) { m_direction = direction; }
 	void setDamageAmount(int damage) { m_damageAmount = damage; }
-
-	// for debugging
-	//std::string name; // for debugging
-	//std::string getName() const { return name; }
-	//void setName(const std::string& type) { name = type; }
-	//bool hasTexture() { return (m_texture != nullptr); }
-	//sf::Vector2f getTextureSize() { return sf::Vector2f(m_texture->getSize()); }
-	//sf::Sprite getSprite() const { return m_sprite; }
-	//sf::Vector2f getpritePosition() { return m_sprite.getPosition(); }
+	bool isSwallowed() const { return m_state == EnemyState::SWALLOWED; }
 
 	ObjectType getType() const { return ObjectType::ENEMY; }
-	sf::Vector2f getDirection() const { return m_direction; }
 
 private:
 	std::unique_ptr <MoveBehavior> m_moveBehavior;
@@ -50,7 +41,6 @@ private:
 	std::unique_ptr <CollisionBehavior> m_collisionBehavior;
 
 	EnemyState m_state;
-	sf::Vector2f m_direction;
 	float m_stunTimer{ 0.0f }; // enemy stunned
 	float m_spawnTimer{ 1.25f };
 	int m_damageAmount;

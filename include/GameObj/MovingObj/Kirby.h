@@ -1,6 +1,7 @@
 // Kirby.h
 #pragma once
 #include "GameObj/MovingObj/MovingObject.h"
+#include "GameObj/MovingObj/Enemy.h"
 #include "PresentManager.h"
 #include <memory>
 
@@ -17,11 +18,12 @@ public:
 	void update(float deltaTime) override;
 	void move(float deltaTime) override {};
 
-	//float getSpeed() const; // NOTE: Transfered function to MovingObject
+	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
+
 	float getSpeed() const;
 	void setSpeed(float speed);
 	float getOriginalSpeed() const;
-
+	
 	// The single public method to add any present's effect
 	void addPresentEffect(std::unique_ptr<PresentCommand> command);
 

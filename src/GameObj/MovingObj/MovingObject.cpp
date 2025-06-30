@@ -23,3 +23,13 @@ sf::Vector2f MovingObject::getOldPosition() const
 {
 	return m_oldPosition;
 }
+
+sf::Vector2f MovingObject::getDirection() const
+{
+	return m_direction;
+}
+
+void MovingObject::setDirection(const sf::Vector2f& direction)
+{
+	m_direction = direction;
+}

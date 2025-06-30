@@ -23,17 +23,36 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	m_state = std::make_unique<KirbyStandingState>();
 	m_state->enter(*this);
 
-	m_originalSpeed = m_speed;
+	//m_originalSpeed = m_speed;
+	m_originalSpeed = getSpeed();
 };
+
+void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
+{
+	for (auto& enemy : enemies)
+	{
+		float distance = enemy->getPosition().x - getPosition().x;
+		if (distance < 0 || collidesWith(*enemy))
+			; // do nothing
+		else if (distance < range) {
+			enemy->onSwallowed();
+			break; // Only attack the first enemy within range
+		}
+	}
+}
 
 void Kirby::update(float deltaTime)
 {
 	// Manager handles all item effect timing and logic
 	m_presentManager.update(deltaTime, *this);
 
-	// Handle invincibility frames
+	// Handle invincibility frames 
 	if (m_isInvincible)
 	{
+		// TODO: Consider moving this to a separate InvincibilityState
+		// possible challenges:
+		// - if Kirby is invincible, he can still be attacked, attack enemies, collect items etc'
+		// - caused by collision, not by keyboard input
 		m_invincibilityTimer -= deltaTime;
 		if (m_invincibilityTimer <= 0.0f)
 		{
@@ -104,6 +123,7 @@ void Kirby::handleCollision(Door* door)
 
 void Kirby::takeDamage(int damageAmount)
 {
+	// Ignore damage if invincible or no lives left
 	if (m_isInvincible || m_lives <= 0) return;
 
 	m_health -= damageAmount;
@@ -114,7 +134,7 @@ void Kirby::takeDamage(int damageAmount)
 		m_health = m_maxHealth; // Reset health after losing a life
 	}
 
-	// start invincibility period
+	// Start invincibility period
 	m_isInvincible = true;
 	m_invincibilityTimer = 1.0f; // 1 second of invincibility
 

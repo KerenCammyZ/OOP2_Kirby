@@ -24,7 +24,7 @@ public:
 
 private:
 	void update(float deltaTime);
-	void handle();
+	void handleEvents();
 	void draw();
 	void drawHUD();
 	void checkCollisions();

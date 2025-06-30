@@ -23,7 +23,7 @@ void GameObject::draw(sf::RenderTarget& target) const
 	}
 }
 
-
+// updates sprite position and origin based on the current position and texture size
 void GameObject::update(float dt)
 {
 	if (m_texture) {

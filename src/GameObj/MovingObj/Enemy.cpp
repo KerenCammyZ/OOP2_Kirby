@@ -58,9 +58,9 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 Enemy::Enemy() = default; // Default constructor
 
 Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition)
-	: m_state(EnemyState::SPAWNING), m_direction(sf::Vector2f(0.f, 0.f))
+	: m_state(EnemyState::SPAWNING)
 {
-	setTexture(enemyTexture); // initialize m_texture, m_sprite
+	setTexture(enemyTexture); // initializes m_texture, m_sprite
 	setPosition(startPosition);
 	setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
 	m_speed = 180.0f;
@@ -81,7 +81,7 @@ void Enemy::update(float deltaTime)
 		GameObject::update(deltaTime);
 		return;
 	}
-	if (m_state == EnemyState::STUNNED)
+	else if (m_state == EnemyState::STUNNED)
 	{
 		// Handle stunned state logic
 		m_stunTimer -= deltaTime;
@@ -92,6 +92,11 @@ void Enemy::update(float deltaTime)
 		GameObject::update(deltaTime);
 		return;
 	}
+	if (m_state == EnemyState::SWALLOWED)
+	{
+		// removal is handled by the GameController
+		// GameController::update(float deltaTime)
+	}
 	if (m_state == EnemyState::ACTIVE)
 	{
 		// Handle active state logic
@@ -101,7 +106,6 @@ void Enemy::update(float deltaTime)
 		GameObject::update(deltaTime);
 		return;
 	}
-
 	GameObject::update(deltaTime);
 }
 
@@ -110,6 +114,19 @@ void Enemy::stun(float duration)
 {
 	m_state = EnemyState::STUNNED;
 	m_stunTimer = duration;
+}
+
+void Enemy::onSwallowed()
+{
+	// Handle the enemy being swallowed by Kirby
+	// This could involve removing the enemy from the game, playing an animation, etc.
+	std::cout << "Enemy swallowed!" << std::endl;
+	// For now, we just set the state to SPAWNING to simulate respawn
+	m_sprite.setColor(sf::Color::Red);
+	m_spawnTimer = 1.25f; // Reset spawn timer
+
+	// remove enemy from the game world
+	m_state = EnemyState::SWALLOWED;
 }
 
 // Handle collision with Kirby
