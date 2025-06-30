@@ -24,6 +24,7 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
 		enemy->setDamageAmount(1); // Set damage amount for Waddle Dee
+		enemy->setScoreValue(1);
 		return enemy;
 	}  
 );  
@@ -40,7 +41,8 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 		enemy->setCollisionBehavior(std::make_unique<IgnoreWalls>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
-		enemy->setDamageAmount(3); // Set damage amount for Twizzy
+		enemy->setDamageAmount(2); // Set damage amount for Twizzy
+		enemy->setScoreValue(1);
 		return enemy;  
 	}  
 );  
@@ -96,6 +98,8 @@ void Enemy::update(float deltaTime)
 	{
 		// removal is handled by the GameController
 		// GameController::update(float deltaTime)
+
+		;
 	}
 	if (m_state == EnemyState::ACTIVE)
 	{
@@ -105,6 +109,7 @@ void Enemy::update(float deltaTime)
 		//attack(deltaTime);
 		GameObject::update(deltaTime);
 		return;
+		
 	}
 	GameObject::update(deltaTime);
 }
@@ -116,17 +121,13 @@ void Enemy::stun(float duration)
 	m_stunTimer = duration;
 }
 
+// Handle the enemy being swallowed by Kirby
 void Enemy::onSwallowed()
 {
-	// Handle the enemy being swallowed by Kirby
-	// This could involve removing the enemy from the game, playing an animation, etc.
-	std::cout << "Enemy swallowed!" << std::endl;
-	// For now, we just set the state to SPAWNING to simulate respawn
 	m_sprite.setColor(sf::Color::Red);
-	m_spawnTimer = 1.25f; // Reset spawn timer
-
-	// remove enemy from the game world
 	m_state = EnemyState::SWALLOWED;
+	std::cout << "Enemy swallowed!" << std::endl;
+	// remove enemy from the game world
 }
 
 // Handle collision with Kirby

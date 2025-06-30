@@ -38,7 +38,7 @@ private:
 
 	int m_currentLevel;
 	const int m_maxLevels = 2;
-	int m_score;
+	int m_score = 0;
 
 	sf::Clock m_deltaClock;
 	//sf::View m_view;

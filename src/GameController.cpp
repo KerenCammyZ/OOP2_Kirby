@@ -192,8 +192,10 @@ void GameController::update(float deltaTime)
 
 	for (auto& enemy : m_enemies)
 	{
-		enemy->update(deltaTime);
+		if(enemy->isSwallowed())
+			addScore(enemy->getScoreValue());
 
+		enemy->update(deltaTime);
 	}
 
 	// remove swallowed enemies
@@ -332,8 +334,8 @@ void GameController::drawHUD()
 	// Update HUD with current game data
 	int kirbyHealth = m_kirby->getHealth();
 	int lives = m_kirby->getLives();
-	int score = 0;    // TODO: Replace with getScore()
-	
+	int score = getScore();
+
 	std::string state;
 	//if (m_kirby->isInvincible())
 		//state = "invincible"; // TODO: Replace with a m_kirby->get() function

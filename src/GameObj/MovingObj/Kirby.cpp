@@ -27,17 +27,30 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	m_direction = sf::Vector2f(1.f, 0.f); // Kirby starts facing right
 };
 
+// set facing direction
+// @param direction -1 for left, 1 for right
+void Kirby::faceDirection(int direction)
+{
+	m_direction.x = direction;
+}
+
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
-	bool facingLeft = getDirection().x < 0; // Check if Kirby is facing left
+	bool facingLeft = m_velocity.x < 0 ? true : false;
 	for (auto& enemy : enemies)
 	{
-		float distance = enemy->getPosition().x - getPosition().x;
-		if (distance < 0 || collidesWith(*enemy))
+		float distanceX = enemy->getPosition().x - getPosition().x;
+		float distanceY = enemy->getPosition().y - getPosition().y;
+
+		if (collidesWith(*enemy))
 			; // do nothing
-		else if (distance < range) {
+		else if (facingLeft && (distanceX < -range) && std::abs(distanceY) < 1.f) {
 			enemy->onSwallowed();
-			break; // Only attack the first enemy within range
+			break;
+		}
+		else if (!facingLeft && distanceX < range && std::abs(distanceY) < 1.f) {
+			enemy->onSwallowed();
+			break;
 		}
 	}
 }
@@ -58,7 +71,6 @@ void Kirby::update(float deltaTime)
 		if (m_invincibilityTimer <= 0.0f)
 		{
 			m_isInvincible = false;
-			m_sprite.setColor(sf::Color::White); // Ensure normal color once invinciblity is over
 		}
 
 		// Optional: Make sprite flash during invincibility
@@ -70,6 +82,10 @@ void Kirby::update(float deltaTime)
 			m_sprite.setColor(currentColor.a == 255 ? sf::Color(255, 255, 255, 128) : sf::Color::White);
 			flashTimer = 0.0f;
 		}
+	}
+	else
+	{
+		m_sprite.setColor(sf::Color::White); // Ensure normal color once invinciblity is over
 	}
 
 	// Assume we are not on the ground at the start of the frame.
@@ -97,11 +113,6 @@ void Kirby::move(float deltaTime)
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
 
-	// Update Kirby's direction
-	if (m_velocity.x < 0)
-		m_direction.x = -1.f; // Facing left
-	else if (m_velocity.x > 0)
-		m_direction.x = 1.f; // Facing right
 	// If Kirby is not moving horizontally, keep the direction as it is.
 }
 

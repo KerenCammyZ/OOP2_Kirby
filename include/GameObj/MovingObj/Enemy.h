@@ -31,9 +31,11 @@ public:
 	void setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBehavior);
 	
 	void setDamageAmount(int damage) { m_damageAmount = damage; }
+	void setScoreValue(int score) { m_scoreValue = score; }
 	bool isSwallowed() const { return m_state == EnemyState::SWALLOWED; }
 
 	ObjectType getType() const { return ObjectType::ENEMY; }
+	int getScoreValue() const { return m_scoreValue; }
 
 private:
 	std::unique_ptr <MoveBehavior> m_moveBehavior;
@@ -44,6 +46,7 @@ private:
 	float m_stunTimer{ 0.0f }; // enemy stunned
 	float m_spawnTimer{ 1.25f };
 	int m_damageAmount;
+	int m_scoreValue; // Score value for defeating this enemy
 
 	// Static registration for the Enemy type
 	static bool m_registerTwizzy;

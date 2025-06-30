@@ -97,8 +97,8 @@ void HUD::draw(sf::RenderTarget& target) {
     m_spriteSheet->drawSprite(target, m_kirbyState, statePos.x, statePos.y, scale.x, scale.y); // kirby state display
 
 	drawLives(target, 187, 20);
-    drawScore(target, m_score, 72, 32);
     drawHealthBar(target, 72, 13);
+    drawScore(target, m_score, 72, 32);
 
 }
 
@@ -109,23 +109,27 @@ void HUD::setDisplayArea(float x, float y, float width, float height) {
 }
 
 
-void HUD::drawScore(sf::RenderTarget& target, int score, float x, float y) {
+void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float y) {
     // Convert score to string and draw each digit
     std::string scoreStr = std::to_string(score);
-    float currentX = x;
     sf::Vector2f scale = getHUDScale();
 
-    int i = scoreStr.length();
-    while (i < 7){
-        scoreStr = "0" + scoreStr; // Pad with leading zeros if less than 7 digits
-        i++;
-	}
+    while (scoreStr.length() < 7) {
+        scoreStr = "0" + scoreStr;
+    }
 
-    for (char digit : scoreStr) {
-        int digitValue = digit - '0'; // Convert char to int
-        sf::Vector2f screenPos = hudToScreen(currentX, y);
-        m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, screenPos.x, screenPos.y, scale.x, scale.y);
-        currentX += 8; // Move to next digit position (adjust spacing as needed)
+    float digitPosX = x;
+    float digitPosY = y;
+
+    for (char& digit : scoreStr) {
+        if (digit >= '0' && digit <= '9') {
+            int digitValue = digit - '0'; // Convert char to int
+
+            sf::Vector2f digitPos = hudToScreen(digitPosX, digitPosY);
+            m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, digitPos.x, digitPos.y, scale.x, scale.y);
+            //print("Drawing digit: " + std::to_string(digitValue) + " at position (" + std::to_string(digitPos.x) + ", " + std::to_string(digitPos.y) + ")");
+            digitPosX += 8; // Move to next digit position (adjust spacing as needed)
+        }
     }
 }
 
@@ -147,7 +151,7 @@ void HUD::drawLives(sf::RenderTarget& target, float x, float y) {
         
     for (char digit : livesStr)
     {
-        int digitValue = digit - '0'; // Convert char to int
+        int digitValue = int(digit - '0'); // Convert char to int
         sf::Vector2f digitPos = hudToScreen(digitPosX, digitPosY);
         m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, digitPos.x, digitPos.y, scale.x, scale.y);
 		digitPosX += 8; // Move to next digit position
