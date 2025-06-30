@@ -23,12 +23,13 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	m_state = std::make_unique<KirbyStandingState>();
 	m_state->enter(*this);
 
-	//m_originalSpeed = m_speed;
-	m_originalSpeed = getSpeed();
+	m_originalSpeed = m_speed;
+	m_direction = sf::Vector2f(1.f, 0.f); // Kirby starts facing right
 };
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
+	bool facingLeft = getDirection().x < 0; // Check if Kirby is facing left
 	for (auto& enemy : enemies)
 	{
 		float distance = enemy->getPosition().x - getPosition().x;
@@ -86,14 +87,17 @@ void Kirby::update(float deltaTime)
 	}
 	m_state->update(*this, deltaTime);
 
-	// Apply the final velocity to our position.
-	m_oldPosition = m_position;
-	setPosition(m_position + m_velocity * deltaTime);
+	move(deltaTime); // Apply the final velocity to our position.
 	GameObject::update(deltaTime);
 
 	setGrounded(false);
 }
 
+void Kirby::move(float deltaTime)
+{
+	m_oldPosition = m_position;
+	setPosition(m_position + m_velocity * deltaTime);
+}
 
 void Kirby::handleCollision(GameObject* other)
 {

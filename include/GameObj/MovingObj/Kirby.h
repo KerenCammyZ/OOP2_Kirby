@@ -16,7 +16,7 @@ public:
 
 	// We override MovingObject's update to handle our new physics logic
 	void update(float deltaTime) override;
-	void move(float deltaTime) override {};
+	void move(float deltaTime) override;
 
 	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
 
