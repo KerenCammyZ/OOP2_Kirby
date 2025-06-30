@@ -170,6 +170,20 @@ void GameController::loadLevel(int levelNum)
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
+
+	// --- CAMERA SETUP PER LEVEL ---
+	if (m_worldMap)
+	{
+		// 1. Calculate the new height for each of the three vertical sections.
+		float newViewHeight = m_worldMap->getSize().y / 3.0f;
+
+		// 2. Update our logical variable for camera snapping.
+		m_levelAreaHeight = newViewHeight;
+
+		// 3. IMPORTANT: Update the actual sf::View object with the new size.
+		// We keep the original width to maintain the aspect ratio you've defined.
+		m_view.setSize(VIEW_WIDTH, newViewHeight);
+	}
 }
 
 void GameController::update(float deltaTime)
