@@ -17,7 +17,6 @@ public:
 	void update(float deltaTime) override;
 	void move(float deltaTime) override {};
 
-	//float getSpeed() const; // NOTE: Transfered function to MovingObject
 	float getSpeed() const;
 	void setSpeed(float speed);
 	float getOriginalSpeed() const;

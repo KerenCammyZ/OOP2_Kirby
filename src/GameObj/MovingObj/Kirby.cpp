@@ -6,6 +6,8 @@
 #include "GlobalSizes.h"
 #include "GameObj/FixedObj/Wall.h"
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	: m_velocity(0.f, 0.f), m_isGrounded(false) // Initialize physics members
@@ -92,7 +94,10 @@ void Kirby::handleCollision(GameObject* other)
 
 void Kirby::handleCollision(Door* door)
 {
-	door->handleCollision(this);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		door->handleCollision(this);
+	}
 }
 
 void Kirby::takeDamage(int damageAmount)
