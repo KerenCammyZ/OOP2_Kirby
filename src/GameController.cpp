@@ -5,15 +5,19 @@
 GameController::GameController():
 	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1)
 {
-	// camera setup
-	m_view.setSize(VIEW_WIDTH, VIEW_HEIGHT);
-	m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
-	m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
-
+	// camera setup -- NOTE: camera setup is now handled by loadHUD()
+	
+	//m_view.setSize(VIEW_WIDTH, VIEW_HEIGHT);
+	//m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
+	//m_view.setCenter(m_view.getSize().x / 2.f, m_view.getSize().y / 2.f);
+	
 	loadTextures(); // Load Textures of Kirby and Visual World
+	loadHUD(); // Load the HUD and set up the views for the game and HUD
+	
 	//loadCollisionMap("Level1Collisions.png"); // Load the collision map for fixed objects and enemies
 
 }
+
 
 void GameController::run()
 {
@@ -33,7 +37,7 @@ void GameController::run()
 				if (event.type == sf::Event::Closed)
 				{
 					// If the window is closed, exit the game entirely.
-					m_currentLevel = m_maxLevels + 1; // Set level to exit outer loop
+					m_currentLevel = m_maxLevels + 1; // Set level to exit outer loop. Q: unnecessary? (window is being closed anyway).
 					m_window.close();
 				}
 			}
@@ -47,7 +51,7 @@ void GameController::run()
 		}
 
 		// If the level was completed (and the window wasn't closed), advance to the next level.
-		if (m_window.isOpen())
+		if (m_window.isOpen()) // Q: "if" is unncessary? (window is necessarily open if we are here)
 		{
 			m_currentLevel++;
 		}
@@ -105,6 +109,7 @@ void GameController::checkCollisions()
 	}
 }
 
+
 void GameController::updateView()
 {
 	// horizontal movement
@@ -119,8 +124,8 @@ void GameController::updateView()
 
 	// boundry checks
 	sf::FloatRect worldBounds = m_worldMap->getBounds();
-	float viewHalfWidth = m_view.getSize().x / 2.f;
-	float viewHalfHeight = m_view.getSize().y / 2.f;
+	float viewHalfWidth = m_gameView.getSize().x / 2.f;
+	float viewHalfHeight = m_gameView.getSize().y / 2.f;
 
 	// Left boundary
 	if (viewX < viewHalfWidth) {
@@ -140,8 +145,9 @@ void GameController::updateView()
 	}
 
 	// Set the view's final center position for this frame.
-	m_view.setCenter(viewX, viewY);
+	m_gameView.setCenter(viewX, viewY);
 }
+
 
 // Load Kirby and Worldmap Textures
 void GameController::loadTextures()
@@ -163,6 +169,7 @@ void GameController::loadTextures()
 	//m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
 }
 
+
 void GameController::loadLevel(int levelNum)
 {
 	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position at the start of each level
@@ -182,10 +189,12 @@ void GameController::loadLevel(int levelNum)
 
 		// 3. IMPORTANT: Update the actual sf::View object with the new size.
 		// We keep the original width to maintain the aspect ratio you've defined.
-		m_view.setSize(VIEW_WIDTH, newViewHeight);
+		m_gameView.setSize(VIEW_WIDTH, newViewHeight);
 	}
 }
 
+
+// Update all game objects, including Kirby and enemies
 void GameController::update(float deltaTime)
 {
 	// --- THIS IS THE CORRECT GAME LOOP ORDER ---
@@ -229,6 +238,7 @@ void GameController::update(float deltaTime)
 	// Enemy removal logic would go here.
 }
 
+
 void GameController::handle()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
@@ -237,10 +247,11 @@ void GameController::handle()
 		m_window.close();
 }
 
+
 void GameController::draw()
 {
 	m_window.clear(sf::Color::Black);
-	m_window.setView(m_view);
+	m_window.setView(m_gameView);
 
 	m_worldMap->draw(m_window);
 	m_kirby->draw(m_window);
@@ -257,9 +268,61 @@ void GameController::draw()
 		enemy->draw(m_window);
 	}
 
-	
 	// NOTE: If you were to draw UI elements (like a score or health bar),
 	// you would switch back to the default view here so they stay fixed on the screen:
 	// m_window.setView(m_window.getDefaultView());
 	// ... draw UI ...
+	drawHUD();
+}
+
+
+// Load the HUD and set up the views for the game and HUD
+void GameController::loadHUD()
+{
+	// Game view - takes up the top portion of the screen
+	m_gameView.setSize(VIEW_WIDTH, VIEW_HEIGHT);
+	m_gameView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, float(GAME_HEIGHT) / SCREEN_HEIGHT));
+	m_levelAreaHeight = VIEW_HEIGHT; // The height of a level section is one view height
+	m_gameView.setCenter(m_gameView.getSize().x / 2.f, m_gameView.getSize().y / 2.f);
+
+	// HUD view - takes up the bottom portion of the screen
+	m_hudView.setSize(SCREEN_WIDTH, HUD_HEIGHT);
+	m_hudView.setViewport(sf::FloatRect(0.f, (float)GAME_HEIGHT / SCREEN_HEIGHT, 1.f, (float)HUD_HEIGHT / SCREEN_HEIGHT)); // ?
+	m_hudView.setCenter(SCREEN_WIDTH / 2.f, HUD_HEIGHT / 2.f);
+
+	// Initialize HUD
+	m_hud = std::make_unique<HUD>();
+	if (!m_hud->loadTexture("HUD.png")) {
+		std::cout << "Warning: Could not load HUD.png\n";
+	}
+
+	if (!m_hud->loadSpriteSheet("HUDSpriteSheet.png")) {
+		std::cout << "Warning: Could not load spritesheet.png\n";
+	}
+}
+
+
+// Draw the HUD at the bottom of the screen
+void GameController::drawHUD()
+{
+	// Set the HUD view for the bottom section
+	m_window.setView(m_hudView);
+	
+	// Update HUD with current game data
+	int kirbyHealth = m_kirby->getHealth();
+	int lives = m_kirby->getLives();
+	int score = 0;    // TODO: Replace with getScore()
+	
+	std::string state;
+	//if (m_kirby->isInvincible())
+		//state = "invincible"; // TODO: Replace with a m_kirby->get() function
+	if (m_kirby->isHyper())
+		state = "hyper";      // maybe getCurrentPower() / getCurrentState() / getStateDisplay(), ..
+	else
+		state = "normal";
+
+	m_hud->updateGameData(kirbyHealth, lives, score, state);
+
+	// Draw the HUD stretched across the bottom
+	m_hud->draw(m_window);
 }

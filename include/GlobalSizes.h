@@ -9,7 +9,7 @@ static int SCREEN_HEIGHT = 1200;
 static int VIEW_WIDTH = 600;
 static int VIEW_HEIGHT = 300;
 
-// --- NEW PHYSICS CONSTANTS ---
+// --- NEW PHYSICS CONSTANTS ---git 
 const float GRAVITY = 200.0f;
 const float JUMP_STRENGTH = 120.0f;
 
@@ -25,3 +25,6 @@ const float WATER_DRAG = 1.0f;   // How much water slows you down
 //static int VIEW_WIDTH = 300; // originally 800
 //static int VIEW_HEIGHT = 150; // originally 600
 
+// --- HUD Configuration ---
+static int HUD_HEIGHT = SCREEN_HEIGHT / 5;  // Height reserved for HUD at bottom (can be adjusted)
+static int GAME_HEIGHT = SCREEN_HEIGHT - HUD_HEIGHT;  // Remaining height for gameplay
