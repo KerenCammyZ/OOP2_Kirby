@@ -7,7 +7,6 @@
 
 void KirbySwimmingState::enter(Kirby& kirby)
 {
-	std::cout << "Kirby has entered the swimming state." << std::endl;
 	// When entering water, kill any existing vertical velocity from a jump/fall.
 	kirby.setVelocity({ kirby.getVelocity().x, 0.f });
 }
@@ -47,7 +46,13 @@ void KirbySwimmingState::update(Kirby& kirby, float deltaTime)
 	// Pressing UP makes Kirby swim upwards
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		velocity.y = -swimSpeed;
+		velocity.y = -swimSpeed - BUOYANCY;
+	}
+
+	//Pressing DOWN makes Kirby swim downwards
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		velocity.y = swimSpeed;
 	}
 
 	kirby.setVelocity(velocity);
