@@ -98,21 +98,14 @@ void Kirby::update(float deltaTime)
 	}
 	m_state->update(*this, deltaTime);
 
-	move(deltaTime); // Apply the final velocity to our position.
+	m_oldPosition = m_position;
+	setPosition(m_position + m_velocity * deltaTime);
 	GameObject::update(deltaTime);
 
 	setGrounded(false); // Q: redundant? setGrounded is reset to false as required
-						// in the next call to Kirby::Update() before modifying m_state 
+						// in the next call to Kirby::Update() before modifying m_state again
 }
 
-void Kirby::move(float deltaTime)
-{
-	// If Kirby is not grounded, apply gravity
-	m_oldPosition = m_position;
-	setPosition(m_position + m_velocity * deltaTime);
-
-	// If Kirby is not moving horizontally, keep the direction as it is.
-}
 
 void Kirby::handleCollision(GameObject* other)
 {
