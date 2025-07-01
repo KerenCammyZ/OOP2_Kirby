@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "GlobalSizes.h"
 
-enum class ObjectType { DOOR, FLOOR, WALL, ENEMY, PRESENT, SPEED_PRESENT, EXIT , DEFAULT };
+enum class ObjectType { DOOR, FLOOR, WALL, ENEMY, PRESENT, SPEED_PRESENT, EXIT , WATER, DEFAULT };
 
 class Kirby;
 class Door;

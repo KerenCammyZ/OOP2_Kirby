@@ -33,7 +33,7 @@ bool GameObjectFactory::registerType(const sf::Color& colorKey, CreateFunction f
 }
 
 // This is the core creation logic. Given a key (a color), it builds the object.
-std::unique_ptr<GameObject> GameObjectFactory::create(const sf::Color& colorKey, sf::Vector2f position)
+std::unique_ptr<GameObject> GameObjectFactory::create(const sf::Color& colorKey, sf::Vector2f position , const Kirby* kirby)
 {
     // We use .find() to look for the colorKey in our map of blueprints.
     // .find() returns an "iterator" to the key-value pair if it's found.
@@ -48,7 +48,7 @@ std::unique_ptr<GameObject> GameObjectFactory::create(const sf::Color& colorKey,
         // stored creation function (the lambda).
         // We then call that function, passing the 'position' argument it needs.
         // This executes the 'return std::make_unique<...>()' inside the lambda.
-        return it->second(position);
+        return it->second(position, kirby);
     }
 
     // If no blueprint was found in the map for this specific color,

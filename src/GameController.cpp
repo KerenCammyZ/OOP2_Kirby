@@ -59,29 +59,33 @@ void GameController::run()
 		}
 	}
 	// Optional: Add a "You Win!" screen here after the loop finishes.
+	std::cout << "Game Over! Thanks for playing!" << std::endl;
 }
-
 
 void GameController::checkCollisions()
 {
-	// Check collisions between Kirby and all other game objects
+	// --- THIS IS THE FIX ---
+	// At the start of the collision phase, assume Kirby is not in water and not on the ground.
+	m_kirby->setInWater(false);
+	m_kirby->setGrounded(false);
+
+	// Loop through all objects to check for interactions with Kirby.
 	for (const auto& otherObject : m_allGameObjects)
 	{
 		if (m_kirby->collidesWith(*otherObject))
 		{
-			// --- NEW: Check for collision with the Exit ---
-			// Before doing normal collision handling, check if Kirby hit the exit.
+			// The double-dispatch call will handle everything.
+			// - If 'otherObject' is a Water tile, its handleCollision will call kirby->setInWater(true).
+			// - If 'otherObject' is a Floor tile, its handleCollision will call kirby->setGrounded(true).
+			// - If 'otherObject' is an Exit, we handle it specially.
+
 			if (otherObject->getType() == ObjectType::EXIT)
 			{
-				// If it's an exit, tell the level it's complete.
 				m_level->setCompleted(true);
-
-				// Return immediately. We don't need to check other collisions
-				// for this frame, as a level transition is about to happen.
-				return;
+				return; // Exit early, a level transition is happening.
 			}
 
-			// If it wasn't an exit, handle the collision normally.
+			// For all other objects, let them handle the collision.
 			m_kirby->handleCollision(otherObject.get());
 		}
 	}
@@ -171,25 +175,53 @@ void GameController::loadTextures()
 void GameController::loadLevel(int levelNum)
 {
 	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position at the start of each level
-	m_level = std::make_unique<Level>(levelNum);
+	m_level = std::make_unique<Level>(levelNum , m_kirby.get());
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
+
+	// --- CAMERA SETUP PER LEVEL ---
+	if (m_worldMap)
+	{
+		// 1. Calculate the new height for each of the three vertical sections.
+		float newViewHeight = m_worldMap->getSize().y / 3.0f;
+
+		// 2. Update our logical variable for camera snapping.
+		m_levelAreaHeight = newViewHeight;
+
+		// 3. IMPORTANT: Update the actual sf::View object with the new size.
+		// We keep the original width to maintain the aspect ratio you've defined.
+		m_gameView.setSize(VIEW_WIDTH, newViewHeight);
+	}
 }
 
 
 // Update all game objects, including Kirby and enemies
 void GameController::update(float deltaTime)
 {
+	if (m_kirby->getLives() == 0 && m_kirby->getHealth() == 0)
+	{
+		// If Kirby has no health or lives left, end the game.
+		m_window.close();
+		std::cout << "Game Over! Kirby has no health or lives left." << std::endl;
+		exit(EXIT_SUCCESS);
+	}
+	// --- THIS IS THE CORRECT GAME LOOP ORDER ---
+
+	// 1. CHECK THE ENVIRONMENT
+	// Run collision checks based on the objects' positions from the last frame.
+	// This will set all environmental flags (isGrounded, isInWater, etc.)
+	checkCollisions();
+
+	// 2. ACT ON THE ENVIRONMENT
+	// Now that all flags are correctly set for this frame, update all objects.
+	// Kirby's state machine will now see the correct values for m_isGrounded and m_isInWater.
 	m_kirby->update(deltaTime);
-	
-	// Update all other objects loaded from the map
+
 	for (auto& obj : m_allGameObjects)
 	{
-		// Polymorphism calls the correct update (MovingObject vs FixedObject)
 		obj->update(deltaTime);
 	}
-
 	for (auto& enemy : m_enemies)
 	{
 		if(enemy->isSwallowed())
@@ -197,6 +229,7 @@ void GameController::update(float deltaTime)
 
 		enemy->update(deltaTime);
 	}
+
 
 	// remove swallowed enemies
 	auto enemyIterator = std::remove_if(m_enemies.begin(), m_enemies.end(),
@@ -207,27 +240,29 @@ void GameController::update(float deltaTime)
 	m_enemies.erase(enemyIterator, m_enemies.end());
 
 
-	checkCollisions();
+	//checkCollisions();
 	updateView(); // Update the camera's position every frame 
 
-	// --- NEW: Remove collected presents ---Add commentMore actions
-	// std::remove_if moves all elements to be deleted to the end of the vector
-	// and returns an iterator to the first of those elements.
+	// 3. UPDATE THE CAMERA
+	// The view follows the newly calculated positions.
+	updateView();
+
+
+	// 4. CLEAN UP
+	// Remove any objects that were marked for deletion during the update phase.
 	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
 		[](const std::unique_ptr<GameObject>& obj)
 		{
-			// Try to cast the object to a Present*
 			if (Present* present = dynamic_cast<Present*>(obj.get()))
 			//if (obj.get()->getType() == ObjectType::PRESENT) -- to avoid dynamic casting
 			{
-				// If it is a present and it's been collected, mark it for removal
 				return present->isCollected();
 			}
-			return false; // Not a present, don't remove
+			return false;
 		});
-
-	// .erase() then actually removes the elements from the vector.
 	m_allGameObjects.erase(it, m_allGameObjects.end());
+
+	// Enemy removal logic would go here.
 }
 
 

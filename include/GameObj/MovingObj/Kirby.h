@@ -16,8 +16,9 @@ public:
 
 	// We override MovingObject's update to handle our new physics logic
 	void update(float deltaTime) override;
+	void move(float deltaTime) override {};
 
-	void move(float deltaTime) override;
+	//void move(float deltaTime) override;
 	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
 
 	float getSpeed() const;
@@ -33,6 +34,10 @@ public:
 
 	void setGrounded(bool grounded);
 	bool isGrounded() const;
+
+	// --- NEW: Water state management ---
+	void setInWater(bool inWater);
+	bool isInWater() const;
 
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
@@ -67,4 +72,5 @@ private:
 	bool m_isInvincible = false;
 	bool m_isHyper = false;
 	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
+	bool m_inWater = false;
 };

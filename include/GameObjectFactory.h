@@ -4,6 +4,8 @@
 #include <memory>
 #include <map>
 
+class Kirby;
+
 // A struct for comparing sf::Color, so it can be a map key.
 struct ColorComparator {
     bool operator()(const sf::Color& a, const sf::Color& b) const {
@@ -20,9 +22,11 @@ public:
     //static GameObjectFactory& instance();
 
     // The create function now returns the BASE class pointer
-    using CreateFunction = std::unique_ptr<GameObject>(*)(sf::Vector2f position);
+   //using CreateFunction = std::unique_ptr<GameObject>(*)(sf::Vector2f position);
+    // --- The creation function now accepts a Kirby pointer ---
+    using CreateFunction = std::unique_ptr<GameObject>(*)(sf::Vector2f position, const Kirby* kirby);
 
-    static std::unique_ptr<GameObject> create(const sf::Color& colorKey, sf::Vector2f position);
+    static std::unique_ptr<GameObject> create(const sf::Color& colorKey, sf::Vector2f position, const Kirby* kirby);
     static bool registerType(const sf::Color& colorKey, CreateFunction func);
 
 private:

@@ -9,7 +9,7 @@ sf::Color wallColor(255, 0, 0);
 
 bool Wall::m_registeritem = GameObjectFactory::registerType(
 	sf::Color(wallColor), // The color key for a Wall object
-	[](sf::Vector2f position) -> std::unique_ptr<GameObject> // The blueprint
+	[](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject> // The blueprint
 	{
 		// This lambda function creates and returns a new wall object
 		// when the factory is asked to create one for the color red.

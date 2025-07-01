@@ -7,13 +7,15 @@
 #include "Behaviors/AttackBehavior.h"
 #include "Behaviors/CollisionBehavior.h"
 
-enum class EnemyState { SPAWNING, ACTIVE, STUNNED, SWALLOWED };
+class Kirby;
+enum class EnemyState { SPAWNING, ACTIVE, SWALLOWED, STUNNED, ATTACKING };
 
 class Enemy : public MovingObject
 {
 public:
-	Enemy();
-	Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
+	Enemy() = default;
+	//Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
+	Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby);
 
 	void update(float deltaTime) override;
 	void move(float deltaTime) override;
@@ -42,14 +44,23 @@ private:
 	std::unique_ptr <AttackBehavior> m_attackBehavior;
 	std::unique_ptr <CollisionBehavior> m_collisionBehavior;
 
+	const Kirby* m_kirby;
+
 	EnemyState m_state;
-	float m_stunTimer{ 0.0f }; // enemy stunned
-	float m_spawnTimer{ 1.25f };
+
+	// Timers for State Management
 	int m_damageAmount;
 	int m_scoreValue; // Score value for defeating this enemy
+	float m_stunTimer{ 0.0f };
+	float m_spawnTimer{ 3.25f };
+	float m_actionTimer{ 0.0f };
+	float m_attackDuration{ 0.0f };
+	sf::Vector2f m_direction;
+
 
 	// Static registration for the Enemy type
 	static bool m_registerTwizzy;
 	static bool m_registerWaddleDee;
+	static bool m_registerSparky;
 	//static bool m_registerEnemy;
 };

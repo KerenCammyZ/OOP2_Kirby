@@ -26,8 +26,8 @@ bool HUD::loadTexture(const std::string& filePath) {
     m_hudSprite.setTexture(*m_hudTexture);
     updateSprite(); // Set initial scaling and position
 
-    std::cout << "HUD texture loaded successfully. Original size: "
-        << m_hudTexture->getSize().x << "x" << m_hudTexture->getSize().y << std::endl;
+    /*std::cout << "HUD texture loaded successfully. Original size: "
+        << m_hudTexture->getSize().x << "x" << m_hudTexture->getSize().y << std::endl;*/
 
     return true;
 }
@@ -46,7 +46,7 @@ bool HUD::loadSpriteSheet(const std::string& filePath) {
     m_spriteSheet->defineSpriteType("health", 8, 14);
     m_spriteSheet->defineSpriteType("star", 13, 12);
 
-    std::cout << "Spritesheet setup complete. Add your sprite locations next." << std::endl;
+   // std::cout << "Spritesheet setup complete. Add your sprite locations next." << std::endl;
 
     // TODO: You'll need to specify where these sprites are located in your spritesheet
     // Example setup for digits 0-9 (you'll need to adjust coordinates):
@@ -197,8 +197,8 @@ void HUD::updateSprite()
     m_hudSprite.setScale(scaleX, scaleY);
     m_hudSprite.setPosition(m_displayArea.left, m_displayArea.top);
 
-    std::cout << "HUD stretched - Scale: (" << scaleX << ", " << scaleY
-        << ") Final size: " << m_displayArea.width << "x" << m_displayArea.height << std::endl;
+ /*   std::cout << "HUD stretched - Scale: (" << scaleX << ", " << scaleY
+        << ") Final size: " << m_displayArea.width << "x" << m_displayArea.height << std::endl;*/
 }
 
 

@@ -13,6 +13,10 @@ static int VIEW_HEIGHT = 300;
 const float GRAVITY = 200.0f;
 const float JUMP_STRENGTH = 120.0f;
 
+// New constants for water physics
+const float BUOYANCY = -100.0f; // An upward force that counters gravity
+const float WATER_DRAG = 1.0f;   // How much water slows you down
+
 //// Adjusted sizes for lower resolution displays
 //constexpr float ENTITY_SIZE = 12.0f; // originally 24.0f
 //static int SCREEN_WIDTH = 800; // originally 1600

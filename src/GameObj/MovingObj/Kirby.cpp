@@ -2,13 +2,12 @@
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Door.h"
 #include "States/KirbyStandingState.h"
+#include "States/KirbySwimmingState.h"
 #include "GlobalSizes.h"
 #include "GameObj/FixedObj/Wall.h"
 #include <iostream>
-
-// It's better to declare these constants where they are used,
-// but for now, we'll make them accessible via GlobalSizes.h
-// Make sure GlobalSizes.h is included in any file that needs them.
+#include <thread>
+#include <chrono>
 
 Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	: m_velocity(0.f, 0.f), m_isGrounded(false) // Initialize physics members
@@ -55,6 +54,8 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 
 void Kirby::update(float deltaTime)
 {
+	//m_isGrounded = false;
+
 	// Manager handles all item effect timing and logic
 	m_presentManager.update(deltaTime, *this);
 
@@ -71,7 +72,7 @@ void Kirby::update(float deltaTime)
 			m_isInvincible = false;
 		}
 
-		// Optional: Make sprite flash during invincibility
+		// Make sprite flash during invincibility
 		static float flashTimer = 0.0f;
 		flashTimer += deltaTime;
 		if (flashTimer > 0.1f) // Flash every 0.1 seconds
@@ -86,10 +87,11 @@ void Kirby::update(float deltaTime)
 		m_sprite.setColor(sf::Color::White); // Ensure normal color once invinciblity is over
 	}
 
-	// Assume we are not on the ground at the start of the frame.
-	setGrounded(false);
+	if (isInWater())
+	{
+		m_state = std::make_unique<KirbySwimmingState>();
+	}
 
-	// Current state handle transitions and modify velocity.
 	auto newState = m_state->handleInput(*this);
 	if (newState)
 	{
@@ -98,21 +100,16 @@ void Kirby::update(float deltaTime)
 	}
 	m_state->update(*this, deltaTime);
 
-	move(deltaTime); // Apply the final velocity to our position.
-	GameObject::update(deltaTime);
-
-	setGrounded(false); // Q: redundant? setGrounded is reset to false as required
-						// in the next call to Kirby::Update() before modifying m_state 
-}
-
-void Kirby::move(float deltaTime)
-{
-	// If Kirby is not grounded, apply gravity
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
-
-	// If Kirby is not moving horizontally, keep the direction as it is.
+	GameObject::update(deltaTime);
 }
+
+//void Kirby::move(float deltaTime)
+//{
+//	m_oldPosition = m_position;
+//	setPosition(m_position + m_velocity * deltaTime);
+//}
 
 void Kirby::handleCollision(GameObject* other)
 {
@@ -125,19 +122,18 @@ void Kirby::handleCollision(GameObject* other)
 	{
 		static_cast<Enemy*>(other)->handleCollision(this);
 	}
-	//else if (other->getType() == ObjectType::DOOR)
-	//{
-	//	handleCollision(static_cast<Door*>(other));
-	//	return;
-	//}
-	else {
+	else 
+	{
 		other->handleCollision(this);
 	}
 }
 
 void Kirby::handleCollision(Door* door)
 {
-	door->handleCollision(this);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		door->handleCollision(this);
+	}
 }
 
 void Kirby::takeDamage(int damageAmount)
@@ -202,3 +198,13 @@ void Kirby::setVelocity(const sf::Vector2f& velocity) { m_velocity = velocity; }
 sf::Vector2f Kirby::getVelocity() const { return m_velocity; }
 void Kirby::setGrounded(bool grounded) { m_isGrounded = grounded; }
 bool Kirby::isGrounded() const { return m_isGrounded; }
+
+void Kirby::setInWater(bool inWater)
+{
+	m_inWater = inWater;
+}
+
+bool Kirby::isInWater() const
+{
+	return m_inWater;
+}

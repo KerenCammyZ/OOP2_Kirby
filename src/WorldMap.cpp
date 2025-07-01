@@ -47,7 +47,7 @@ void WorldMap::draw(sf::RenderTarget& target) const
 
 // This is the new, primary function for loading all objects.
 // It replaces the logic that was previously in GameController.
-std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std::string& filePath)
+std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std::string& filePath, const Kirby* kirby)
 {
 	sf::Image collisionImage;
 	if (!collisionImage.loadFromFile(filePath))
@@ -72,7 +72,7 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
 				(y * TILE_SIZE * m_scale.y) + (TILE_SIZE * m_scale.y / 2.f) + 1.0f // + 1.0f for collision overlap
 			);
 
-			auto newObject = GameObjectFactory::create(pixelColor, position);
+			auto newObject = GameObjectFactory::create(pixelColor, position, kirby);
 
 			if (newObject)
 			{
