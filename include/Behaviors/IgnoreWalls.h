@@ -7,16 +7,15 @@ class IgnoreWalls : public CollisionBehavior
 public:
 	void handleCollision(GameObject* other)
 	{
-		// entering this block returns to calling function immediately
 		if (other->getType() == ObjectType::WALL)
 		{
-			return; // Ignore collision with walls
+			; // do nothing
 		} 
 	
 		// ObjectType is not a Wall
-		if (m_owner)
-		{
-			m_owner->handleCollision(other);
+		if (other->getType() == ObjectType::ENEMY) {
+			m_owner->reverseDirection();
+			m_owner->setPosition(m_owner->getOldPosition());
 		}
 	}
 };

@@ -22,6 +22,7 @@ public:
 	void attack(float deltaTime);
 	void stun(float duration);
 	void onSwallowed();
+	void reverseDirection();
 	
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override;
@@ -50,9 +51,9 @@ private:
 
 	// Timers for State Management
 	int m_damageAmount;
-	int m_scoreValue; // Score value for defeating this enemy
+	int m_scoreValue = 10; // Score value for defeating this enemy
 	float m_stunTimer{ 0.0f };
-	float m_spawnTimer{ 3.25f };
+	float m_spawnTimer{ 1.0f };
 	float m_actionTimer{ 0.0f };
 	float m_attackDuration{ 0.0f };
 

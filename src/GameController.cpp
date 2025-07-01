@@ -212,7 +212,7 @@ void GameController::update(float deltaTime)
 	// 1. CHECK THE ENVIRONMENT
 	// Run collision checks based on the objects' positions from the last frame.
 	// This will set all environmental flags (isGrounded, isInWater, etc.)
-	// checkCollisions(); *****
+	checkCollisions();
 
 	// 2. ACT ON THE ENVIRONMENT
 	// Now that all flags are correctly set for this frame, update all objects.
@@ -242,7 +242,6 @@ void GameController::update(float deltaTime)
 
 	m_kirby->setInWater(false);
 	m_kirby->setGrounded(false);
-	checkCollisions();
 
 	// 3. UPDATE THE CAMERA
 	// The view follows the newly calculated positions.

@@ -22,7 +22,7 @@ Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
 	m_state = std::make_unique<KirbyStandingState>();
 	m_state->enter(*this);
 
-	m_originalSpeed = m_speed;
+	m_originalSpeed = m_speed; 
 };
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
@@ -32,7 +32,7 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 	{
 		float distanceX = enemy->getPosition().x - getPosition().x;
 		float distanceY = enemy->getPosition().y - getPosition().y;
-		bool inRange = std::abs(distanceX) <= range && std::abs(distanceY) < 1.f;
+		bool inRange = std::abs(distanceX) <= range && std::abs(distanceY) < 2.5f;
 
 		if (collidesWith(*enemy))
 			continue; // do nothing
