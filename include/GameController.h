@@ -35,7 +35,7 @@ private:
 	float m_deltaTime;
 
 	int m_currentLevel;
-	const int m_maxLevels = 2;
+	const int m_maxLevels = 3;
 
 	sf::Clock m_deltaClock;
 	//sf::View m_view;
