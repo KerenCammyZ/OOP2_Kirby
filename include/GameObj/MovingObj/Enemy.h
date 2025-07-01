@@ -55,7 +55,6 @@ private:
 	float m_spawnTimer{ 3.25f };
 	float m_actionTimer{ 0.0f };
 	float m_attackDuration{ 0.0f };
-	sf::Vector2f m_direction;
 
 
 	// Static registration for the Enemy type

@@ -80,7 +80,6 @@ bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 
 Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby)
 	: m_state(EnemyState::SPAWNING),
-	m_direction(sf::Vector2f(0.f, 0.f)),
 	m_kirby(kirby) // Initialize the new member
 {
 	setTexture(enemyTexture);
