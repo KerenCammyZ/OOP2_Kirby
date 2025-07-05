@@ -24,7 +24,7 @@ public:
 	float getSpeed() const;
 	void setSpeed(float speed);
 	float getOriginalSpeed() const;
-	
+
 	// The single public method to add any present's effect
 	void addPresentEffect(std::unique_ptr<PresentCommand> command);
 
@@ -45,18 +45,20 @@ public:
 	void handleCollision(Door* door) override;
 
 	// Kirby's health and lives management
-	void takeDamage(int damageAmount);
 	void heal(int healAmount);
+	void takeDamage(int damageAmount);
 	void loseLife();
+	int getLives() const { return m_lives; }
 	int getHealth() const { return m_health; }
 	int getMaxHealth() const { return m_maxHealth; }
-	int getLives() const { return m_lives; }
-	bool isInvincible() const { return m_isInvincible; }
-
-	bool isHyper() const { return m_isHyper; }
-	void setHyper(bool hyper) { m_isHyper = hyper; }
+	
+	bool isHyper() const;
+	void setHyper(bool hyper);
+	bool isInvincible() const;
 
 private:
+	void activateInvincibility(float deltaTime);
+
 	std::unique_ptr<KirbyState> m_state;
 
 	PresentManager m_presentManager;

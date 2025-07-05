@@ -58,34 +58,9 @@ void Kirby::update(float deltaTime)
 
 	// Manager handles all item effect timing and logic
 	m_presentManager.update(deltaTime, *this);
-
-	// Handle invincibility frames 
-	if (m_isInvincible)
-	{
-		// TODO: Consider moving this to a separate InvincibilityState
-		// possible challenges:
-		// 1. it should not cancel other states
-		// 2. caused by collision, not by keyboard input
-		m_invincibilityTimer -= deltaTime;
-		if (m_invincibilityTimer <= 0.0f)
-		{
-			m_isInvincible = false;
-		}
-
-		// Make sprite flash during invincibility
-		static float flashTimer = 0.0f;
-		flashTimer += deltaTime;
-		if (flashTimer > 0.1f) // Flash every 0.1 seconds
-		{
-			sf::Color currentColor = m_sprite.getColor();
-			m_sprite.setColor(currentColor.a == 255 ? sf::Color(255, 255, 255, 128) : sf::Color::White);
-			flashTimer = 0.0f;
-		}
-	}
-	else
-	{
-		m_sprite.setColor(sf::Color::White); // Ensure normal color once invinciblity is over
-	}
+	
+	if (m_isInvincible) // set to true in function takeDamage
+		activateInvincibility(deltaTime);
 
 	if (isInWater())
 	{
@@ -136,6 +111,7 @@ void Kirby::handleCollision(Door* door)
 	}
 }
 
+// Decrease kirbys health by damageAmount
 void Kirby::takeDamage(int damageAmount)
 {
 	// Ignore damage if invincible or no lives left
@@ -150,8 +126,8 @@ void Kirby::takeDamage(int damageAmount)
 	}
 
 	// Start invincibility period
+	m_invincibilityTimer = 1.0f;
 	m_isInvincible = true;
-	m_invincibilityTimer = 1.0f; // 1 second of invincibility
 
 	std::cout << "Kirby took damage! Health: " << m_health << ", Lives: " << m_lives << std::endl;
 }
@@ -170,6 +146,30 @@ void Kirby::loseLife()
 	if (m_lives <= 0)
 	{
 		std::cout << "Game Over!" << std::endl;
+	}
+}
+
+// Prevents rapid damage by setting invincibility timer
+void Kirby::activateInvincibility(float deltaTime)
+{
+	m_invincibilityTimer -= deltaTime;
+	if (m_invincibilityTimer <= 0.0f)
+	{
+		m_isInvincible = false;
+	}
+
+	// Make sprite flash during invincibility
+	static float flashTimer = 0.0f;
+	flashTimer += deltaTime;
+	if (flashTimer > 0.1f) // Flash every 0.1 seconds
+	{
+		sf::Color currentColor = m_sprite.getColor();
+		m_sprite.setColor(currentColor.a == 255 ? sf::Color(255, 255, 255, 128) : sf::Color::White);
+		flashTimer = 0.0f;
+	}
+	if (!m_isInvincible)
+	{
+		m_sprite.setColor(sf::Color::White); // Ensure normal color once invinciblity is over
 	}
 }
 
@@ -193,18 +193,18 @@ void Kirby::addPresentEffect(std::unique_ptr<PresentCommand> command)
 	m_presentManager.add(std::move(command), *this);
 }
 
+bool Kirby::isHyper() const { return m_isHyper; }
+void Kirby::setHyper(bool hyper) { m_isHyper = hyper; }
+bool Kirby::isInvincible() const { return m_isInvincible; }
+
 // --- NEW PHYSICS METHOD DEFINITIONS ---
+
 void Kirby::setVelocity(const sf::Vector2f& velocity) { m_velocity = velocity; }
 sf::Vector2f Kirby::getVelocity() const { return m_velocity; }
+
 void Kirby::setGrounded(bool grounded) { m_isGrounded = grounded; }
 bool Kirby::isGrounded() const { return m_isGrounded; }
 
-void Kirby::setInWater(bool inWater)
-{
-	m_inWater = inWater;
-}
+void Kirby::setInWater(bool inWater) { m_inWater = inWater; }
+bool Kirby::isInWater() const { return m_inWater; }
 
-bool Kirby::isInWater() const
-{
-	return m_inWater;
-}
