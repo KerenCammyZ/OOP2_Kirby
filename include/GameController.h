@@ -19,16 +19,16 @@ public:
 	GameController();
 	~GameController() = default;
 	void run();
-	unsigned int getScore() const;
 	void addScore(unsigned int);
-
+	unsigned int getScore() const;
+	
 private:
 	void update(float deltaTime);
 	void handleEvents();
 	void draw();
 	void drawHUD();
-	void checkCollisions();
 	void updateView();
+	void checkCollisions();
 	void loadTextures();
 	void loadLevel(int levelNum);
 	void loadHUD();
@@ -40,10 +40,9 @@ private:
 	const int m_maxLevels = 2;
 	int m_score = 0;
 
-	sf::Clock m_deltaClock;
-	//sf::View m_view;
 	sf::View m_gameView;
 	sf::View m_hudView;
+	sf::Clock m_deltaClock;
 	sf::RenderWindow m_window;
 
 	std::unique_ptr<Kirby> m_kirby;
