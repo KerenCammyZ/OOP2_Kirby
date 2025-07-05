@@ -22,10 +22,12 @@ bool Floor::m_registeritem = GameObjectFactory::registerType(
 
 void Floor::handleCollision(Kirby* kirby)
 {
+	
 	sf::FloatRect kirbyBounds = kirby->getBounds();
 	sf::FloatRect floorBounds = getBounds();
 	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
-
+	const int floorHeight = floorBounds.height;
+	
 	// Check if Kirby was coming from above in the previous frame
 	if (kirbyPrevPos.y + kirbyBounds.height / 2.f <= floorBounds.top)
 	{
@@ -37,5 +39,18 @@ void Floor::handleCollision(Kirby* kirby)
 
 		// 3. Reposition him to be exactly on top of the floor.
 		kirby->setPosition({ kirby->getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
+	}
+
+	else if (kirbyPrevPos.x + kirbyBounds.width / 2.f <= floorBounds.left) // Coming from the left
+	{
+		// Stop horizontal movement and reposition Kirby to the left and on top of the floor
+		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
+		kirby->setPosition({ floorBounds.left - (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight});
+	}
+	else if (kirbyPrevPos.x - kirbyBounds.width / 2.f >= floorBounds.left + floorBounds.width) // Coming from the right
+	{
+		// Stop horizontal movement and reposition Kirby to the right and on top of the floor
+		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
+		kirby->setPosition({ floorBounds.left + floorBounds.width + (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight });
 	}
 }
