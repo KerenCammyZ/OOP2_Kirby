@@ -90,8 +90,10 @@ void Kirby::handleCollision(GameObject* other)
 {
 	if (other->getType() == ObjectType::WALL)
 	{
-		setPosition(getOldPosition());
+		sf::FloatRect wallBounds = other->getBounds();
+
 		setVelocity(sf::Vector2f(0, 0));
+		setPosition(getOldPosition());
 	}
 	else if (other->getType() == ObjectType::ENEMY)
 	{

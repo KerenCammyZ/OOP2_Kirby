@@ -19,20 +19,12 @@ struct ColorComparator {
 class GameObjectFactory
 {
 public:
-    //static GameObjectFactory& instance();
-
-    // The create function now returns the BASE class pointer
-   //using CreateFunction = std::unique_ptr<GameObject>(*)(sf::Vector2f position);
-    // --- The creation function now accepts a Kirby pointer ---
     using CreateFunction = std::unique_ptr<GameObject>(*)(sf::Vector2f position, const Kirby* kirby);
 
     static std::unique_ptr<GameObject> create(const sf::Color& colorKey, sf::Vector2f position, const Kirby* kirby);
     static bool registerType(const sf::Color& colorKey, CreateFunction func);
 
 private:
-    //GameObjectFactory() = default;
-    //GameObjectFactory(const GameObjectFactory&) = delete;
-    //void operator=(const GameObjectFactory&) = delete;
     static std::map<sf::Color, CreateFunction, ColorComparator>& getMap()
     {
         static std::map<sf::Color, CreateFunction, ColorComparator> m_creationFunctions;

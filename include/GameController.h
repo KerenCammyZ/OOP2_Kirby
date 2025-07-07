@@ -25,6 +25,7 @@ public:
 private:
 	void update(float deltaTime);
 	void handleEvents();
+	void processWindowEvents();
 	void draw();
 	void drawHUD();
 	void updateView();
@@ -33,17 +34,19 @@ private:
 	void loadLevel(int levelNum);
 	void loadHUD();
 
-	float m_levelAreaHeight;
-	float m_deltaTime;
 
+
+	float m_deltaTime;
+	sf::Clock m_deltaClock;
+
+	int m_score = 0;
 	int m_currentLevel;
 	const int m_maxLevels = 2;
-	int m_score = 0;
 
 	sf::View m_gameView;
 	sf::View m_hudView;
-	sf::Clock m_deltaClock;
 	sf::RenderWindow m_window;
+	float m_levelAreaHeight;
 
 	std::unique_ptr<Kirby> m_kirby;
 	std::unique_ptr<WorldMap> m_worldMap;
