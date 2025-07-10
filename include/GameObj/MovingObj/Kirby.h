@@ -12,7 +12,7 @@ class PresentCommand;
 class Kirby : public MovingObject
 {
 public:
-	Kirby(std::shared_ptr<sf::Texture>& kirbyTexture);
+	Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture);
 
 	// We override MovingObject's update to handle our new physics logic
 	void update(float deltaTime) override;

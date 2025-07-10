@@ -67,19 +67,8 @@ bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 	}
 );
 
-//Enemy::Enemy() = default; // Default constructor
 
-
-//Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition)
-//	: m_state(EnemyState::SPAWNING), m_direction(sf::Vector2f(0.f, 0.f))
-//{
-//	setTexture(enemyTexture); // initialize m_texture, m_sprite
-//	setPosition(startPosition);
-//	setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
-//	m_speed = 180.0f;
-//}
-
-Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby)
+Enemy::Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby)
 	: m_state(EnemyState::SPAWNING),
 	m_kirby(kirby) // Initialize the new member
 {
@@ -90,6 +79,15 @@ Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosit
 
 	m_actionTimer = 2.0f + (rand() % 3);
 }
+
+Enemy::~Enemy()
+{
+	// Clean up behaviors
+	if (m_attackBehavior) m_attackBehavior->setOwner(nullptr);
+	if (m_moveBehavior) m_moveBehavior->setOwner(nullptr);
+	if (m_collisionBehavior) m_collisionBehavior->setOwner(nullptr);
+}
+
 
 
 void Enemy::update(float deltaTime)

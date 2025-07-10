@@ -14,8 +14,9 @@ class Enemy : public MovingObject
 {
 public:
 	Enemy() = default;
+	~Enemy();
 	//Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
-	Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby);
+	Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby);
 
 	void update(float deltaTime) override;
 	void move(float deltaTime) override;

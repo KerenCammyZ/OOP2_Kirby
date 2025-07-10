@@ -9,7 +9,7 @@
 #include <thread>
 #include <chrono>
 
-Kirby::Kirby(std::shared_ptr<sf::Texture>& kirbyTexture)
+Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 	: m_velocity(0.f, 0.f), m_isGrounded(false) // Initialize physics members
 {
 	setTexture(kirbyTexture);

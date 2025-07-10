@@ -1,11 +1,22 @@
 #include "GameObj/GameObject.h"
 #include <iostream> 
 
+std::shared_ptr<sf::Texture> GameObject::m_defaultTexture = nullptr;
+
 GameObject::GameObject()
 {
 	m_position = sf::Vector2f(0.f, 0.f); // Initialize position to (0, 0)
 	m_size = sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE); // Default size based on ENTITY_SIZE
-	m_texture = nullptr; // No texture by default
+	//m_texture = m_defaultTexture; // Use default texture if no texture is set
+	m_sprite.setOrigin(m_size.x / 2.f, m_size.y / 2.f); // Center the sprite origin
+	m_sprite.setPosition(m_position); // Set initial position of the sprite
+}
+
+GameObject::GameObject(const std::shared_ptr<sf::Texture>& texture)
+{
+	m_texture = texture; // Use default texture if no texture is set
+	m_position = sf::Vector2f(0.f, 0.f); // Initialize position to (0, 0)
+	m_size = sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE); // Default size based on ENTITY_SIZE
 	m_sprite.setOrigin(m_size.x / 2.f, m_size.y / 2.f); // Center the sprite origin
 	m_sprite.setPosition(m_position); // Set initial position of the sprite
 }
@@ -36,6 +47,7 @@ void GameObject::update(float dt)
 void GameObject::setPosition(const sf::Vector2f& position)
 {
 	m_position = position;
+	m_sprite.setPosition(m_position);
 }
 
 sf::Vector2f GameObject::getPosition() const
@@ -63,6 +75,7 @@ void GameObject::setSize(const sf::Vector2f& size)
 			m_sprite.setScale(scaleX, scaleY);
 		}
 	}
+	m_sprite.setOrigin(m_size.x / 2.f, m_size.y / 2.f);
 }
 
 sf::Vector2f GameObject::getSize() const
@@ -77,9 +90,23 @@ void GameObject::setTexture(std::shared_ptr<sf::Texture> texture)
 	m_sprite.setTexture(*m_texture);
 }
 
+void GameObject::loadTexture(const std::string& filename)
+{
+	if (!m_defaultTexture) {
+		m_defaultTexture = std::make_shared<sf::Texture>();
+		if (!m_defaultTexture->loadFromFile(filename)) {
+			std::cerr << "Error loading texture from file: " << filename << std::endl;
+		}
+	}
+	m_texture = m_defaultTexture; // Set the texture to the default texture
+	m_sprite.setTexture(*m_texture);
+}
+
 sf::FloatRect GameObject::getBounds() const
 {
 	// The origin is now centered, so adjust the position for the bounding box
-	sf::Vector2f cornerPosition = m_position - sf::Vector2f(m_size.x / 2.f, m_size.y / 2.f);
-	return sf::FloatRect(cornerPosition, m_size);
+	//sf::Vector2f cornerPosition = m_position - sf::Vector2f(m_size.x / 2.f, m_size.y / 2.f);
+	//return sf::FloatRect(cornerPosition, m_size);
+
+	return m_sprite.getGlobalBounds();
 }

@@ -1,5 +1,6 @@
 // GameController.cpp
 #include "GameController.h"
+#include "ResourceManager.h"
 #include <iostream> // for debugging
 
 GameController::GameController():
@@ -74,7 +75,9 @@ void GameController::run()
 
 void GameController::loadLevel(int levelNum)
 {
+	m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
 	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position at the start of each level
+
 	m_level = std::make_unique<Level>(levelNum , m_kirby.get());
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
@@ -189,12 +192,13 @@ void GameController::updateView()
 // Load Kirby Texture
 void GameController::loadTextures()
 {
-	m_kirbyTexture = std::make_shared<sf::Texture>();
-	if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
-	{
-		throw std::runtime_error("Failed to load Kirby texture");
-	}
-	m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
+	//m_kirbyTexture = std::make_shared<sf::Texture>();
+	//if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
+	//{
+	//	throw std::runtime_error("Failed to load Kirby texture");
+	//}
+	//m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
+	;
 }
 
 // This function is called every frame to update the game state.
@@ -277,14 +281,15 @@ void GameController::handleEvents()
 	// Handle Game controll Input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 		m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
+
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-		m_window.close();
+		m_window.close(); // Close game window
 
 	// Handle Kirby's input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
 		float attackRange = 100.0f; // Define the attack range
-		m_kirby->attack(m_enemies, attackRange);
+		m_kirby->attack(m_enemies, attackRange); // Attack enemies within range
 	}
 	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{

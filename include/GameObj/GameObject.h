@@ -12,6 +12,7 @@ class GameObject
 {
 public:
 	GameObject();
+	GameObject(const std::shared_ptr<sf::Texture>& texture);
 	virtual ~GameObject() = default;
 
 	virtual void update(float dt);
@@ -33,6 +34,7 @@ public:
 
 	bool collidesWith(GameObject& other) const;
 	virtual sf::FloatRect getBounds() const;
+	void loadTexture(const std::string& filename);
 	void setTexture(std::shared_ptr<sf::Texture> texture);
 
 	virtual ObjectType getType() const { return ObjectType::DEFAULT; }
@@ -40,6 +42,7 @@ public:
 protected:
 	sf::Vector2f m_position;
 	sf::Vector2f m_size;
-	std::shared_ptr<sf::Texture> m_texture;
 	sf::Sprite m_sprite;
+	std::shared_ptr<sf::Texture> m_texture;
+	static std::shared_ptr<sf::Texture> m_defaultTexture;
 };

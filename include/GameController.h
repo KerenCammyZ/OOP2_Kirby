@@ -53,7 +53,7 @@ private:
 	std::unique_ptr<Level> m_level;
 	std::unique_ptr<HUD> m_hud;
 
-	std::shared_ptr<sf::Texture> m_kirbyTexture;
+	//std::shared_ptr<sf::Texture> m_kirbyTexture;
 
 	std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
 	std::vector<std::unique_ptr<Enemy>> m_enemies;
