@@ -12,27 +12,37 @@
 #include "HUD.h"
 #include "SpriteSheet.h"
 #include <vector>
+#include <memory>
+
+class GameState;
 
 class GameController
 {
 public:
 	GameController();
-	~GameController() = default;
+	~GameController();
 	void run();
 	void addScore(unsigned int);
 	unsigned int getScore() const;
-	
-private:
+	void changeState(std::unique_ptr<GameState> newState);
+	sf::RenderWindow& getWindow();
+	Level* getLevel();
 	void update(float deltaTime);
 	void handleEvents();
-	void processWindowEvents();
 	void draw();
+	void loadLevel(int levelNum);
+	void loadHUD();
+private:
+	/*void update(float deltaTime);
+	void handleEvents();*/
+	void processWindowEvents();
+	//void draw();
 	void drawHUD();
 	void updateView();
 	void checkCollisions();
 	void loadTextures();
-	void loadLevel(int levelNum);
-	void loadHUD();
+	//void loadLevel(int levelNum);
+	//void loadHUD();
 
 
 
@@ -52,6 +62,7 @@ private:
 	std::unique_ptr<WorldMap> m_worldMap;
 	std::unique_ptr<Level> m_level;
 	std::unique_ptr<HUD> m_hud;
+	std::unique_ptr<GameState> m_currentState;
 
 	//std::shared_ptr<sf::Texture> m_kirbyTexture;
 

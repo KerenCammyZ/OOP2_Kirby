@@ -1,81 +1,78 @@
 // GameController.cpp
 #include "GameController.h"
 #include "ResourceManager.h"
+#include "States/GameStates/MainMenuState.h"
+#include "States/GameStates/PlayingState.h"
 #include <iostream> // for debugging
 
 GameController::GameController():
 	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1), m_score(0)
 {
+	// Set the initial state to the Main Menu
+	m_currentState = std::make_unique<MainMenuState>();
+	m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
+	//loadLevel(m_currentLevel);
 	loadTextures(); // Load Textures of Kirby and Visual World
 	loadHUD(); // Load the HUD and set up the views for the game and HUD
 }
 
-//void GameController::run()
-//{
-//	// This is the main outer loop that controls the entire game session.
-//	while (m_currentLevel <= m_maxLevels && m_window.isOpen())
-//	// while (m_currentLevel <= m_maxLevels
-//	{
-//		// --- Load all assets for the current level ---
-//		loadLevel(m_currentLevel);
-//
-//		// run the current level until it's complete.
-//		while (m_window.isOpen() && !m_level->getCompleted())
-//		{
-//			m_deltaTime = m_deltaClock.restart().asSeconds();
-//			sf::Event event;
-//			while (m_window.pollEvent(event))
-//			{
-//				if (event.type == sf::Event::Closed)
-//				{
-//					// If the window is closed, exit the game entirely.
-//					m_currentLevel = m_maxLevels + 1; // Set level to exit outer loop. Q: unnecessary? (window is being closed anyway).
-//					m_window.close();
-//				}
-//			}
-//
-//			if (!m_window.isOpen()) break;
-//
-//			handleEvents();
-//			update(m_deltaTime);
-//			draw();
-//			m_window.display();
-//		}
-//
-//		// If the level was completed (and the window wasn't closed), advance to the next level.
-//		if (m_window.isOpen()) // Q: "if" is unncessary? (window is necessarily open if we are here)
-//		{
-//			m_currentLevel++;
-//		}
-//	}
-//	// Optional: Add a "You Win!" screen here after the loop finishes.
-//	std::cout << "Game Over! Thanks for playing!" << std::endl;
-//}
+GameController::~GameController() = default;
+
+void GameController::changeState(std::unique_ptr<GameState> newState) 
+{
+	if (newState) 
+	{
+		m_currentState = std::move(newState);
+	}
+}
+
+sf::RenderWindow& GameController::getWindow() 
+{
+	return m_window;
+}
+
+Level* GameController::getLevel()
+{
+	return m_level.get();
+}
 
 void GameController::run()
 {
-	while (m_currentLevel <= m_maxLevels)
+	//while (m_currentLevel <= m_maxLevels)
+	//{
+	//	loadLevel(m_currentLevel);
+
+	//	// run the current level until it's complete.
+	//	while (m_window.isOpen() && !m_level->getCompleted())
+	//	{
+	//		m_deltaTime = m_deltaClock.restart().asSeconds();
+
+	//		handleEvents();
+	//		update(m_deltaTime);
+	//		draw();
+	//		m_window.display();
+	//	}
+	//	m_currentLevel++;
+	//}
+	//std::cout << "Game Over! Thanks for playing!" << std::endl;
+	while (m_window.isOpen())
 	{
-		loadLevel(m_currentLevel);
+		m_deltaTime = m_deltaClock.restart().asSeconds();
 
-		// run the current level until it's complete.
-		while (m_window.isOpen() && !m_level->getCompleted())
-		{
-			m_deltaTime = m_deltaClock.restart().asSeconds();
+		if (m_currentState) {
+			m_currentState->handleEvents(*this);
+			m_currentState->update(m_deltaTime, *this);
 
-			handleEvents();
-			update(m_deltaTime);
-			draw();
+			m_window.clear();
+			m_currentState->draw(*this);
 			m_window.display();
 		}
-		m_currentLevel++;
 	}
-	std::cout << "Game Over! Thanks for playing!" << std::endl;
 }
 
 void GameController::loadLevel(int levelNum)
 {
-	m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
+	//m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
 	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position at the start of each level
 
 	m_level = std::make_unique<Level>(levelNum , m_kirby.get());

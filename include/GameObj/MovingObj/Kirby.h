@@ -48,9 +48,9 @@ public:
 	void heal(int healAmount);
 	void takeDamage(int damageAmount);
 	void loseLife();
-	int getLives() const { return m_lives; }
-	int getHealth() const { return m_health; }
-	int getMaxHealth() const { return m_maxHealth; }
+	int getLives() const;
+	int getHealth() const;
+	int getMaxHealth() const;
 	
 	bool isHyper() const;
 	void setHyper(bool hyper);

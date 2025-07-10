@@ -73,7 +73,10 @@ std::unique_ptr<WorldMap> Level::getWorldMap()
 
 bool Level::getCompleted() const
 {
-	return complete;
+	if (this)
+		return complete;
+	else
+		return false;
 }
 
 void Level::setCompleted(bool completed)

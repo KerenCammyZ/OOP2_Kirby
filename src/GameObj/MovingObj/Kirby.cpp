@@ -210,3 +210,16 @@ bool Kirby::isGrounded() const { return m_isGrounded; }
 void Kirby::setInWater(bool inWater) { m_inWater = inWater; }
 bool Kirby::isInWater() const { return m_inWater; }
 
+// other getter/setters
+int Kirby::getLives() const
+{ 	
+	return m_lives; 	
+}
+int Kirby::getHealth() const 
+{ 
+	return m_health; 
+}
+int Kirby::getMaxHealth() const 
+{ 
+	return m_maxHealth; 
+}
