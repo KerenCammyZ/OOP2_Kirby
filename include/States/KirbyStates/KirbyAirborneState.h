@@ -1,5 +1,5 @@
 #pragma once
-#include "States/KirbyState.h"
+#include "States/KirbyStates/KirbyState.h"
 
 class KirbyAirborneState : public KirbyState
 {

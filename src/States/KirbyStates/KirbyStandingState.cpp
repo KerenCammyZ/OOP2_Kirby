@@ -1,10 +1,7 @@
-//#include "States/KirbyStandingState.h"
-//#include "States/KirbyWalkingState.h" // Use the new WalkingState
-//#include "States/KirbyJumpingState.h" // Include the JumpingState header
-#include "States/KirbyStandingState.h"
-#include "States/KirbyWalkingState.h"
-#include "States/KirbyJumpingState.h"
-#include "GameObj/MovingObj/Kirby.h" // Kirby header is needed for update
+#include "States/KirbyStates/KirbyStandingState.h"
+#include "States/KirbyStates/KirbyWalkingState.h"
+#include "States/KirbyStates/KirbyJumpingState.h"
+#include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 
 std::unique_ptr<KirbyState> KirbyStandingState::handleInput(Kirby& kirby)

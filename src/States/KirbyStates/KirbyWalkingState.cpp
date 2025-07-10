@@ -1,7 +1,7 @@
-#include "States/KirbyWalkingState.h"
-#include "States/KirbyStandingState.h"
-#include "States/KirbyJumpingState.h"
-#include "States/KirbyFallingState.h"  // Include falling
+#include "States/KirbyStates/KirbyWalkingState.h"
+#include "States/KirbyStates/KirbyStandingState.h"
+#include "States/KirbyStates/KirbyJumpingState.h"
+#include "States/KirbyStates/KirbyFallingState.h"  // Include falling
 #include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 

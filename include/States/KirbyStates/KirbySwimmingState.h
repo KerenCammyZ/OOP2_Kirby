@@ -1,9 +1,10 @@
 #pragma once
-#include "States/KirbyState.h"
+#include "States/KirbyStates/KirbyState.h"
 
-class KirbyStandingState : public KirbyState
+class KirbySwimmingState : public KirbyState
 {
 public:
+	void enter(Kirby& kirby) override;
 	std::unique_ptr<KirbyState> handleInput(Kirby& kirby) override;
 	void update(Kirby& kirby, float deltaTime) override;
 };

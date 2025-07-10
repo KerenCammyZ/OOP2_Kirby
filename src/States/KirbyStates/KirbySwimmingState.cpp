@@ -1,5 +1,5 @@
-#include "States/KirbySwimmingState.h"
-#include "States/KirbyFallingState.h" // To transition to when leaving water
+#include "States/KirbyStates/KirbySwimmingState.h"
+#include "States/KirbyStates/KirbyFallingState.h" // To transition to when leaving water
 #include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 #include "GlobalSizes.h"

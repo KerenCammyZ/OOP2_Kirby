@@ -1,4 +1,4 @@
-#include "States/KirbyJumpingState.h"
+#include "States/KirbyStates/KirbyJumpingState.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include "GlobalSizes.h";
 

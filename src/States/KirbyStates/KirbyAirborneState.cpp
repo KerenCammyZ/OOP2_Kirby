@@ -1,6 +1,6 @@
-#include "States/KirbyAirborneState.h"
-#include "States/KirbyStandingState.h" // To transition to when we land
-#include "States/KirbyJumpingState.h" // To transition to when we jump
+#include "States/KirbyStates/KirbyAirborneState.h"
+#include "States/KirbyStates/KirbyStandingState.h" // To transition to when we land
+#include "States/KirbyStates/KirbyJumpingState.h" // To transition to when we jump
 #include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 #include "GlobalSizes.h";

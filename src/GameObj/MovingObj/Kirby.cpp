@@ -1,8 +1,8 @@
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Door.h"
-#include "States/KirbyStandingState.h"
-#include "States/KirbySwimmingState.h"
+#include "States/KirbyStates/KirbyStandingState.h"
+#include "States/KirbyStates/KirbySwimmingState.h"
 #include "GlobalSizes.h"
 #include "GameObj/FixedObj/Wall.h"
 #include <iostream>
