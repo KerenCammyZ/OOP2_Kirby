@@ -36,11 +36,11 @@ void KirbySwimmingState::update(Kirby& kirby, float deltaTime)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		velocity.x = -swimSpeed;
+		velocity.x = -swimSpeed - BUOYANCY;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		velocity.x = swimSpeed;
+		velocity.x = swimSpeed + BUOYANCY;;
 	}
 
 	// Pressing UP makes Kirby swim upwards
@@ -52,7 +52,7 @@ void KirbySwimmingState::update(Kirby& kirby, float deltaTime)
 	//Pressing DOWN makes Kirby swim downwards
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		velocity.y = swimSpeed;
+		velocity.y = swimSpeed + BUOYANCY;
 	}
 
 	kirby.setVelocity(velocity);
