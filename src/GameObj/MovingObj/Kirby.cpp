@@ -10,7 +10,7 @@
 #include <chrono>
 
 Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
-	: m_velocity(0.f, 0.f), m_isGrounded(false) // Initialize physics members
+	: m_velocity(0.f, 0.f), m_isGrounded(false), m_inWater(false) // Initialize physics members
 {
 	setTexture(kirbyTexture);
 	sf::Vector2f kirbySize(ENTITY_SIZE, ENTITY_SIZE);
@@ -62,14 +62,22 @@ void Kirby::update(float deltaTime)
 	if (m_isInvincible) // set to true in function takeDamage
 		activateInvincibility(deltaTime);
 
+	std::unique_ptr<KirbyState> newState = nullptr;
+
 	if (isInWater())
 	{
+		//std::cout << "UPDATE_DEBUG: -----> Condition MET. Creating new SwimmingState." << std::endl;
 		m_state = std::make_unique<KirbySwimmingState>();
 	}
+	else
+	{
+		//std::cout << "UPDATE_DEBUG: -----> handleInput returned a new state." << std::endl;
+		newState = m_state->handleInput(*this);
+	}
 
-	auto newState = m_state->handleInput(*this);
 	if (newState)
 	{
+		//std::cout << "UPDATE_DEBUG: -----> Performing state transition..." << std::endl;
 		m_state = std::move(newState);
 		m_state->enter(*this);
 	}

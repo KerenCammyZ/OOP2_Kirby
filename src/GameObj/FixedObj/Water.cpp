@@ -18,8 +18,5 @@ bool Water::m_register = GameObjectFactory::registerType(
 
 void Water::handleCollision(Kirby* kirby)
 {
-	// This is the core logic. When Kirby is inside a Water object,
-	// we set his internal "in water" flag to true.
-	kirby->setInWater(true);
-	
+	kirby->setInWater(!kirby->isInWater());
 }
