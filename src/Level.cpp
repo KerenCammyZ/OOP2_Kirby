@@ -1,7 +1,8 @@
 #include "Level.h"
 #include "GameObj/MovingObj/Enemy.h" // Ensure Enemy is included for dynamic_cast
 
-Level::Level(int levelNumber, const Kirby* kirby) : levelNumber(levelNumber), complete(false)
+Level::Level(int levelNumber, const Kirby* kirby)
+	: levelNumber(levelNumber), complete(false)
 {
 	collisionMap = "Level" + std::to_string(levelNumber) + "Collisions.png";
 	backgroundImage = "Level" + std::to_string(levelNumber) + ".png";
@@ -45,12 +46,21 @@ void Level::loadObjects(const Kirby* kirby)
 }
 
 // --- FIX 2: Use std::move to transfer ownership of the vectors ---
-std::vector<std::unique_ptr<GameObject>>&& Level::getObjects()
+//std::vector<std::unique_ptr<GameObject>>&& Level::getObjects()
+//{
+//	return std::move(m_objects);
+//}
+//
+//std::vector<std::unique_ptr<Enemy>>&& Level::getEnemies()
+//{
+//	return std::move(m_enemies);
+//}
+std::vector<std::unique_ptr<GameObject>> Level::getObjects()
 {
 	return std::move(m_objects);
 }
 
-std::vector<std::unique_ptr<Enemy>>&& Level::getEnemies()
+std::vector<std::unique_ptr<Enemy>> Level::getEnemies()
 {
 	return std::move(m_enemies);
 }

@@ -19,36 +19,41 @@ public:
 	GameController();
 	~GameController() = default;
 	void run();
-
+	void addScore(unsigned int);
+	unsigned int getScore() const;
+	
 private:
 	void update(float deltaTime);
-	void handle();
+	void handleEvents();
+	void processWindowEvents();
 	void draw();
 	void drawHUD();
-	void checkCollisions();
 	void updateView();
+	void checkCollisions();
 	void loadTextures();
 	void loadLevel(int levelNum);
 	void loadHUD();
 
-	float m_levelAreaHeight;
-	float m_deltaTime;
 
+
+	float m_deltaTime;
+	sf::Clock m_deltaClock;
+
+	int m_score = 0;
 	int m_currentLevel;
 	const int m_maxLevels = 3;
 
-	sf::Clock m_deltaClock;
-	//sf::View m_view;
 	sf::View m_gameView;
 	sf::View m_hudView;
 	sf::RenderWindow m_window;
+	float m_levelAreaHeight;
 
 	std::unique_ptr<Kirby> m_kirby;
 	std::unique_ptr<WorldMap> m_worldMap;
 	std::unique_ptr<Level> m_level;
 	std::unique_ptr<HUD> m_hud;
 
-	std::shared_ptr<sf::Texture> m_kirbyTexture;
+	//std::shared_ptr<sf::Texture> m_kirbyTexture;
 
 	std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
 	std::vector<std::unique_ptr<Enemy>> m_enemies;

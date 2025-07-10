@@ -85,11 +85,6 @@ void HUD::draw(sf::RenderTarget& target) {
 
     // draw background first
     target.draw(m_hudSprite);
-
-    // Example: Draw some HUD elements using sprites
-    // (You can call these based on your game state)
-    // drawScore(target, 12345, 100, 20);
-    // drawLives(target, 3, 200, 20);
     
     // draw state 'normal state' at HUD coordinate (577, 33)
 	sf::Vector2f scale = getHUDScale();
@@ -97,35 +92,45 @@ void HUD::draw(sf::RenderTarget& target) {
     m_spriteSheet->drawSprite(target, m_kirbyState, statePos.x, statePos.y, scale.x, scale.y); // kirby state display
 
 	drawLives(target, 187, 20);
-    drawScore(target, m_score, 72, 32);
     drawHealthBar(target, 72, 13);
+    drawScore(target, m_score, 72, 32);
 
 }
 
 // Set the area where HUD should be drawn
-void HUD::setDisplayArea(float x, float y, float width, float height) {
+void HUD::setDisplayArea(float x, float y, float width, float height)
+{
     m_displayArea = sf::FloatRect(x, y, width, height);
     updateSprite();
 }
 
 
-void HUD::drawScore(sf::RenderTarget& target, int score, float x, float y) {
-    // Convert score to string and draw each digit
+void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float y)
+{
     std::string scoreStr = std::to_string(score);
-    float currentX = x;
-    sf::Vector2f scale = getHUDScale();
 
-    int i = scoreStr.length();
-    while (i < 7){
-        scoreStr = "0" + scoreStr; // Pad with leading zeros if less than 7 digits
-        i++;
+    if (scoreStr.length() > 7) {
+        scoreStr = std::to_string(9999999);
+		std::cerr << "Score exceeds maximum display length, resetting to 9999999." << std::endl;
 	}
 
+    sf::Vector2f scale = getHUDScale();
+
+    while (scoreStr.length() < 7) {
+        scoreStr = "0" + scoreStr;
+    }
+
+    float digitPosX = x;
+    float digitPosY = y;
+
     for (char digit : scoreStr) {
-        int digitValue = digit - '0'; // Convert char to int
-        sf::Vector2f screenPos = hudToScreen(currentX, y);
-        m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, screenPos.x, screenPos.y, scale.x, scale.y);
-        currentX += 8; // Move to next digit position (adjust spacing as needed)
+        if (digit >= '0' && digit <= '9')
+        {
+            int digitValue = digit - '0';
+            sf::Vector2f digitPos = hudToScreen(digitPosX, digitPosY);
+            m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, digitPos.x, digitPos.y, scale.x, scale.y);
+			digitPosX += 8; // each digit is 8 pixels wide
+        }
     }
 }
 
@@ -147,7 +152,7 @@ void HUD::drawLives(sf::RenderTarget& target, float x, float y) {
         
     for (char digit : livesStr)
     {
-        int digitValue = digit - '0'; // Convert char to int
+        int digitValue = int(digit - '0'); // Convert char to int
         sf::Vector2f digitPos = hudToScreen(digitPosX, digitPosY);
         m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, digitPos.x, digitPos.y, scale.x, scale.y);
 		digitPosX += 8; // Move to next digit position

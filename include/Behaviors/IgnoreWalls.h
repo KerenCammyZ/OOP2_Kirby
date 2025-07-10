@@ -9,14 +9,13 @@ public:
 	{
 		if (other->getType() == ObjectType::WALL)
 		{
-			// Ignore collision with walls
-			return;
+			; // do nothing
 		} 
-		
-		// Handle other collisions normally
-		if (m_owner)
-		{
-			m_owner->handleCollision(other);
+	
+		// ObjectType is not a Wall
+		if (other->getType() == ObjectType::ENEMY) {
+			m_owner->reverseDirection();
+			m_owner->setPosition(m_owner->getOldPosition());
 		}
 	}
 };

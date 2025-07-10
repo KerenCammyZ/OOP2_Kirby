@@ -11,7 +11,6 @@ public:
 		sf::Vector2f position = m_owner->getPosition();
 		float direction = m_owner->getDirection().x;
 		float speed = m_owner->getSpeed();
-
 		m_owner->setPosition(
 			sf::Vector2f(position.x + direction * speed * deltaTime, position.y));
 	}

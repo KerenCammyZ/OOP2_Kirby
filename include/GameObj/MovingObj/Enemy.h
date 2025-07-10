@@ -8,21 +8,23 @@
 #include "Behaviors/CollisionBehavior.h"
 
 class Kirby;
-
-enum class EnemyState { SPAWNING, ACTIVE, STUNNED, ATTACKING };
+enum class EnemyState { SPAWNING, ACTIVE, SWALLOWED, STUNNED, ATTACKING };
 
 class Enemy : public MovingObject
 {
 public:
 	Enemy() = default;
+	~Enemy();
 	//Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
-	Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby);
+	Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby);
 
 	void update(float deltaTime) override;
 	void move(float deltaTime) override;
 	void attack(float deltaTime);
 	void stun(float duration);
-
+	void onSwallowed();
+	void reverseDirection();
+	
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override;
 	void handleCollision(Door* door) override {};
@@ -32,20 +34,12 @@ public:
 	void setAttackBehavior(std::unique_ptr<AttackBehavior> attackBehavior);
 	void setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBehavior);
 	
-	void setDirection(const sf::Vector2f& direction) { m_direction = direction; }
 	void setDamageAmount(int damage) { m_damageAmount = damage; }
-
-	// for debugging
-	//std::string name; // for debugging
-	//std::string getName() const { return name; }
-	//void setName(const std::string& type) { name = type; }
-	//bool hasTexture() { return (m_texture != nullptr); }
-	//sf::Vector2f getTextureSize() { return sf::Vector2f(m_texture->getSize()); }
-	//sf::Sprite getSprite() const { return m_sprite; }
-	//sf::Vector2f getpritePosition() { return m_sprite.getPosition(); }
+	void setScoreValue(int score) { m_scoreValue = score; }
+	bool isSwallowed() const { return m_state == EnemyState::SWALLOWED; }
 
 	ObjectType getType() const { return ObjectType::ENEMY; }
-	sf::Vector2f getDirection() const { return m_direction; }
+	int getScoreValue() const { return m_scoreValue; }
 
 private:
 	std::unique_ptr <MoveBehavior> m_moveBehavior;
@@ -55,14 +49,15 @@ private:
 	const Kirby* m_kirby;
 
 	EnemyState m_state;
-	sf::Vector2f m_direction;
 
 	// Timers for State Management
-	float m_stunTimer{ 0.0f };
-	float m_spawnTimer{ 1.25f };
 	int m_damageAmount;
+	int m_scoreValue = 10; // Score value for defeating this enemy
+	float m_stunTimer{ 0.0f };
+	float m_spawnTimer{ 0.0f };
 	float m_actionTimer{ 0.0f };
 	float m_attackDuration{ 0.0f };
+
 
 	// Static registration for the Enemy type
 	static bool m_registerTwizzy;

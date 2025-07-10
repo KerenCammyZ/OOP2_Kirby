@@ -26,6 +26,7 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
 		enemy->setDamageAmount(1); // Set damage amount for Waddle Dee
+		enemy->setScoreValue(10); // number of points awarded for defeating Waddle Dee
 		return enemy;
 	}  
 );  
@@ -42,7 +43,8 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 		enemy->setCollisionBehavior(std::make_unique<IgnoreWalls>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
-		enemy->setDamageAmount(3); // Set damage amount for Twizzy
+		enemy->setDamageAmount(1); // Set damage amount for Twizzy
+		enemy->setScoreValue(25);
 		return enemy;  
 	}  
 );  
@@ -60,24 +62,14 @@ bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setDamageAmount(2); // Set damage amount for Sparky
+		enemy->setScoreValue(200);
 		return enemy;
 	}
 );
 
-//Enemy::Enemy() = default; // Default constructor
 
-//Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition)
-//	: m_state(EnemyState::SPAWNING), m_direction(sf::Vector2f(0.f, 0.f))
-//{
-//	setTexture(enemyTexture); // initialize m_texture, m_sprite
-//	setPosition(startPosition);
-//	setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE));
-//	m_speed = 180.0f;
-//}
-
-Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby)
+Enemy::Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby)
 	: m_state(EnemyState::SPAWNING),
-	m_direction(sf::Vector2f(0.f, 0.f)),
 	m_kirby(kirby) // Initialize the new member
 {
 	setTexture(enemyTexture);
@@ -87,6 +79,15 @@ Enemy::Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosit
 
 	m_actionTimer = 2.0f + (rand() % 3);
 }
+
+Enemy::~Enemy()
+{
+	// Clean up behaviors
+	if (m_attackBehavior) m_attackBehavior->setOwner(nullptr);
+	if (m_moveBehavior) m_moveBehavior->setOwner(nullptr);
+	if (m_collisionBehavior) m_collisionBehavior->setOwner(nullptr);
+}
+
 
 
 void Enemy::update(float deltaTime)
@@ -103,7 +104,7 @@ void Enemy::update(float deltaTime)
 		GameObject::update(deltaTime);
 		return;
 	}
-	if (m_state == EnemyState::STUNNED)
+	else if (m_state == EnemyState::STUNNED)
 	{
 		// Handle stunned state logic
 		m_stunTimer -= deltaTime;
@@ -114,6 +115,13 @@ void Enemy::update(float deltaTime)
 		GameObject::update(deltaTime);
 		return;
 	}
+	if (m_state == EnemyState::SWALLOWED)
+	{
+		// removal is handled by the GameController
+		// GameController::update(float deltaTime)
+
+		;
+	}
 	if (m_state == EnemyState::ACTIVE)
 	{
 		// Handle active state logic
@@ -122,7 +130,9 @@ void Enemy::update(float deltaTime)
 		//attack(deltaTime);
 		GameObject::update(deltaTime);
 		return;
+		
 	}
+
 	if(m_state == EnemyState::ATTACKING)
 	{
 		// Handle attacking state logic
@@ -145,6 +155,24 @@ void Enemy::stun(float duration)
 	m_stunTimer = duration;
 }
 
+// Handle the enemy being swallowed by Kirby
+void Enemy::onSwallowed()
+{
+	m_sprite.setColor(sf::Color::Red);
+	m_state = EnemyState::SWALLOWED;
+	std::cout << "Enemy swallowed!" << std::endl;
+	// remove enemy from the game world
+}
+
+// Reverse the enemy's direction
+// by flipping the sprite horizontally and reversing the direction vector
+void Enemy::reverseDirection()
+{
+	sf::Vector2f currentScale = m_sprite.getScale();
+	m_sprite.setScale(-currentScale.x, currentScale.y);
+	m_direction.x = -m_direction.x;
+}
+
 // Handle collision with Kirby
 void Enemy::handleCollision(Kirby* kirby)
 {
@@ -165,18 +193,13 @@ void Enemy::handleCollision(GameObject* other)
 	else { // Default collision handling
 		if (other->getType() == ObjectType::WALL)
 		{
-			// Handle collision with walls by reversing direction
-			sf::Vector2f currentScale = m_sprite.getScale();
-			m_sprite.setScale(-currentScale.x, currentScale.y);
-			m_direction = -m_direction; // Reverse direction on collision
+			// Handle collision by reversing direction
+			reverseDirection();
 			setPosition(m_oldPosition);
 		}
 		else if (other->getType() == ObjectType::ENEMY)
 		{
-			// Handle collision by reversing direction
-			sf::Vector2f currentScale = m_sprite.getScale();
-			m_sprite.setScale(-currentScale.x, currentScale.y);
-			m_direction = -m_direction; // Reverse direction on collision
+			reverseDirection();
 			setPosition(m_oldPosition);
 		}
 	}

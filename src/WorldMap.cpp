@@ -30,7 +30,7 @@ WorldMap::WorldMap(std::shared_ptr<sf::Texture> backgroundTexture)
 	setSize(targetMapSize);
 }
 
-//WorldMap::~WorldMap() = default;
+// WorldMap::~WorldMap() = default;
 
 // Initialize the background sprite
 void WorldMap::init(std::shared_ptr<sf::Texture> backgroundTexture)
@@ -49,6 +49,7 @@ void WorldMap::draw(sf::RenderTarget& target) const
 // It replaces the logic that was previously in GameController.
 std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std::string& filePath, const Kirby* kirby)
 {
+	// Load the collision map image
 	sf::Image collisionImage;
 	if (!collisionImage.loadFromFile(filePath))
 	{
@@ -131,16 +132,13 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
 
 // --- Getters and Setters ---
 
+// Return the size of the world map sprite
 sf::Vector2f WorldMap::getSize() const
 {
 	return sf::Vector2f(m_backgroundSprite.getGlobalBounds().width, m_backgroundSprite.getGlobalBounds().height);
 }
 
-sf::FloatRect WorldMap::getBounds() const
-{
-	return m_backgroundSprite.getGlobalBounds();
-}
-
+// Set the size of the world map sprite based on the texture size and scale
 void WorldMap::setSize(const sf::Vector2f& size)
 {
 	sf::Vector2u texSize = m_backgroundTexture->getSize();
@@ -148,4 +146,10 @@ void WorldMap::setSize(const sf::Vector2f& size)
 	{
 		m_backgroundSprite.setScale(m_scale.x, m_scale.y);
 	}
+}
+
+// Get the bounds of the world map sprite
+sf::FloatRect WorldMap::getBounds() const
+{
+	return m_backgroundSprite.getGlobalBounds();
 }

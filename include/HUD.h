@@ -25,7 +25,7 @@ public:
     void setDisplayArea(float x, float y, float width, float height);
 
     // Example HUD element drawing functions
-    void drawScore(sf::RenderTarget& target, int score, float x, float y);
+    void drawScore(sf::RenderTarget& target, unsigned int score, float x, float y);
     void drawLives(sf::RenderTarget& target, float x, float y);
     void drawHealthBar(sf::RenderTarget& target, float x, float y);
 
