@@ -198,6 +198,7 @@ void GameController::update(float deltaTime)
 	m_enemies.erase(enemyIterator, m_enemies.end());
 
 }
+
 // Handle user input and game events.
 // Processes window and keyboard events
 void GameController::handleEvents()
@@ -239,6 +240,7 @@ void GameController::handleEvents()
 		m_kirby->attack();
 	}*/
 }
+
 void GameController::draw()
 {
 	m_window.clear(sf::Color::Black);
@@ -265,6 +267,7 @@ void GameController::draw()
 	// ... draw UI ...
 	drawHUD();
 }
+
 void GameController::loadLevel(int levelNum)
 {
 	sf::Vector2f startPosition(50, 50);
@@ -293,10 +296,12 @@ Level* GameController::getLevel()
 {
 	return m_level.get();
 }
+
 sf::RenderWindow& GameController::getWindow() 
 {
 	return m_window;
 }
+
 // Handle window close, resizing, etc.
 void GameController::processWindowEvents()
 {
@@ -333,6 +338,7 @@ void GameController::loadHUD()
 		std::cout << "Warning: Could not load spritesheet.png\n";
 	}
 }
+
 // Draw the HUD at the bottom of the screen
 void GameController::drawHUD()
 {
@@ -357,10 +363,12 @@ void GameController::drawHUD()
 	// Draw the HUD stretched across the bottom
 	m_hud->draw(m_window);
 }
+
 void GameController::addScore(unsigned int points)
 {
 	m_score += points;
 }
+
 unsigned int GameController::getScore() const
 {
 	return m_score;
