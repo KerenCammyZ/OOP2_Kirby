@@ -8,6 +8,7 @@
 #include "Behaviors/FlyingMove.h"
 #include "Behaviors/HoppingMove.h"
 #include "Behaviors/SimpleAttack.h"
+#include "Behaviors/SparkAttack.h"
 #include "Behaviors/IgnoreWalls.h"
 
 sf::Color WaddleDeeColor(0, 0, 40); // Define Waddle Dee's color key
@@ -30,6 +31,7 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 		enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
 		enemy->setDamageAmount(1); // Set damage amount for Waddle Dee
 		enemy->setScoreValue(10); // number of points awarded for defeating Waddle Dee
+		enemy->setGrounded(true);
 		return enemy;
 	}  
 );  
@@ -45,6 +47,7 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setDamageAmount(1); // Set damage amount for Twizzy
 		enemy->setScoreValue(25);
+		enemy->setGrounded(false);
 		return enemy;  
 	}  
 );  
@@ -56,10 +59,11 @@ bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 		auto enemyTexture = ResourceManager::getTexture("SparkySprite.png");
 		auto enemy = std::make_unique<Enemy>(enemyTexture, position, kirby);
 		enemy->setMoveBehavior(std::make_unique<HoppingMove>());
-		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
+		enemy->setAttackBehavior(std::make_unique<SparkAttack>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setDamageAmount(2); // Set damage amount for Sparky
 		enemy->setScoreValue(200);
+		enemy->setGrounded(false); // this will change in Hopping Behavior
 		return enemy;
 	}
 );
@@ -87,59 +91,120 @@ Enemy::~Enemy()
 
 
 
+//void Enemy::update(float deltaTime)
+//{
+//	// Hanlde state transitions first
+//	if (m_state == EnemyState::SPAWNING)
+//	{
+//		// Handle spawning state logic
+//		m_spawnTimer -= deltaTime;
+//		if (m_spawnTimer <= 0.0f)
+//		{
+//			m_state = EnemyState::ACTIVE;
+//		}
+//		GameObject::update(deltaTime);
+//		return;
+//	}
+//	else if (m_state == EnemyState::STUNNED)
+//	{
+//		// Handle stunned state logic
+//		m_stunTimer -= deltaTime;
+//		if (m_stunTimer <= 0.0f)
+//		{
+//			m_state = EnemyState::ACTIVE;
+//		}
+//		GameObject::update(deltaTime);
+//		return;
+//	}
+//	if (m_state == EnemyState::SWALLOWED)
+//	{
+//		// removal is handled by the GameController
+//		// GameController::update(float deltaTime)
+//
+//		;
+//	}
+//	if (m_state == EnemyState::ACTIVE)
+//	{
+//		// Handle active state logic
+//		m_oldPosition = m_position;
+//		move(deltaTime);
+//		//attack(deltaTime);
+//		GameObject::update(deltaTime);
+//		return;
+//		
+//	}
+//
+//	if(m_state == EnemyState::ATTACKING)
+//	{
+//		// Handle attacking state logic
+//		//m_attackTimer -= deltaTime;
+//		//attack(deltaTime);
+//		//if (m_attackTimer <= 0.0f)
+//		//{
+//		//	m_state = EnemyState::ACTIVE; // Return to active state after attack
+//		//}
+//		return;
+//	}
+//
+//	GameObject::update(deltaTime);
+//}
+
 void Enemy::update(float deltaTime)
 {
-	// Hanlde state transitions first
+	// Handle non-active states first
 	if (m_state == EnemyState::SPAWNING)
 	{
-		// Handle spawning state logic
 		m_spawnTimer -= deltaTime;
-		if (m_spawnTimer <= 0.0f)
-		{
+		if (m_spawnTimer <= 0.0f) {
 			m_state = EnemyState::ACTIVE;
 		}
 		GameObject::update(deltaTime);
 		return;
 	}
-	else if (m_state == EnemyState::STUNNED)
+	else if (m_state == EnemyState::STUNNED || m_state == EnemyState::SWALLOWED)
 	{
-		// Handle stunned state logic
-		m_stunTimer -= deltaTime;
-		if (m_stunTimer <= 0.0f)
-		{
-			m_state = EnemyState::ACTIVE;
-		}
+		// No updates needed for these states, just let them exist
 		GameObject::update(deltaTime);
 		return;
 	}
-	if (m_state == EnemyState::SWALLOWED)
-	{
-		// removal is handled by the GameController
-		// GameController::update(float deltaTime)
 
-		;
-	}
+	// --- State Logic for Active and Attacking ---
+
 	if (m_state == EnemyState::ACTIVE)
 	{
-		// Handle active state logic
-		m_oldPosition = m_position;
-		move(deltaTime);
-		//attack(deltaTime);
-		GameObject::update(deltaTime);
-		return;
-		
-	}
+		// Countdown the timer until the next attack
+		m_actionTimer -= deltaTime;
 
-	if(m_state == EnemyState::ATTACKING)
+		if (m_actionTimer <= 0.0f && isGrounded())
+		{
+			// Timer is up, switch to ATTACKING state
+			m_state = EnemyState::ATTACKING;
+			m_attackDuration = 1.5f; // Attack will last for 1.5 seconds
+		}
+		else
+		{
+			// If not attacking, move normally
+			m_oldPosition = m_position;
+			move(deltaTime);
+		}
+	}
+	else if (m_state == EnemyState::ATTACKING)
 	{
-		// Handle attacking state logic
-		//m_attackTimer -= deltaTime;
-		//attack(deltaTime);
-		//if (m_attackTimer <= 0.0f)
-		//{
-		//	m_state = EnemyState::ACTIVE; // Return to active state after attack
-		//}
-		return;
+		// When attacking, the enemy does NOT move.
+		// Countdown the duration of the attack.
+		m_attackDuration -= deltaTime;
+
+		if (m_attackDuration <= 0.0f)
+		{
+			// Attack is over, switch back to ACTIVE state
+			m_state = EnemyState::ACTIVE;
+			m_actionTimer = 2.0f + (rand() % 3); // Reset timer for the next attack cycle
+		}
+		else
+		{
+			// While the attack is happening, call the attack behavior
+			attack(deltaTime);
+		}
 	}
 
 	GameObject::update(deltaTime);
@@ -238,4 +303,14 @@ void Enemy::setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBeh
 		collisionBehavior->setOwner(this);
 	}
 	m_collisionBehavior = std::move(collisionBehavior);
+}
+
+void Enemy::setGrounded(bool grounded)
+{
+	m_isGrounded = grounded;
+}
+
+bool Enemy::isGrounded() const
+{
+	return m_isGrounded;
 }

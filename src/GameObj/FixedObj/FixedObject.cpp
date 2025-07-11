@@ -43,3 +43,5 @@ void FixedObject::handleCollision(GameObject* other)
 {
 	other->handleCollision(this);
 }
+
+void FixedObject::handleCollision(Enemy* enemy) { enemy->handleCollision(this); }

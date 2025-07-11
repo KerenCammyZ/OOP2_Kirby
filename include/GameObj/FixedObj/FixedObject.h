@@ -12,6 +12,7 @@ public:
 	virtual void handleCollision(Kirby* kirby) = 0;
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Door* door) override = 0;
+	void handleCollision(Enemy* enemy) override;
 
 	// --- OVERRIDE DECLARATIONS ---
 	void draw(sf::RenderTarget& target) const override;

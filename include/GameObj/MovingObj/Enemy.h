@@ -42,6 +42,11 @@ public:
 	ObjectType getType() const { return ObjectType::ENEMY; }
 	int getScoreValue() const { return m_scoreValue; }
 
+	sf::Sprite& getSprite() { return m_sprite; }
+
+	void setGrounded(bool grounded);
+	bool isGrounded() const;
+
 private:
 	std::unique_ptr <MoveBehavior> m_moveBehavior;
 	std::unique_ptr <AttackBehavior> m_attackBehavior;
@@ -50,6 +55,7 @@ private:
 	const Kirby* m_kirby;
 
 	EnemyState m_state;
+	bool m_isGrounded = false;
 
 	// Timers for State Management
 	int m_damageAmount;
