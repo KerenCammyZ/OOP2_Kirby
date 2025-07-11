@@ -99,7 +99,7 @@ void GameController::checkCollisions()
 {
 	// --- THIS IS THE FIX ---
 	// At the start of the collision phase, assume Kirby is not in water and not on the ground.
-	//m_kirby->setInWater(false);
+	m_kirby->setInWater(false);
 	m_kirby->setGrounded(false);
 
 	// Loop through all objects to check for interactions with Kirby.
