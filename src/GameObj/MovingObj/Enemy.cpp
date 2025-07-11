@@ -28,6 +28,7 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 		enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
 		enemy->setDamageAmount(1); // Set damage amount for Waddle Dee
 		enemy->setScoreValue(10); // number of points awarded for defeating Waddle Dee
+		enemy->setGrounded(true);
 		return enemy;
 	}  
 );  
@@ -46,6 +47,7 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setDamageAmount(1); // Set damage amount for Twizzy
 		enemy->setScoreValue(25);
+		enemy->setGrounded(false);
 		return enemy;  
 	}  
 );  
@@ -64,6 +66,7 @@ bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
 		enemy->setDamageAmount(2); // Set damage amount for Sparky
 		enemy->setScoreValue(200);
+		enemy->setGrounded(false); // this will change in Hopping Behavior
 		return enemy;
 	}
 );
