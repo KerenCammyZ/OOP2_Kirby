@@ -30,8 +30,9 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 	bool facingLeft = m_velocity.x < 0 ? true : false;
 	for (auto& enemy : enemies)
 	{
+		float yBuffer = 0.5f; // Buffer to account for slight vertical differences
 		float distanceX = enemy->getPosition().x - getPosition().x;
-		float distanceY = enemy->getPosition().y - getPosition().y;
+		float distanceY = enemy->getPosition().y - getPosition().y + yBuffer;
 		bool inRange = std::abs(distanceX) <= range && std::abs(distanceY) < 2.5f;
 
 		if (collidesWith(*enemy))

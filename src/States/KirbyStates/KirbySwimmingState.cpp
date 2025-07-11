@@ -25,7 +25,7 @@ std::unique_ptr<KirbyState> KirbySwimmingState::handleInput(Kirby& kirby)
 
 void KirbySwimmingState::update(Kirby& kirby, float deltaTime)
 {
-	std::cout << "Kirby is updating in swimming state\n";
+	//std::cout << "Kirby is updating in swimming state\n";
 	// 1. Apply Water Physics
 	sf::Vector2f velocity = kirby.getVelocity();
 	// Gravity still applies, but buoyancy pushes upward.
