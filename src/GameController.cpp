@@ -102,6 +102,12 @@ void GameController::checkCollisions()
 	//m_kirby->setInWater(false);
 	m_kirby->setGrounded(false);
 
+	// Assume all enemies are in the air
+	for (const auto& enemy : m_enemies)
+	{
+		enemy->setGrounded(false);
+	}
+
 	// Loop through all objects to check for interactions with Kirby.
 	for (const auto& otherObject : m_allGameObjects)
 	{

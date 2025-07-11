@@ -54,3 +54,16 @@ void Floor::handleCollision(Kirby* kirby)
 		kirby->setPosition({ floorBounds.left + floorBounds.width + (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight });
 	}
 }
+
+void Floor::handleCollision(Enemy* enemy)
+{
+	// This simple check is enough for hopping/patrolling enemies.
+	// It tells the enemy that it is on the ground.
+	enemy->setGrounded(true);
+
+	//// For hopping enemies like Sparky, we can also stop their downward movement.
+	//if (auto hoppingMove = dynamic_cast<HoppingMove*>(enemy->getMoveBehavior())) {
+	//	// This is a more advanced step, but it would prevent the hop from
+	//	// going "through" the floor. For now, just setting the flag is enough.
+	//}
+}

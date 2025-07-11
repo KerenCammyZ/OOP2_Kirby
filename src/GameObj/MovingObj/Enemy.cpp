@@ -175,7 +175,7 @@ void Enemy::update(float deltaTime)
 		// Countdown the timer until the next attack
 		m_actionTimer -= deltaTime;
 
-		if (m_actionTimer <= 0.0f)
+		if (m_actionTimer <= 0.0f && isGrounded())
 		{
 			// Timer is up, switch to ATTACKING state
 			m_state = EnemyState::ATTACKING;
@@ -298,4 +298,14 @@ void Enemy::setCollisionBehavior(std::unique_ptr<CollisionBehavior> collisionBeh
 		collisionBehavior->setOwner(this);
 	}
 	m_collisionBehavior = std::move(collisionBehavior);
+}
+
+void Enemy::setGrounded(bool grounded)
+{
+	m_isGrounded = grounded;
+}
+
+bool Enemy::isGrounded() const
+{
+	return m_isGrounded;
 }

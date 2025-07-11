@@ -7,6 +7,7 @@ enum class ObjectType { DOOR, FLOOR, WALL, ENEMY, PRESENT, SPEED_PRESENT, EXIT ,
 
 class Kirby;
 class Door;
+class Enemy;
 
 class GameObject
 {
@@ -21,6 +22,7 @@ public:
 	virtual void handleCollision(GameObject* other) = 0;
 	virtual void handleCollision(Kirby* kirby) = 0;
 	virtual void handleCollision(Door* door) = 0;
+	virtual void handleCollision(Enemy* enemy) = 0;
 
 	// enforce override in moving objects only
 	// virtual void handleCollision(Wall* wall) {}
