@@ -49,9 +49,9 @@ private:
     sf::Vector2f getHUDScale();
 
     // Game state data (updated each frame)
+    int m_score;
+    int m_lives;
     int m_currentHealth;
     int m_maxHealth;
-    int m_lives;
-    int m_score;
 	std::string m_kirbyState; // special powers or states ("normal", "hyper", "spark", "invincible", etc.)
 };

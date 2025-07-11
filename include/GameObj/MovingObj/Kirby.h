@@ -77,11 +77,11 @@ private:
 	sf::Vector2f m_velocity;
 	bool m_isGrounded;
 
+	bool m_inWater = false;
+	bool m_isHyper = false;
+	bool m_isInvincible = false;
+	int m_lives = 5;
 	int m_health = 6;
 	int m_maxHealth = 6;
-	int m_lives = 5;
-	bool m_isInvincible = false;
-	bool m_isHyper = false;
 	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
-	bool m_inWater = false;
 };
