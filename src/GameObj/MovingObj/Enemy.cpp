@@ -205,6 +205,11 @@ void Enemy::handleCollision(GameObject* other)
 	}
 }
 
+//void Enemy::move(float deltaTime)
+//{
+//	if (m_moveBehavior)
+//		m_moveBehavior->move(deltaTime);
+//}
 void Enemy::move(float deltaTime)
 {
 	if (m_moveBehavior)

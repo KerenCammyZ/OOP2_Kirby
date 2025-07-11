@@ -1,6 +1,7 @@
 // GameController.h
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "States/GameStates/GameState.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Floor.h"
@@ -20,18 +21,20 @@ class GameController
 {
 public:
 	GameController();
-	~GameController();
+	~GameController() = default;
 	void run();
 	void changeGameState(std::unique_ptr<GameState> newState);
-	void addScore(unsigned int);
-	Level* getLevel();
-	sf::RenderWindow& getWindow();
-	unsigned int getScore() const;
 	void update(float deltaTime);
 	void handleEvents();
 	void draw();
 	void loadLevel(int levelNum);
 	void loadHUD();
+
+	Level* getLevel();
+	sf::RenderWindow& getWindow();
+
+	void addScore(unsigned int);
+	unsigned int getScore() const;
 
 private:
 	void processWindowEvents();

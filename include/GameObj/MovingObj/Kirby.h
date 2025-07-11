@@ -4,6 +4,11 @@
 #include "GameObj/MovingObj/Enemy.h"
 #include "PresentManager.h"
 #include <memory>
+#include <vector>
+
+//// suggestion:
+//using std::vector; 
+//using std::unique_ptr; // remove std::'s below for readability
 
 class KirbyState;
 class Wall;
@@ -17,6 +22,8 @@ public:
 	// We override MovingObject's update to handle our new physics logic
 	void update(float deltaTime) override;
 	void move(float deltaTime) override {};
+	void move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles);
+	
 
 	//void move(float deltaTime) override;
 	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
@@ -58,6 +65,8 @@ public:
 
 private:
 	void activateInvincibility(float deltaTime);
+	bool willCollideAt(const sf::Vector2f& testPosition,
+		const std::vector<std::unique_ptr<GameObject>>& obstacles) const;
 
 	std::unique_ptr<KirbyState> m_state;
 

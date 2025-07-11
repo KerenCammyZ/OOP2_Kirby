@@ -20,6 +20,7 @@ public:
 
 	void update(float deltaTime) override;
 	void move(float deltaTime) override;
+	//void move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles) override;
 	void attack(float deltaTime);
 	void stun(float duration);
 	void onSwallowed();
@@ -54,7 +55,7 @@ private:
 	int m_damageAmount;
 	int m_scoreValue = 10; // Score value for defeating this enemy
 	float m_stunTimer{ 0.0f };
-	float m_spawnTimer{ 0.0f };
+	float m_spawnTimer{ 2.0f };
 	float m_actionTimer{ 0.0f };
 	float m_attackDuration{ 0.0f };
 

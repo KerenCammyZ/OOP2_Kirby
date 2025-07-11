@@ -74,17 +74,61 @@ void Kirby::update(float deltaTime)
 		m_state->enter(*this);
 	}
 	m_state->update(*this, deltaTime);
+	
+	// position is 
+}
+
+// 
+// 
+void Kirby::move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles)
+{
+	sf::Vector2f newPosition = m_position;
+
+	// Move along X axis
+	float dx = m_velocity.x * deltaTime;
+	if (dx != 0.f) {
+		sf::Vector2f testPosX = { newPosition.x + dx, newPosition.y };
+		if (!willCollideAt(testPosX, obstacles)) {
+			newPosition.x += dx;
+		}
+		else {
+			m_velocity.x = 0.f; // Stop horizontal movement if blocked
+		}
+	}
+
+	// Move along Y axis
+	float dy = m_velocity.y * deltaTime;
+	if (dy != 0.f) {
+		sf::Vector2f testPosY = { newPosition.x, newPosition.y + dy };
+		if (!willCollideAt(testPosY, obstacles)) {
+			newPosition.y += dy;
+		}
+		else {
+			m_velocity.y = 0.f; // Stop vertical movement if blocked
+		}
+	}
 
 	m_oldPosition = m_position;
-	setPosition(m_position + m_velocity * deltaTime);
+	setPosition(newPosition);
 	GameObject::update(deltaTime);
 }
 
-//void Kirby::move(float deltaTime)
-//{
-//	m_oldPosition = m_position;
-//	setPosition(m_position + m_velocity * deltaTime);
-//}
+bool Kirby::willCollideAt(const sf::Vector2f& intendedPosition, const std::vector<std::unique_ptr<GameObject>>& obstacles) const
+{
+	// Create a temporary bounding box for the intended position
+	sf::FloatRect intendedBounds = getBounds();
+	intendedBounds.left = intendedPosition.x - intendedBounds.width / 2.f;
+	intendedBounds.top = intendedPosition.y - intendedBounds.height / 2.f;
+
+	for (const auto& obj : obstacles) {
+		if (obj->getType() == ObjectType::WALL || obj->getType() == ObjectType::FLOOR) {
+			if (intendedBounds.intersects(obj->getBounds())) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 void Kirby::handleCollision(GameObject* other)
 {
