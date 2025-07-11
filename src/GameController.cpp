@@ -41,178 +41,6 @@ void GameController::changeGameState(std::unique_ptr<GameState> newState)
 	}
 }
 
-// This function is called every frame to update the game state.
-// It checks for collisions, updates the positions and states of all game objects,
-// and handles the game logic such as checking if Kirby has lost lives.
-// It also updates the camera view to follow Kirby's position.
-void GameController::update(float deltaTime)
-{
-	if (m_kirby->getLives() == 0 && m_kirby->getHealth() == 0)
-	{
-		// If Kirby has no health or lives left, end the game.
-		m_window.close();
-		std::cout << "Game Over! Kirby has no health or lives left." << std::endl;
-		exit(EXIT_SUCCESS);
-	}
-
-	// 1. CHECK THE ENVIRONMENT
-	// Run collision checks based on the objects' positions from the last frame.
-	// This will set all environmental flags (isGrounded, isInWater, etc.)
-	checkCollisions();
-
-	// 2. ACT ON THE ENVIRONMENT
-	// Now that all flags are correctly set for this frame, update all objects.
-	// Kirby's state machine will now see the correct values for m_isGrounded and m_isInWater.
-	m_kirby->update(deltaTime);
-	m_kirby->move(deltaTime, m_fixedObjects);
-	 
-	for (auto& obj : m_fixedObjects)
-	{
-		obj->update(deltaTime);
-	}
-
-	for (auto& enemy : m_enemies)
-	{
-		if(enemy->isSwallowed())
-			addScore(enemy->getScoreValue());
-
-		enemy->update(deltaTime);
-	}
-
-	m_kirby->setInWater(false);
-	m_kirby->setGrounded(false);
-
-	// update the camera
-	updateView();
-
-
-	// 4. CLEAN UP
-	// Remove any objects that were marked for deletion during the update phase.
-	auto it = std::remove_if(m_fixedObjects.begin(), m_fixedObjects.end(),
-		[](const std::unique_ptr<GameObject>& obj)
-		{
-			if (Present* present = dynamic_cast<Present*>(obj.get()))
-			{
-				return present->isCollected();	
-			}
-			return false;
-		});
-	m_fixedObjects.erase(it, m_fixedObjects.end());
-
-	// remove swallowed enemies
-	auto enemyIterator = std::remove_if(m_enemies.begin(), m_enemies.end(),
-		[](const std::unique_ptr<Enemy>& enemy) {
-			return enemy->isSwallowed();
-		}
-	);
-	m_enemies.erase(enemyIterator, m_enemies.end());
-
-}
-
-// Handle user input and game events.
-// Processes window and keyboard events
-void GameController::handleEvents()
-{
-	// Process window events
-	processWindowEvents();
-
-	// Handle Game controll Input
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-		m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
-
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-		m_window.close(); // Close game window
-
-	// Handle Kirby's input
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-	{
-		float attackRange = 100.0f; // Define the attack range
-		m_kirby->attack(m_enemies, attackRange); // Attack enemies within range
-	}
-	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		m_kirby->moveLeft();
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		m_kirby->moveRight();
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		m_kirby->jump();
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		m_kirby->crouch();
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-	{
-		m_kirby->attack();
-	}*/
-}
-
-void GameController::draw()
-{
-	m_window.clear(sf::Color::Black);
-	m_window.setView(m_gameView);
-
-	m_worldMap->draw(m_window);
-	m_kirby->draw(m_window);
-
-	// Draw all other objects from our unified list
-	for (const auto& obj : m_fixedObjects)
-	{
-		obj->draw(m_window);
-	}
-
-	// Draw all enemies
-	for (const auto& enemy : m_enemies)
-	{
-		enemy->draw(m_window);
-	}
-
-	// NOTE: If you were to draw UI elements (like a score or health bar),
-	// you would switch back to the default view here so they stay fixed on the screen:
-	// m_window.setView(m_window.getDefaultView());
-	// ... draw UI ...
-	drawHUD();
-}
-
-void GameController::loadLevel(int levelNum)
-{
-	sf::Vector2f startPosition(50, 50);
-	m_kirby->setPosition(startPosition); // Reset Kirby's position at the start of each level
-
-	m_level = std::make_unique<Level>(levelNum , m_kirby.get());
-	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
-	m_fixedObjects = m_level->getObjects(); // Load all objects from the level
-	m_enemies = m_level->getEnemies(); // Load all enemies from the level
-
-	// --- CAMERA SETUP PER LEVEL ---
-	if (m_worldMap)
-	{
-		// 1. Calculate the new height for each of the three vertical sections.
-		float newViewHeight = m_worldMap->getSize().y / 3.0f;
-
-		// 2. Update our logical variable for camera snapping.
-		m_levelAreaHeight = newViewHeight;
-
-		// 3. IMPORTANT: Update the actual sf::View object with the new size.
-		// We keep the original width to maintain the aspect ratio you've defined.
-		m_gameView.setSize(VIEW_WIDTH, newViewHeight);
-	}
-}
-
-Level* GameController::getLevel()
-{
-	return m_level.get();
-}
-
-sf::RenderWindow& GameController::getWindow() 
-{
-	return m_window;
-}
-
 void GameController::checkCollisions()
 {
 	// At the start of the collision phase, assume Kirby is not in water and not on the ground.
@@ -302,6 +130,173 @@ void GameController::updateView()
 	m_gameView.setCenter(viewX, viewY);
 }
 
+
+// This function is called every frame to update the game state.
+// It checks for collisions, updates the positions and states of all game objects,
+// and handles the game logic such as checking if Kirby has lost lives.
+// It also updates the camera view to follow Kirby's position.
+void GameController::update(float deltaTime)
+{
+	if (m_kirby->getLives() == 0 && m_kirby->getHealth() == 0)
+	{
+		// If Kirby has no health or lives left, end the game.
+		m_window.close();
+		std::cout << "Game Over! Kirby has no health or lives left." << std::endl;
+		exit(EXIT_SUCCESS);
+	}
+
+	// 1. CHECK THE ENVIRONMENT
+	// Run collision checks based on the objects' positions from the last frame.
+	// This will set all environmental flags (isGrounded, isInWater, etc.)
+	checkCollisions();
+
+	// 2. ACT ON THE ENVIRONMENT
+	// Now that all flags are correctly set for this frame, update all objects.
+	// Kirby's state machine will now see the correct values for m_isGrounded and m_isInWater.
+	m_kirby->update(deltaTime);
+	m_kirby->move(deltaTime, m_fixedObjects);
+	 
+	for (auto& obj : m_fixedObjects)
+	{
+		obj->update(deltaTime);
+	}
+
+	for (auto& enemy : m_enemies)
+	{
+		if(enemy->isSwallowed())
+			addScore(enemy->getScoreValue());
+
+		enemy->update(deltaTime);
+	}
+
+	m_kirby->setInWater(false);
+	m_kirby->setGrounded(false);
+
+	// update the camera
+	updateView();
+
+
+	// 4. CLEAN UP
+	// Remove any objects that were marked for deletion during the update phase.
+	auto it = std::remove_if(m_fixedObjects.begin(), m_fixedObjects.end(),
+		[](const std::unique_ptr<GameObject>& obj)
+		{
+			if (Present* present = dynamic_cast<Present*>(obj.get()))
+			{
+				return present->isCollected();	
+			}
+			return false;
+		});
+	m_fixedObjects.erase(it, m_fixedObjects.end());
+
+	// remove swallowed enemies
+	auto enemyIterator = std::remove_if(m_enemies.begin(), m_enemies.end(),
+		[](const std::unique_ptr<Enemy>& enemy) {
+			return enemy->isSwallowed();
+		}
+	);
+	m_enemies.erase(enemyIterator, m_enemies.end());
+
+}
+// Handle user input and game events.
+// Processes window and keyboard events
+void GameController::handleEvents()
+{
+	// Process window events
+	processWindowEvents();
+
+	// Handle Game controll Input
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
+
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		m_window.close(); // Close game window
+
+	// Handle Kirby's input
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	{
+		float attackRange = 100.0f; // Define the attack range
+		m_kirby->attack(m_enemies, attackRange); // Attack enemies within range
+	}
+	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		m_kirby->moveLeft();
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+		m_kirby->moveRight();
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		m_kirby->jump();
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		m_kirby->crouch();
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		m_kirby->attack();
+	}*/
+}
+void GameController::draw()
+{
+	m_window.clear(sf::Color::Black);
+	m_window.setView(m_gameView);
+
+	m_worldMap->draw(m_window);
+	m_kirby->draw(m_window);
+
+	// Draw all other objects from our unified list
+	for (const auto& obj : m_fixedObjects)
+	{
+		obj->draw(m_window);
+	}
+
+	// Draw all enemies
+	for (const auto& enemy : m_enemies)
+	{
+		enemy->draw(m_window);
+	}
+
+	// NOTE: If you were to draw UI elements (like a score or health bar),
+	// you would switch back to the default view here so they stay fixed on the screen:
+	// m_window.setView(m_window.getDefaultView());
+	// ... draw UI ...
+	drawHUD();
+}
+void GameController::loadLevel(int levelNum)
+{
+	sf::Vector2f startPosition(50, 50);
+	m_kirby->setPosition(startPosition); // Reset Kirby's position at the start of each level
+
+	m_level = std::make_unique<Level>(levelNum , m_kirby.get());
+	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
+	m_fixedObjects = m_level->getObjects(); // Load all objects from the level
+	m_enemies = m_level->getEnemies(); // Load all enemies from the level
+
+	// --- CAMERA SETUP PER LEVEL ---
+	if (m_worldMap)
+	{
+		// 1. Calculate the new height for each of the three vertical sections.
+		float newViewHeight = m_worldMap->getSize().y / 3.0f;
+
+		// 2. Update our logical variable for camera snapping.
+		m_levelAreaHeight = newViewHeight;
+
+		// 3. IMPORTANT: Update the actual sf::View object with the new size.
+		// We keep the original width to maintain the aspect ratio you've defined.
+		m_gameView.setSize(VIEW_WIDTH, newViewHeight);
+	}
+}
+Level* GameController::getLevel()
+{
+	return m_level.get();
+}
+sf::RenderWindow& GameController::getWindow() 
+{
+	return m_window;
+}
 // Handle window close, resizing, etc.
 void GameController::processWindowEvents()
 {
@@ -314,7 +309,6 @@ void GameController::processWindowEvents()
 		}
 	}
 }
-
 // Load the HUD and set up the views for the game and HUD
 void GameController::loadHUD()
 {
@@ -339,7 +333,6 @@ void GameController::loadHUD()
 		std::cout << "Warning: Could not load spritesheet.png\n";
 	}
 }
-
 // Draw the HUD at the bottom of the screen
 void GameController::drawHUD()
 {
@@ -364,12 +357,10 @@ void GameController::drawHUD()
 	// Draw the HUD stretched across the bottom
 	m_hud->draw(m_window);
 }
-
 void GameController::addScore(unsigned int points)
 {
 	m_score += points;
 }
-
 unsigned int GameController::getScore() const
 {
 	return m_score;
