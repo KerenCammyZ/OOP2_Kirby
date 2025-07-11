@@ -11,14 +11,13 @@ GameController::GameController():
 	// Set the initial state to the Main Menu
 	m_currentState = std::make_unique<MainMenuState>();
 	m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
-	//loadLevel(m_currentLevel);
-	loadTextures(); // Load Textures of Kirby and Visual World
-	loadHUD(); // Load the HUD and set up the views for the game and HUD
+	//loadTextures();
+	loadHUD();
 }
 
 GameController::~GameController() = default;
 
-void GameController::changeState(std::unique_ptr<GameState> newState) 
+void GameController::changeGameState(std::unique_ptr<GameState> newState) 
 {
 	if (newState) 
 	{
@@ -38,23 +37,6 @@ Level* GameController::getLevel()
 
 void GameController::run()
 {
-	//while (m_currentLevel <= m_maxLevels)
-	//{
-	//	loadLevel(m_currentLevel);
-
-	//	// run the current level until it's complete.
-	//	while (m_window.isOpen() && !m_level->getCompleted())
-	//	{
-	//		m_deltaTime = m_deltaClock.restart().asSeconds();
-
-	//		handleEvents();
-	//		update(m_deltaTime);
-	//		draw();
-	//		m_window.display();
-	//	}
-	//	m_currentLevel++;
-	//}
-	//std::cout << "Game Over! Thanks for playing!" << std::endl;
 	while (m_window.isOpen())
 	{
 		m_deltaTime = m_deltaClock.restart().asSeconds();
@@ -72,12 +54,11 @@ void GameController::run()
 
 void GameController::loadLevel(int levelNum)
 {
-	//m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
 	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position at the start of each level
 
 	m_level = std::make_unique<Level>(levelNum , m_kirby.get());
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
-	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
+	m_fixedObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
 
 	// --- CAMERA SETUP PER LEVEL ---
@@ -97,13 +78,12 @@ void GameController::loadLevel(int levelNum)
 
 void GameController::checkCollisions()
 {
-	// --- THIS IS THE FIX ---
 	// At the start of the collision phase, assume Kirby is not in water and not on the ground.
 	m_kirby->setInWater(false);
 	m_kirby->setGrounded(false);
 
 	// Loop through all objects to check for interactions with Kirby.
-	for (const auto& otherObject : m_allGameObjects)
+	for (const auto& otherObject : m_fixedObjects)
 	{
 		if (m_kirby->collidesWith(*otherObject))
 		{
@@ -136,7 +116,7 @@ void GameController::checkCollisions()
 	// Check for collisions between enemies and other objects
 	for (const auto& enemy : m_enemies)
 	{
-		for (const auto& otherObject : m_allGameObjects) {
+		for (const auto& otherObject : m_fixedObjects) {
 			if (enemy->collidesWith(*otherObject))
 			{
 				enemy->handleCollision(otherObject.get());
@@ -186,18 +166,6 @@ void GameController::updateView()
 	m_gameView.setCenter(viewX, viewY);
 }
 
-// Load Kirby Texture
-void GameController::loadTextures()
-{
-	//m_kirbyTexture = std::make_shared<sf::Texture>();
-	//if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
-	//{
-	//	throw std::runtime_error("Failed to load Kirby texture");
-	//}
-	//m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
-	;
-}
-
 // This function is called every frame to update the game state.
 // It checks for collisions, updates the positions and states of all game objects,
 // and handles the game logic such as checking if Kirby has lost lives.
@@ -211,7 +179,6 @@ void GameController::update(float deltaTime)
 		std::cout << "Game Over! Kirby has no health or lives left." << std::endl;
 		exit(EXIT_SUCCESS);
 	}
-	// --- THIS IS THE CORRECT GAME LOOP ORDER ---
 
 	// 1. CHECK THE ENVIRONMENT
 	// Run collision checks based on the objects' positions from the last frame.
@@ -223,10 +190,11 @@ void GameController::update(float deltaTime)
 	// Kirby's state machine will now see the correct values for m_isGrounded and m_isInWater.
 	m_kirby->update(deltaTime);
 
-	for (auto& obj : m_allGameObjects)
+	for (auto& obj : m_fixedObjects)
 	{
 		obj->update(deltaTime);
 	}
+
 	for (auto& enemy : m_enemies)
 	{
 		if(enemy->isSwallowed())
@@ -238,26 +206,23 @@ void GameController::update(float deltaTime)
 	m_kirby->setInWater(false);
 	m_kirby->setGrounded(false);
 
-	// 3. UPDATE THE CAMERA
-	// The view follows the newly calculated positions.
+	// update the camera
 	updateView();
 
 
 	// 4. CLEAN UP
 	// Remove any objects that were marked for deletion during the update phase.
-	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
+	auto it = std::remove_if(m_fixedObjects.begin(), m_fixedObjects.end(),
 		[](const std::unique_ptr<GameObject>& obj)
 		{
 			if (Present* present = dynamic_cast<Present*>(obj.get()))
-			//if (obj.get()->getType() == ObjectType::PRESENT) -- to avoid dynamic casting
 			{
-				return present->isCollected();
+				return present->isCollected();	
 			}
 			return false;
 		});
-	m_allGameObjects.erase(it, m_allGameObjects.end());
+	m_fixedObjects.erase(it, m_fixedObjects.end());
 
-	// Enemy removal logic would go here.
 	// remove swallowed enemies
 	auto enemyIterator = std::remove_if(m_enemies.begin(), m_enemies.end(),
 		[](const std::unique_ptr<Enemy>& enemy) {
@@ -332,7 +297,7 @@ void GameController::draw()
 	m_kirby->draw(m_window);
 
 	// Draw all other objects from our unified list
-	for (const auto& obj : m_allGameObjects)
+	for (const auto& obj : m_fixedObjects)
 	{
 		obj->draw(m_window);
 	}
@@ -386,15 +351,15 @@ void GameController::drawHUD()
 	int lives = m_kirby->getLives();
 	int score = getScore();
 
-	std::string state;
+	std::string kirbyState;
 	//if (m_kirby->isInvincible())
 		//state = "invincible"; // TODO: Replace with a m_kirby->get() function
 	if (m_kirby->isHyper())
-		state = "hyper";      // maybe getCurrentPower() / getCurrentState() / getStateDisplay(), ..
+		kirbyState = "hyper";      // maybe getCurrentPower() / getCurrentState() / getStateDisplay(), ..
 	else
-		state = "normal";
+		kirbyState = "normal";
 
-	m_hud->updateGameData(kirbyHealth, lives, score, state);
+	m_hud->updateGameData(kirbyHealth, lives, score, kirbyState);
 
 	// Draw the HUD stretched across the bottom
 	m_hud->draw(m_window);

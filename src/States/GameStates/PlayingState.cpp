@@ -21,7 +21,7 @@ void PlayingState::update(float deltaTime, GameController& game)
         m_currentLevel++;
         if (m_currentLevel > m_maxLevels) {
             // Game finished, go back to menu
-            game.changeState(std::make_unique<MainMenuState>());
+            game.changeGameState(std::make_unique<MainMenuState>());
             return;
         }
         game.loadLevel(m_currentLevel);
