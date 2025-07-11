@@ -166,6 +166,16 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
                 // Standard object creation...
                 newObject->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
                 newObject->setPosition(position);
+
+                if (newObject.get()->getType() == ObjectType::ENEMY)
+                {					
+                  newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
+                }
+                if (newObject.get()->getType() == ObjectType::SPEED_PRESENT)
+                {
+                   newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
+                }
+
                 createdObjects.push_back(std::move(newObject));
             }
             else
@@ -185,28 +195,6 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
         // --- NEW: Handle Water Zone Markers ---
         if (colorKey == waterColor)
         {
-            //if (locations.size() == 2)
-            //{
-            //    sf::Vector2f p1 = locations[0];
-            //    sf::Vector2f p2 = locations[1];
-
-            //    // Calculate the bounding box
-            //    float left = std::min(p1.x, p2.x);
-            //    float top = std::min(p1.y, p2.y);
-            //    float width = std::abs(p1.x - p2.x);
-            //    float height = std::abs(p1.y - p2.y);
-
-            //    // Create a single Water object for the whole zone
-            //    auto waterZoneObject = std::make_unique<Water>();
-            //    waterZoneObject->setSize({ width, height });
-            //    waterZoneObject->setPosition({ left + width / 2.f, top + height / 2.f });
-
-            //    createdObjects.push_back(std::move(waterZoneObject));
-            //    std::cout << "Created Water Zone at: (" << left << "," << top << ") with size (" << width << "," << height << ")\n";
-            //}
-            //else {
-            //    std::cerr << "Warning: Invalid water zone pair. Found " << locations.size() << " markers, but expected 2.\n";
-            //}
             // First, check if there's an odd number of markers, which is an error.
             if (locations.size() % 2 != 0)
             {
