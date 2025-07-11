@@ -1,6 +1,7 @@
 // Enemy.cpp
 #include <SFML/Graphics.hpp>
 #include "GameObjectFactory.h"
+#include "ResourceManager.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include "Behaviors/PatrolMove.h"
@@ -16,10 +17,12 @@ sf::Color sparkyColor(0, 0, 120);
 // Static registration for WaddleDee
 bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 	WaddleDeeColor, [](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject> {
-		auto enemyTexture = std::make_shared<sf::Texture>();
-		if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
-			throw std::runtime_error("Failed to load Waddle Dee texture");
-		}
+		//auto enemyTexture = std::make_shared<sf::Texture>();
+		auto enemyTexture = ResourceManager::getTexture("WaddleDeeSprite.png");
+		//if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
+		//	throw std::runtime_error("Failed to load Waddle Dee texture");
+		//}
+		//ResourceManager::getTexture("TestSprite.png")
 		auto enemy = std::make_unique<Enemy>(enemyTexture, position, kirby);
 		enemy->setMoveBehavior(std::make_unique<PatrolMove>());
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
@@ -34,10 +37,7 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 // Static registration for Twizzy 
 bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 	TwizzyColor, [](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject> {
-		auto enemyTexture = std::make_shared<sf::Texture>();
-		if (!enemyTexture->loadFromFile("TwizzySprite.png")) {
-			throw std::runtime_error("Failed to load Twizzy texture");
-		}
+		auto enemyTexture = ResourceManager::getTexture("TwizzySprite.png");
 		auto enemy = std::make_unique<Enemy>(enemyTexture, position, kirby);
 		enemy->setMoveBehavior(std::make_unique<FlyingMove>());
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
@@ -53,10 +53,7 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 	sparkyColor,
 	[](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject> {
-		auto enemyTexture = std::make_shared<sf::Texture>();
-		if (!enemyTexture->loadFromFile("SparkySprite.png")) {
-			throw std::runtime_error("Failed to load Sparky texture");
-		}
+		auto enemyTexture = ResourceManager::getTexture("SparkySprite.png");
 		auto enemy = std::make_unique<Enemy>(enemyTexture, position, kirby);
 		enemy->setMoveBehavior(std::make_unique<HoppingMove>());
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());

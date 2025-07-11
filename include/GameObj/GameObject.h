@@ -3,7 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include "GlobalSizes.h"
 
-enum class ObjectType { DOOR, FLOOR, WALL, ENEMY, PRESENT, SPEED_PRESENT, EXIT , WATER, DEFAULT };
+//enum class ObjectType { DOOR, FLOOR, WALL, ENEMY, PRESENT, SPEED_PRESENT, EXIT , WATER, DEFAULT };
+enum class ObjectType { WALL, ENEMY, PRESENT, SPEED_PRESENT, EXIT, WATER, DEFAULT };
 
 class Kirby;
 class Door;
@@ -32,11 +33,10 @@ public:
 	virtual void setSize(const sf::Vector2f& size);
 	sf::Vector2f getSize() const;
 
-	bool collidesWith(GameObject& other) const;
-	virtual sf::FloatRect getBounds() const;
-	void loadTexture(const std::string& filename);
 	void setTexture(std::shared_ptr<sf::Texture> texture);
+	bool collidesWith(GameObject& other) const;
 
+	virtual sf::FloatRect getBounds() const;
 	virtual ObjectType getType() const { return ObjectType::DEFAULT; }
 
 protected:
@@ -44,5 +44,4 @@ protected:
 	sf::Vector2f m_size;
 	sf::Sprite m_sprite;
 	std::shared_ptr<sf::Texture> m_texture;
-	static std::shared_ptr<sf::Texture> m_defaultTexture;
 };

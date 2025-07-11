@@ -13,7 +13,6 @@ HUD::HUD()
     m_spriteSheet = std::make_unique<SpriteSheet>();
 }
 
-
 // Load the HUD texture from a file
 bool HUD::loadTexture(const std::string& filePath) {
     m_hudTexture = std::make_shared<sf::Texture>();
@@ -31,7 +30,6 @@ bool HUD::loadTexture(const std::string& filePath) {
 
     return true;
 }
-
 
 // Load and setup the spritesheet for HUD elements
 bool HUD::loadSpriteSheet(const std::string& filePath) {
@@ -77,7 +75,6 @@ void HUD::updateGameData(int health, int lives, int score, const std::string& st
     m_kirbyState = state;
 }
 
-
 void HUD::draw(sf::RenderTarget& target) {
     if (!m_hudTexture) {
         return; // No texture loaded
@@ -103,7 +100,6 @@ void HUD::setDisplayArea(float x, float y, float width, float height)
     m_displayArea = sf::FloatRect(x, y, width, height);
     updateSprite();
 }
-
 
 void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float y)
 {
@@ -134,7 +130,6 @@ void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float
     }
 }
 
-
 void HUD::drawLives(sf::RenderTarget& target, float x, float y) {
     // Draw number of lives
 	sf::Vector2f scale = getHUDScale();
@@ -158,7 +153,6 @@ void HUD::drawLives(sf::RenderTarget& target, float x, float y) {
 		digitPosX += 8; // Move to next digit position
     }
 }
-
 
 void HUD::drawHealthBar(sf::RenderTarget& target, float x, float y) {
     // Draw health bar segments
@@ -201,7 +195,6 @@ void HUD::updateSprite()
         << ") Final size: " << m_displayArea.width << "x" << m_displayArea.height << std::endl;*/
 }
 
-
 sf::Vector2f HUD::hudToScreen(float hudX, float hudY) {
     // Convert HUD coordinates (based on original HUD size) to stretched screen coordinates
     if (!m_hudTexture) {
@@ -217,7 +210,6 @@ sf::Vector2f HUD::hudToScreen(float hudX, float hudY) {
         m_displayArea.top + (hudY * scaleY)
     );
 }
-
 
 sf::Vector2f HUD::getHUDScale()
 {

@@ -80,12 +80,6 @@ void Kirby::update(float deltaTime)
 	GameObject::update(deltaTime);
 }
 
-//void Kirby::move(float deltaTime)
-//{
-//	m_oldPosition = m_position;
-//	setPosition(m_position + m_velocity * deltaTime);
-//}
-
 void Kirby::handleCollision(GameObject* other)
 {
 	if (other->getType() == ObjectType::WALL)
