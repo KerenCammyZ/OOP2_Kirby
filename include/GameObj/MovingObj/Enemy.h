@@ -41,6 +41,8 @@ public:
 	ObjectType getType() const { return ObjectType::ENEMY; }
 	int getScoreValue() const { return m_scoreValue; }
 
+	sf::Sprite& getSprite() { return m_sprite; }
+
 private:
 	std::unique_ptr <MoveBehavior> m_moveBehavior;
 	std::unique_ptr <AttackBehavior> m_attackBehavior;
