@@ -22,8 +22,12 @@ bool Wall::m_registeritem = GameObjectFactory::registerType(
 
 void Wall::handleCollision(Kirby* kirby)
 {
-	//kirby->setPosition(kirby->getOldPosition());
-	kirby->handleCollision(this);
+	;
+}
+
+void Wall::handleCollision(Enemy* enemy)
+{
+	;
 }
 
 void Wall::draw(sf::RenderTarget& target) const

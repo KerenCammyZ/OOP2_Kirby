@@ -10,7 +10,8 @@
 #include <chrono>
 
 Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
-	: m_velocity(0.f, 0.f), m_isGrounded(false), m_inWater(false) // Initialize physics members
+	: m_velocity(0.f, 0.f), m_isGrounded(false), m_inWater(false), // Initialize physics members
+	m_lastAnimationState("idle"), m_animationChangeDelay(0.0f)
 {
 	setTexture(kirbyTexture);
 	sf::Vector2f kirbySize(ENTITY_SIZE, ENTITY_SIZE);
@@ -23,7 +24,55 @@ Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 	m_state->enter(*this);
 
 	m_originalSpeed = m_speed;
+
+	m_animator = std::make_unique<Animator>();
+	if (m_animator->loadSpriteSheet("KirbySpriteSheet.png")) {
+		setupAnimations();
+		m_animator->play("idle");
+	}
 };
+
+void Kirby::setupAnimations() {
+	m_animator->addGridAnimation("idle", 0, 0, 16, 16, 1, 0.5f, true);
+	m_animator->addGridAnimation("walking", 0, 16, 16, 16, 4, 0.15f, true);
+	m_animator->addGridAnimation("jumping", 0, 64, 16, 16, 2, 0.2f, false);
+	m_animator->addGridAnimation("falling", 0, 32, 16, 16, 1, 0.3f, true);
+	m_animator->addGridAnimation("swimming", 0, 128, 32, 32, 4, 0.25f, true);
+}
+
+void Kirby::updateAnimation(float deltaTime) {
+	if (!m_animator) return;
+
+	m_animationChangeDelay -= deltaTime;
+
+	// Update facing direction based on actual movement
+	if (std::abs(m_velocity.x) > 10.0f) {  // Only change direction when actually moving
+		m_facingLeft = (m_velocity.x < 0);
+	}
+
+	std::string targetAnimation = "idle";
+
+	if (isInWater()) {
+		targetAnimation = "swimming";
+	}
+	else if (std::abs(m_velocity.x) > 50.0f) {
+		targetAnimation = "walking";
+	}
+	else if (m_velocity.y < -100.0f) {
+		targetAnimation = "jumping";
+	}
+	else if (m_velocity.y > 100.0f) {
+		targetAnimation = "falling";
+	}
+
+	if (targetAnimation != m_lastAnimationState && m_animationChangeDelay <= 0.0f) {
+		m_animator->play(targetAnimation);
+		m_lastAnimationState = targetAnimation;
+		m_animationChangeDelay = 0.1f;
+	}
+
+	m_animator->update(deltaTime);
+}
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
@@ -52,10 +101,28 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 	}
 }
 
-// Modified update method with debug output:
+void Kirby::draw(sf::RenderTarget& target) const
+{
+	if (m_animator) {
+		sf::Vector2f pos = getPosition();
+
+		float scaleX = isFacingLeft() ? -1.0f : 1.0f;
+		float scaleY = 1.0f;
+
+		float entityScale = ENTITY_SIZE / 16.0f;
+		scaleX *= entityScale;
+		scaleY *= entityScale;
+
+		m_animator->draw(target, pos.x, pos.y, scaleX, scaleY);
+	}
+	else {
+		GameObject::draw(target);
+	}
+}
+
+
 void Kirby::update(float deltaTime)
 {
-	// Your existing update logic...
 	m_presentManager.update(deltaTime, *this);
 
 	if (m_isInvincible) {
@@ -76,6 +143,7 @@ void Kirby::update(float deltaTime)
 		m_state->enter(*this);
 	}
 	m_state->update(*this, deltaTime);
+	updateAnimation(deltaTime);
 }
 
 void Kirby::move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles)
@@ -140,6 +208,39 @@ void Kirby::handleCollision(GameObject* other)
 	else if (other->getType() == ObjectType::ENEMY)
 	{
 		static_cast<Enemy*>(other)->handleCollision(this);
+	}
+	else if (other->getType() == ObjectType::FLOOR)
+	{
+		sf::FloatRect kirbyBounds = getBounds();
+		sf::FloatRect floorBounds = other->getBounds();
+		sf::Vector2f kirbyPrevPos = getOldPosition();
+		const int floorHeight = floorBounds.height;
+
+		// Check if Kirby was coming from above in the previous frame
+		if (kirbyPrevPos.y + kirbyBounds.height / 2.f <= floorBounds.top)
+		{
+			// 1. Stop his vertical movement completely.
+			setVelocity({ getVelocity().x, 0.f });
+
+			// 2. Mark Kirby as being on the ground.
+			setGrounded(true);
+
+			// 3. Reposition him to be exactly on top of the floor.
+			setPosition({ getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
+		}
+
+		else if (kirbyPrevPos.x + kirbyBounds.width / 2.f <= floorBounds.left) // Coming from the left
+		{
+			// Stop horizontal movement and reposition Kirby to the left and on top of the floor
+			setVelocity({ 0.f, getVelocity().y });
+			setPosition({ floorBounds.left - (kirbyBounds.width / 2.f), getPosition().y - floorHeight });
+		}
+		else if (kirbyPrevPos.x - kirbyBounds.width / 2.f >= floorBounds.left + floorBounds.width) // Coming from the right
+		{
+			// Stop horizontal movement and reposition Kirby to the right and on top of the floor
+			setVelocity({ 0.f, getVelocity().y });
+			setPosition({ floorBounds.left + floorBounds.width + (kirbyBounds.width / 2.f), getPosition().y - floorHeight });
+		}
 	}
 	else 
 	{

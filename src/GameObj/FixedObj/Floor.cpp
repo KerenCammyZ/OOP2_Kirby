@@ -22,7 +22,6 @@ bool Floor::m_registeritem = GameObjectFactory::registerType(
 
 void Floor::handleCollision(Kirby* kirby)
 {
-	
 	sf::FloatRect kirbyBounds = kirby->getBounds();
 	sf::FloatRect floorBounds = getBounds();
 	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
@@ -45,7 +44,7 @@ void Floor::handleCollision(Kirby* kirby)
 	{
 		// Stop horizontal movement and reposition Kirby to the left and on top of the floor
 		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
-		kirby->setPosition({ floorBounds.left - (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight});
+		kirby->setPosition({ floorBounds.left - (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight });
 	}
 	else if (kirbyPrevPos.x - kirbyBounds.width / 2.f >= floorBounds.left + floorBounds.width) // Coming from the right
 	{

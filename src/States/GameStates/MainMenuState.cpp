@@ -53,12 +53,15 @@ void MainMenuState::handleEvents(GameController& game)
                 window.close();
             }
         }
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P) {
+                game.changeGameState(std::make_unique<PlayingState>(game));
+        }
     }
 }
 
 void MainMenuState::update(float deltaTime, GameController& game)
 {
-
+    ;
 }
 
 void MainMenuState::draw(GameController& game)

@@ -3,8 +3,8 @@
 #include "GameObj/MovingObj/MovingObject.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "PresentManager.h"
-#include "Animation.h"
-#include "AnimationManager.h"
+#include "SpriteSheet.h"
+#include "Animator.h"
 #include <memory>
 #include <vector>
 
@@ -28,6 +28,7 @@ public:
 	
 	//void move(float deltaTime) override;
 	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
+	void draw(sf::RenderTarget& target) const override;
 
 	float getSpeed() const;
 	void setSpeed(float speed);
@@ -65,12 +66,20 @@ public:
 	bool isInvincible() const;
 
 	bool isMovingHorizontally() const { return std::abs(m_velocity.x) > 0.1f; }
-	bool isFacingLeft() const { return m_velocity.x < 0; }
+	bool isFacingLeft() const { return m_facingLeft; }
+	void setFacingLeft(bool facingLeft) { m_facingLeft = facingLeft; }
 
 private:
 	void activateInvincibility(float deltaTime);
 	bool willCollideAt(const sf::Vector2f& testPosition, // TODO: change function name to CheckCollisionAt
 		const std::vector<std::unique_ptr<GameObject>>& obstacles) const;
+
+	std::unique_ptr<Animator> m_animator;
+	std::string m_lastAnimationState;
+	float m_animationChangeDelay;
+
+	void setupAnimations();
+	void updateAnimation(float deltaTime);
 
 	std::unique_ptr<KirbyState> m_state;
 
@@ -87,6 +96,7 @@ private:
 	bool m_inWater = false;
 	bool m_isHyper = false;
 	bool m_isInvincible = false;
+	bool m_facingLeft = false;
 	int m_lives = 5;
 	int m_health = 6;
 	int m_maxHealth = 6;

@@ -5,6 +5,8 @@
 #include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 
+#include <iostream>
+
 std::unique_ptr<KirbyState> KirbyWalkingState::handleInput(Kirby& kirby)
 {
 	// --- THIS IS THE "WALK OFF A CLIFF" LOGIC ---
@@ -35,11 +37,19 @@ void KirbyWalkingState::update(Kirby& kirby, float deltaTime)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		horizontalVelocity -= speed;
+		kirby.setFacingLeft(true);
+		std::cout << "Setting facing LEFT" << std::endl;  // Debug
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		horizontalVelocity += speed;
+		kirby.setFacingLeft(false);
+		std::cout << "Setting facing RIGHT" << std::endl; // Debug
 	}
+
+	// Debug: Show current facing direction
+	std::cout << "Kirby facing left: " << (kirby.isFacingLeft() ? "YES" : "NO") << std::endl;
+
 	// The walking state now controls horizontal velocity.
 	kirby.setVelocity({ horizontalVelocity, 0.f });
 }
