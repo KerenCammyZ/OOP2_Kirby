@@ -1,4 +1,4 @@
-ï»¿// SpriteSheet.cpp
+// SpriteSheet.cpp
 #include "SpriteSheet.h"
 #include <iostream>
 
@@ -30,13 +30,13 @@ void SpriteSheet::defineSpriteType(const std::string& typeName, int width, int h
 // Add a specific sprite to the catalog
 void SpriteSheet::addSprite(const std::string& spriteName, int x, int y, int width, int height) {
     m_sprites[spriteName] = SpriteInfo(x, y, width, height);
-    // std::cout << "Added sprite '" << spriteName << "' at (" << x << "," << y << ") size " << width << "x" << height << std::endl;
+   // std::cout << "Added sprite '" << spriteName << "' at (" << x << "," << y << ") size " << width << "x" << height << std::endl;
 }
 
 
 /*
 *    Quick add for grid-based sprites (like digits 0-9 in a row)
-*
+* 
 *    @param typePrefix: Prefix for sprite names (e.g., "digit")
 *    @param startX: Starting X position in the spritesheet
 *    @param startY: Starting Y position in the spritesheet
@@ -107,13 +107,13 @@ void SpriteSheet::setupSprite(const SpriteInfo& info, float x, float y, float sc
 *
 * Some potential use cases for the addSpriteGrid function in game development include:
 *
-* ï¿½	Animation Frames: Quickly registering all frames of a character or object animation that are laid out in a grid on a spritesheet.
+* •	Animation Frames: Quickly registering all frames of a character or object animation that are laid out in a grid on a spritesheet.
 *
-* ï¿½	UI Elements: Loading button states, icons, or other interface elements that are organized in a grid.
+* •	UI Elements: Loading button states, icons, or other interface elements that are organized in a grid.
 *
-* ï¿½	Font Glyphs: Registering a set of character images (e.g., numbers, letters) for custom bitmap fonts
+* •	Font Glyphs: Registering a set of character images (e.g., numbers, letters) for custom bitmap fonts
 *
-* ï¿½	Inventory Items: Many 2D scrollers include collectible items, power-ups, or equipment.
+* •	Inventory Items: Many 2D scrollers include collectible items, power-ups, or equipment.
 *   An inventory system lets players collect, view, and use these items.
 *   The icons for these items are typically stored in a spritesheet and managed similarly to other sprites.
 */
