@@ -10,6 +10,7 @@
 #include "Behaviors/SimpleAttack.h"
 #include "Behaviors/SparkAttack.h"
 #include "Behaviors/IgnoreWalls.h"
+#include "Commands/SparkCommand.h"
 
 sf::Color WaddleDeeColor(0, 0, 40); // Define Waddle Dee's color key
 sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key
@@ -17,7 +18,7 @@ sf::Color sparkyColor(0, 0, 120);
 
 // Static registration for WaddleDee
 bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
-	WaddleDeeColor, [](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject> {
+	WaddleDeeColor, [](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject> {
 		auto enemyTexture = std::make_shared<sf::Texture>();
 		if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
 			throw std::runtime_error("Failed to load Waddle Dee texture");
@@ -36,7 +37,7 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 
 // Static registration for Twizzy 
 bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
-	TwizzyColor, [](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject> {
+	TwizzyColor, [](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject> {
 		auto enemyTexture = std::make_shared<sf::Texture>();
 		if (!enemyTexture->loadFromFile("TwizzySprite.png")) {
 			throw std::runtime_error("Failed to load Twizzy texture");
@@ -56,7 +57,7 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 // Static registration for Sparky
 bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 	sparkyColor,
-	[](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject> {
+	[](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject> {
 		auto enemyTexture = std::make_shared<sf::Texture>();
 		if (!enemyTexture->loadFromFile("SparkySprite.png")) {
 			throw std::runtime_error("Failed to load Sparky texture");
@@ -73,7 +74,7 @@ bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 );
 
 
-Enemy::Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby)
+Enemy::Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, Kirby* kirby)
 	: m_state(EnemyState::SPAWNING),
 	m_kirby(kirby) // Initialize the new member
 {
@@ -124,6 +125,12 @@ void Enemy::update(float deltaTime)
 			// If the enemy is very close to Kirby, finish the swallow
 			if (distance < 10.0f)
 			{
+				// Check if this enemy is a Sparky by checking its attack behavior.
+				if (dynamic_cast<SparkAttack*>(m_attackBehavior.get()))
+				{
+					// If it is, give Kirby the SparkCommand.
+					m_kirby->addPresentEffect(std::make_unique<SparkCommand>());
+				}
 				onSwallowed(); // This sets the state to SWALLOWED for deletion
 			}
 			else

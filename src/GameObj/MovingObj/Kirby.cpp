@@ -5,6 +5,8 @@
 #include "States/KirbyStates/KirbySwimmingState.h"
 #include "GlobalSizes.h"
 #include "GameObj/FixedObj/Wall.h"
+#include "States/KirbyStates/KirbySparkAttackState.h"
+#include "States/KirbyStates/KirbyWalkingState.h" 
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -27,6 +29,16 @@ Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
+	// Check if Kirby has the Spark power and is in a state that allows attacking
+	if (m_currentPower == PowerUpType::Spark &&
+		(dynamic_cast<KirbyStandingState*>(m_state.get()) || dynamic_cast<KirbyWalkingState*>(m_state.get())))
+	{
+		// If so, transition to the special spark attack state
+		m_state = std::make_unique<KirbySparkAttackState>(*this, enemies);
+		m_state->enter(*this);
+		return; // Exit to avoid the regular attack
+	}
+
 	bool facingLeft = m_velocity.x < 0 ? true : false;
 	for (auto& enemy : enemies)
 	{
@@ -58,6 +70,17 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 			break;
 		}
 	}
+}
+
+// --- IMPLEMENT NEW POWER-UP FUNCTIONS ---
+void Kirby::setPower(PowerUpType power)
+{
+	m_currentPower = power;
+}
+
+PowerUpType Kirby::getCurrentPower() const
+{
+	return m_currentPower;
 }
 
 void Kirby::update(float deltaTime)
@@ -118,6 +141,18 @@ void Kirby::handleCollision(GameObject* other)
 	else 
 	{
 		other->handleCollision(this);
+	}
+}
+
+void Kirby::draw(sf::RenderTarget& target) const
+{
+	// First, draw the base Kirby sprite
+	MovingObject::draw(target);
+
+	// Then, allow the current state to draw any special effects over Kirby
+	if (m_state)
+	{
+		m_state->draw(target);
 	}
 }
 

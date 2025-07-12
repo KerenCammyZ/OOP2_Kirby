@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <SFML/Graphics.hpp>
 
 class Kirby; // Forward-declaration to avoid circular includes
 
@@ -16,4 +17,6 @@ public:
 
 	// A function to run code when entering a state (e.g., set an animation)
 	virtual void enter(Kirby& kirby) {};
+
+	virtual void draw(sf::RenderTarget& target) {}
 };

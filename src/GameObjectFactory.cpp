@@ -18,7 +18,7 @@ bool GameObjectFactory::registerType(const sf::Color& colorKey, CreateFunction f
     return true;
 }
 
-std::unique_ptr<GameObject> GameObjectFactory::create(const sf::Color& colorKey, sf::Vector2f position, const Kirby* kirby)
+std::unique_ptr<GameObject> GameObjectFactory::create(const sf::Color& colorKey, sf::Vector2f position, Kirby* kirby)
 {
     // Retrieve the map of registered GameObject creation functions.
     // Each entry in the map associates a color key with a function that creates a specific type of GameObject.

@@ -7,7 +7,7 @@ const sf::Color speedPresentColor(255, 216, 0);
 // Static lambda to register this present with the factory
 bool SpeedPresent::m_registerSpeedPresent = GameObjectFactory::registerType(
 	speedPresentColor,
-	[](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject>
+	[](sf::Vector2f position,  Kirby* kirby) -> std::unique_ptr<GameObject>
 	{
 		auto present = std::make_unique<SpeedPresent>();
 

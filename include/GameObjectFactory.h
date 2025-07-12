@@ -34,7 +34,7 @@ public:
      * The function takes a position and a pointer to a Kirby instance as arguments.
      * It returns a unique_ptr to the created GameObject. 
      */  
-    using CreateFunction = std::unique_ptr<GameObject>(*)(sf::Vector2f position, const Kirby* kirby);  
+    using CreateFunction = std::unique_ptr<GameObject>(*)(sf::Vector2f position, Kirby* kirby);  
 
     /**  
      * Creates a GameObject based on the provided color key.  
@@ -49,7 +49,7 @@ public:
      * - If a matching function is found, it is called with the provided position and Kirby pointer.  
      * - If no matching function is found, nullptr is returned.  
      */  
-    static std::unique_ptr<GameObject> create(const sf::Color& colorKey, sf::Vector2f position, const Kirby* kirby);  
+    static std::unique_ptr<GameObject> create(const sf::Color& colorKey, sf::Vector2f position, Kirby* kirby);  
 
     /**  
      * Registers a creation function for a specific color key.  

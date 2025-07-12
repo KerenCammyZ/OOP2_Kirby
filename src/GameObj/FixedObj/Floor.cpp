@@ -9,7 +9,7 @@ const sf::Color floorColor(76, 255, 0);
 
 bool Floor::m_registeritem = GameObjectFactory::registerType(
 	floorColor, // The color key for a Floor object
-	[](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject> // The blueprint
+	[](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject> // The blueprint
 	{
 		// This lambda function creates and returns a new Floor object
 		// when the factory is asked to create one for the color green.

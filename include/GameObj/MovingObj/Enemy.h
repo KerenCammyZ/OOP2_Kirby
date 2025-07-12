@@ -16,7 +16,7 @@ public:
 	Enemy() = default;
 	~Enemy();
 	//Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
-	Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, const Kirby* kirby);
+	Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, Kirby* kirby);
 
 	void update(float deltaTime) override;
 	void move(float deltaTime) override;
@@ -52,7 +52,7 @@ private:
 	std::unique_ptr <AttackBehavior> m_attackBehavior;
 	std::unique_ptr <CollisionBehavior> m_collisionBehavior;
 
-	const Kirby* m_kirby;
+	Kirby* m_kirby;
 
 	EnemyState m_state;
 	bool m_isGrounded = false;

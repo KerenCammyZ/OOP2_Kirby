@@ -9,11 +9,9 @@
 class Level
 {
 public:
-	Level(int levelNumber, const Kirby* kirby);
+	Level(int levelNumber, Kirby* kirby);
 	~Level() = default;
 
-	//std::vector<std::unique_ptr<GameObject>>&& getObjects(); // Q: perhaps better to return by value
-	//std::vector<std::unique_ptr<Enemy>>&& getEnemies();      //    instead of by reference?
 	std::vector<std::unique_ptr<GameObject>> getObjects();
 	std::vector<std::unique_ptr<Enemy>> getEnemies();
 	std::unique_ptr<WorldMap> getWorldMap();
@@ -21,7 +19,7 @@ public:
 	void setCompleted(bool completed);
 
 private:
-	void loadObjects(const Kirby* kirby);
+	void loadObjects(Kirby* kirby);
 	bool complete;  // TODO: by course conventions, class data members are prefixed 'm_'
 	int levelNumber;
 	std::string collisionMap;

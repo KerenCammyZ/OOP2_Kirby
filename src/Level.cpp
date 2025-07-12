@@ -1,7 +1,7 @@
 #include "Level.h"
 #include "GameObj/MovingObj/Enemy.h" // Ensure Enemy is included for dynamic_cast
 
-Level::Level(int levelNumber, const Kirby* kirby)
+Level::Level(int levelNumber, Kirby* kirby)
 	: levelNumber(levelNumber), complete(false)
 {
 	collisionMap = "Level" + std::to_string(levelNumber) + "Collisions.png";
@@ -21,7 +21,7 @@ Level::Level(int levelNumber, const Kirby* kirby)
 	loadObjects(kirby);
 }
 
-void Level::loadObjects(const Kirby* kirby)
+void Level::loadObjects( Kirby* kirby)
 {
 	// Load all objects from the collision map file
 	auto objects = m_worldMap->loadObjectsFromFile(collisionMap, kirby);

@@ -10,7 +10,7 @@ const sf::Color exitColor = sf::Color(0, 255, 255);
 
 static bool isExitRegistered = GameObjectFactory::registerType(
 	exitColor,
-	[](sf::Vector2f position, const Kirby* kirby) -> std::unique_ptr<GameObject>
+	[](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject>
 	{
 		return std::make_unique<Exit>();
 	}

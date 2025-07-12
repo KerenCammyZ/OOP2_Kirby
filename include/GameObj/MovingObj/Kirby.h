@@ -9,6 +9,8 @@ class KirbyState;
 class Wall;
 class PresentCommand;
 
+enum class PowerUpType { None, Spark };
+
 class Kirby : public MovingObject
 {
 public:
@@ -56,6 +58,13 @@ public:
 	void setHyper(bool hyper);
 	bool isInvincible() const;
 
+	// --- NEW POWER-UP FUNCTIONS ---
+	void setPower(PowerUpType power);
+	PowerUpType getCurrentPower() const;
+
+	// We override draw to include state-specific effects
+	void draw(sf::RenderTarget& target) const override;
+
 private:
 	void activateInvincibility(float deltaTime);
 
@@ -75,4 +84,6 @@ private:
 	bool m_isHyper = false;
 	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
 	bool m_inWater = false;
+
+	PowerUpType m_currentPower = PowerUpType::None;
 };
