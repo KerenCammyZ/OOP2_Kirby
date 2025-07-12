@@ -35,10 +35,12 @@ void KirbyWalkingState::update(Kirby& kirby, float deltaTime)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		horizontalVelocity -= speed;
+		kirby.setFacingDirection(FacingDirection::Left);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		horizontalVelocity += speed;
+		kirby.setFacingDirection(FacingDirection::Right);
 	}
 	// The walking state now controls horizontal velocity.
 	kirby.setVelocity({ horizontalVelocity, 0.f });

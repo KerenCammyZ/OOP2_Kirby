@@ -10,6 +10,7 @@ class Wall;
 class PowerUpCommand;
 
 enum class PowerUpType { None, Spark };
+enum class FacingDirection { Left = -1, Right = 1 };
 
 class Kirby : public MovingObject
 {
@@ -65,6 +66,10 @@ public:
 	// We override draw to include state-specific effects
 	void draw(sf::RenderTarget& target) const override;
 
+	// --- NEW DIRECTION FUNCTIONS ---
+	void setFacingDirection(FacingDirection dir);
+	FacingDirection getFacingDirection() const;
+
 private:
 	void activateInvincibility(float deltaTime);
 
@@ -86,4 +91,5 @@ private:
 	bool m_inWater = false;
 
 	PowerUpType m_currentPower = PowerUpType::None;
+	FacingDirection m_facingDirection = FacingDirection::Right;
 };

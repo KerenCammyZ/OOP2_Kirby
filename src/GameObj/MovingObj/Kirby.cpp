@@ -43,7 +43,7 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 		return; // Exit to avoid the regular attack
 	}
 	
-		bool facingLeft = m_velocity.x < 0 ? true : false;
+	bool facingLeft = (m_facingDirection == FacingDirection::Left);
 		for (auto& enemy : enemies)
 		{
 
@@ -121,14 +121,17 @@ void Kirby::update(float deltaTime)
 
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
+
+	float currentScaleX = m_sprite.getScale().x;
+	m_sprite.setScale(std::abs(currentScaleX) * static_cast<float>(m_facingDirection), m_sprite.getScale().y);
+
 	GameObject::update(deltaTime);
 }
 
-//void Kirby::move(float deltaTime)
-//{
-//	m_oldPosition = m_position;
-//	setPosition(m_position + m_velocity * deltaTime);
-//}
+void Kirby::setFacingDirection(FacingDirection dir)
+{
+	m_facingDirection = dir;
+}
 
 void Kirby::handleCollision(GameObject* other)
 {
