@@ -70,6 +70,7 @@ public:
 	void setFacingDirection(FacingDirection dir);
 	FacingDirection getFacingDirection() const;
 
+
 private:
 	void activateInvincibility(float deltaTime);
 

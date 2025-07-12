@@ -6,16 +6,17 @@
 
 std::unique_ptr<KirbyState> KirbyStandingState::handleInput(Kirby& kirby)
 {
-	// Pressing UP transitions to Jumping state
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		return std::make_unique<KirbyJumpingState>();
+		kirby.setFacingDirection(FacingDirection::Left);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		return std::make_unique<KirbyWalkingState>();
+		kirby.setFacingDirection(FacingDirection::Right);
 	}
 	return nullptr;
 }

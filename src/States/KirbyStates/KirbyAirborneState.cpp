@@ -37,10 +37,12 @@ void KirbyAirborneState::update(Kirby& kirby, float deltaTime)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		horizontalVelocity -= speed;
+		kirby.setFacingDirection(FacingDirection::Left);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		horizontalVelocity += speed;
+		kirby.setFacingDirection(FacingDirection::Right);
 	}
 
 	kirby.setVelocity({ horizontalVelocity, kirby.getVelocity().y });

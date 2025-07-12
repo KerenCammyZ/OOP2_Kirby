@@ -90,7 +90,6 @@ PowerUpType Kirby::getCurrentPower() const
 
 void Kirby::update(float deltaTime)
 {
-	//m_isGrounded = false;
 
 	// Manager handles all item effect timing and logic
 	m_PowerUpManager.update(deltaTime, *this);
