@@ -172,12 +172,6 @@ void GameController::update(float deltaTime)
 	m_kirby->setInWater(false);
 	m_kirby->setGrounded(false);
 
-
-	// Update HUD animations
-	/*if (m_hud) {
-		m_hud->update(deltaTime);
-	}*/
-
 	// update the camera
 	updateView();
 

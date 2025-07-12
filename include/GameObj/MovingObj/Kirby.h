@@ -21,21 +21,11 @@ class Kirby : public MovingObject
 public:
 	Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture);
 
-	// Debug methods - add these temporarily
-	void debugAnimationState() const;
-	std::string getCurrentAnimationName() const;
-
 	// We override MovingObject's update to handle our new physics logic
 	void update(float deltaTime) override;
 	void move(float deltaTime) override {};
 	void move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles);
 	
-	void draw(sf::RenderTarget& target) const override;
-	void setupAnimations();
-	void updateAnimation(const std::string& stateName, float deltaTime);
-    std::unique_ptr<AnimationManager> getAnimationManager() { return std::move(m_animationManager); }
-
-
 	//void move(float deltaTime) override;
 	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
 
@@ -89,8 +79,6 @@ private:
 
 	// Animation system
 	std::shared_ptr<SpriteSheet> m_spriteSheet;
-	std::unique_ptr<AnimationManager> m_animationManager;
-	std::string m_currentAnimationState;
 
 	// --- NEW PHYSICS MEMBERS ---
 	sf::Vector2f m_velocity;
