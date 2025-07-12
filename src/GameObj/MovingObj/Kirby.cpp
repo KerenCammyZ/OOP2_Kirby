@@ -133,6 +133,11 @@ void Kirby::setFacingDirection(FacingDirection dir)
 	m_facingDirection = dir;
 }
 
+FacingDirection Kirby::getFacingDirection() const
+{
+	return m_facingDirection;
+}
+
 void Kirby::handleCollision(GameObject* other)
 {
 	if (other->getType() == ObjectType::WALL)
