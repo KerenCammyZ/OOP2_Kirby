@@ -29,6 +29,10 @@ Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
+	if (dynamic_cast<KirbySparkAttackState*>(m_state.get()))
+	{
+		return;
+	}
 	// Check if Kirby has the Spark power and is in a state that allows attacking
 	if (m_currentPower == PowerUpType::Spark &&
 		(dynamic_cast<KirbyStandingState*>(m_state.get()) || dynamic_cast<KirbyWalkingState*>(m_state.get())))
@@ -38,38 +42,39 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 		m_state->enter(*this);
 		return; // Exit to avoid the regular attack
 	}
-
-	bool facingLeft = m_velocity.x < 0 ? true : false;
-	for (auto& enemy : enemies)
-	{
-		
-		float distanceX = enemy->getPosition().x - getPosition().x;
-		float distanceY = enemy->getPosition().y - getPosition().y;
-
-		// The vertical tolerance is now much larger (ENTITY_SIZE / 2.0f),
-		// allowing Kirby to swallow enemies that are not perfectly aligned.
-		bool inVerticalRange = std::abs(distanceY) < (ENTITY_SIZE / 2.0f);
-		bool inHorizontalRange = std::abs(distanceX) <= range;
-
-		// An enemy is in range if it's within the vertical and horizontal distances.
-		bool inRange = inVerticalRange && inHorizontalRange;
-
-		if (collidesWith(*enemy))
-			continue; // do nothing
-
-		if (facingLeft && distanceX < 0 && inRange)
+	
+		bool facingLeft = m_velocity.x < 0 ? true : false;
+		for (auto& enemy : enemies)
 		{
-			enemy->startBeingSwallowed();
-			std::cout << "Swallowing enemy from the left!" << std::endl;
-			break;
+
+			float distanceX = enemy->getPosition().x - getPosition().x;
+			float distanceY = enemy->getPosition().y - getPosition().y;
+
+			// The vertical tolerance is now much larger (ENTITY_SIZE / 2.0f),
+			// allowing Kirby to swallow enemies that are not perfectly aligned.
+			bool inVerticalRange = std::abs(distanceY) < (ENTITY_SIZE / 2.0f);
+			bool inHorizontalRange = std::abs(distanceX) <= range;
+
+			// An enemy is in range if it's within the vertical and horizontal distances.
+			bool inRange = inVerticalRange && inHorizontalRange;
+
+			if (collidesWith(*enemy))
+				continue; // do nothing
+
+			if (facingLeft && distanceX < 0 && inRange)
+			{
+				enemy->startBeingSwallowed();
+				std::cout << "Swallowing enemy from the left!" << std::endl;
+				break;
+			}
+			else if (distanceX > 0 && inRange)
+			{
+				enemy->startBeingSwallowed();
+				std::cout << "Swallowing enemy from the right!" << std::endl;
+				break;
+			}
 		}
-		else if (distanceX > 0 && inRange)
-		{
-			enemy->startBeingSwallowed();
-			std::cout << "Swallowing enemy from the right!" << std::endl;
-			break;
-		}
-	}
+	
 }
 
 // --- IMPLEMENT NEW POWER-UP FUNCTIONS ---
