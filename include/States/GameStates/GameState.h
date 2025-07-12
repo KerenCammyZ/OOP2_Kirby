@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include "GameController.h"
 
+class GameController;
+
 class GameState
 {
 public:

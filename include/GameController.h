@@ -1,6 +1,7 @@
 // GameController.h
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "States/GameStates/GameState.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Floor.h"
@@ -20,18 +21,21 @@ class GameController
 {
 public:
 	GameController();
-	~GameController();
+	~GameController() = default;
 	void run();
-	void addScore(unsigned int);
-	unsigned int getScore() const;
-	void changeState(std::unique_ptr<GameState> newState);
-	sf::RenderWindow& getWindow();
-	Level* getLevel();
+	void changeGameState(std::unique_ptr<GameState> newState);
 	void update(float deltaTime);
 	void handleEvents();
 	void draw();
 	void loadLevel(int levelNum);
 	void loadHUD();
+
+	Level* getLevel();
+	sf::RenderWindow& getWindow();
+
+	void addScore(unsigned int);
+	unsigned int getScore() const;
+
 private:
 	void processWindowEvents();
 	void drawHUD();
@@ -40,6 +44,7 @@ private:
 	void spawnKirby();
 
 
+	//void loadTextures();
 	float m_deltaTime;
 	sf::Clock m_deltaClock;
 
@@ -52,13 +57,13 @@ private:
 	sf::RenderWindow m_window;
 	float m_levelAreaHeight;
 
+	std::unique_ptr<HUD> m_hud;
+	std::unique_ptr<Level> m_level;
 	std::unique_ptr<Kirby> m_kirby;
 	std::unique_ptr<WorldMap> m_worldMap;
-	std::unique_ptr<Level> m_level;
-	std::unique_ptr<HUD> m_hud;
 	std::unique_ptr<GameState> m_currentState;
 
-
-	std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
+	//std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
 	std::vector<std::unique_ptr<Enemy>> m_enemies;
+	std::vector<std::unique_ptr<GameObject>> m_fixedObjects;
 };

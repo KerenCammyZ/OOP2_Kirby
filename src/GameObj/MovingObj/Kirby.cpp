@@ -1,10 +1,10 @@
+#include "GlobalSizes.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
+#include "GameObj/FixedObj/Wall.h"
 #include "GameObj/FixedObj/Door.h"
 #include "States/KirbyStates/KirbyStandingState.h"
 #include "States/KirbyStates/KirbySwimmingState.h"
-#include "GlobalSizes.h"
-#include "GameObj/FixedObj/Wall.h"
 #include "States/KirbyStates/KirbySparkAttackState.h"
 #include "States/KirbyStates/KirbyWaterAttackState.h" 
 #include "States/KirbyStates/KirbyWalkingState.h" 
@@ -14,7 +14,8 @@
 #include <typeinfo> 
 
 Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
-	: m_velocity(0.f, 0.f), m_isGrounded(false), m_inWater(false) // Initialize physics members
+	: m_velocity(0.f, 0.f), m_isGrounded(false), m_inWater(false), // Initialize physics members
+	m_lastAnimationState("idle"), m_animationChangeDelay(0.0f)
 {
 	setTexture(kirbyTexture);
 	sf::Vector2f kirbySize(ENTITY_SIZE, ENTITY_SIZE);
@@ -26,8 +27,56 @@ Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 	m_state = std::make_unique<KirbyStandingState>();
 	m_state->enter(*this);
 
-	m_originalSpeed = m_speed; 
+	m_originalSpeed = m_speed;
+
+	m_animator = std::make_unique<Animator>();
+	if (m_animator->loadSpriteSheet("KirbySpriteSheet.png")) {
+		setupAnimations();
+		m_animator->play("idle");
+	}
 };
+
+void Kirby::setupAnimations() {
+	m_animator->addGridAnimation("idle", 0, 0, 16, 16, 1, 0.5f, true);
+	m_animator->addGridAnimation("walking", 0, 16, 16, 16, 4, 0.15f, true);
+	m_animator->addGridAnimation("jumping", 0, 64, 16, 16, 2, 0.2f, false);
+	m_animator->addGridAnimation("falling", 0, 32, 16, 16, 1, 0.3f, true);
+	m_animator->addGridAnimation("swimming", 0, 128, 32, 32, 4, 0.25f, true);
+}
+
+void Kirby::updateAnimation(float deltaTime) {
+	if (!m_animator) return;
+
+	m_animationChangeDelay -= deltaTime;
+
+	// Update facing direction based on actual movement
+	if (std::abs(m_velocity.x) > 10.0f) {  // Only change direction when actually moving
+		m_facingLeft = (m_velocity.x < 0);
+	}
+
+	std::string targetAnimation = "idle";
+
+	if (isInWater()) {
+		targetAnimation = "swimming";
+	}
+	else if (std::abs(m_velocity.x) > 50.0f) {
+		targetAnimation = "walking";
+	}
+	else if (m_velocity.y < -100.0f) {
+		targetAnimation = "jumping";
+	}
+	else if (m_velocity.y > 100.0f) {
+		targetAnimation = "falling";
+	}
+
+	if (targetAnimation != m_lastAnimationState && m_animationChangeDelay <= 0.0f) {
+		m_animator->play(targetAnimation);
+		m_lastAnimationState = targetAnimation;
+		m_animationChangeDelay = 0.1f;
+	}
+
+	m_animator->update(deltaTime);
+}
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
@@ -53,37 +102,36 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 	}
 	
 	bool facingLeft = (m_facingDirection == FacingDirection::Left);
-		for (auto& enemy : enemies)
+	for (auto& enemy : enemies)
+	{
+
+		float distanceX = enemy->getPosition().x - getPosition().x;
+		float distanceY = enemy->getPosition().y - getPosition().y;
+
+		// The vertical tolerance is now much larger (ENTITY_SIZE / 2.0f),
+		// allowing Kirby to swallow enemies that are not perfectly aligned.
+		bool inVerticalRange = std::abs(distanceY) < (ENTITY_SIZE / 2.0f);
+		bool inHorizontalRange = std::abs(distanceX) <= range;
+
+		// An enemy is in range if it's within the vertical and horizontal distances.
+		bool inRange = inVerticalRange && inHorizontalRange;
+
+		if (collidesWith(*enemy))
+			continue; // do nothing
+
+		if (facingLeft && distanceX < 0 && inRange)
 		{
-
-			float distanceX = enemy->getPosition().x - getPosition().x;
-			float distanceY = enemy->getPosition().y - getPosition().y;
-
-			// The vertical tolerance is now much larger (ENTITY_SIZE / 2.0f),
-			// allowing Kirby to swallow enemies that are not perfectly aligned.
-			bool inVerticalRange = std::abs(distanceY) < (ENTITY_SIZE / 2.0f);
-			bool inHorizontalRange = std::abs(distanceX) <= range;
-
-			// An enemy is in range if it's within the vertical and horizontal distances.
-			bool inRange = inVerticalRange && inHorizontalRange;
-
-			if (collidesWith(*enemy))
-				continue; // do nothing
-
-			if (facingLeft && distanceX < 0 && inRange)
-			{
-				enemy->startBeingSwallowed();
-				std::cout << "Swallowing enemy from the left!" << std::endl;
-				break;
-			}
-			else if (distanceX > 0 && inRange)
-			{
-				enemy->startBeingSwallowed();
-				std::cout << "Swallowing enemy from the right!" << std::endl;
-				break;
-			}
+			enemy->startBeingSwallowed();
+			std::cout << "Swallowing enemy from the left!" << std::endl;
+			break;
 		}
-	
+		else if (distanceX > 0 && inRange)
+		{
+			enemy->startBeingSwallowed();
+			std::cout << "Swallowing enemy from the right!" << std::endl;
+			break;
+		}
+	}
 }
 
 // --- IMPLEMENT NEW POWER-UP FUNCTIONS ---
@@ -97,9 +145,38 @@ PowerUpType Kirby::getCurrentPower() const
 	return m_currentPower;
 }
 
+void Kirby::draw(sf::RenderTarget& target) const // TODO: Resolve Merge with draw()
+{
+	if (m_animator) {
+		sf::Vector2f pos = getPosition();
+
+		float scaleX = isFacingLeft() ? -1.0f : 1.0f;
+		float scaleY = 1.0f;
+
+		float entityScale = ENTITY_SIZE / 16.0f;
+		scaleX *= entityScale;
+		scaleY *= entityScale;
+
+		m_animator->draw(target, pos.x, pos.y, scaleX, scaleY);
+	}
+	else {
+		GameObject::draw(target);
+	}
+}
+//void Kirby::draw(sf::RenderTarget& target) const
+//{
+//	// First, draw the base Kirby sprite
+//	MovingObject::draw(target);
+//
+//	// Then, allow the current state to draw any special effects over Kirby
+//	if (m_state)
+//	{
+//		m_state->draw(target);
+//	}
+//}
+
 void Kirby::update(float deltaTime)
 {
-
 	// Manager handles all item effect timing and logic
 	m_PowerUpManager.update(deltaTime, *this);
 	
@@ -122,13 +199,40 @@ void Kirby::update(float deltaTime)
 		newState = m_state->handleInput(*this);
 	}
 
-	if (newState)
-	{
-		//std::cout << "UPDATE_DEBUG: -----> Performing state transition..." << std::endl;
+	if (newState) {
 		m_state = std::move(newState);
 		m_state->enter(*this);
 	}
 	m_state->update(*this, deltaTime);
+	updateAnimation(deltaTime);
+}
+void Kirby::move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles)
+{
+	sf::Vector2f newPosition = m_position;
+
+	// Move along X axis
+	float dx = m_velocity.x * deltaTime;
+	if (dx != 0.f) {
+		sf::Vector2f testPosX = { newPosition.x + dx, newPosition.y };
+		if (!willCollideAt(testPosX, obstacles)) {
+			newPosition.x += dx;
+		}
+		else {
+			m_velocity.x = 0.f; // Stop horizontal movement if blocked
+		}
+	}
+
+	// Move along Y axis
+	float dy = m_velocity.y * deltaTime;
+	if (dy != 0.f) {
+		sf::Vector2f testPosY = { newPosition.x, newPosition.y + dy };
+		if (!willCollideAt(testPosY, obstacles)) {
+			newPosition.y += dy;
+		}
+		else {
+			m_velocity.y = 0.f; // Stop vertical movement if blocked
+		}
+	}
 
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
@@ -138,17 +242,14 @@ void Kirby::update(float deltaTime)
 
 	GameObject::update(deltaTime);
 }
-
 void Kirby::setFacingDirection(FacingDirection dir)
 {
 	m_facingDirection = dir;
 }
-
 FacingDirection Kirby::getFacingDirection() const
 {
 	return m_facingDirection;
 }
-
 void Kirby::setState(std::unique_ptr<KirbyState> state)
 {
 	if (state)
@@ -161,7 +262,22 @@ void Kirby::setState(std::unique_ptr<KirbyState> state)
 		std::cerr << "Error: Attempted to set Kirby state to nullptr!" << std::endl;
 	}
 }
+bool Kirby::willCollideAt(const sf::Vector2f& intendedPosition, const std::vector<std::unique_ptr<GameObject>>& obstacles) const
+{
+	// Create a temporary bounding box for the intended position
+	sf::FloatRect intendedBounds = getBounds();
+	intendedBounds.left = intendedPosition.x - intendedBounds.width / 2.f;
+	intendedBounds.top = intendedPosition.y - intendedBounds.height / 2.f;
 
+	for (const auto& obj : obstacles) {
+		if (obj->getType() == ObjectType::WALL || obj->getType() == ObjectType::FLOOR) {
+			if (intendedBounds.intersects(obj->getBounds())) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
 void Kirby::handleCollision(GameObject* other)
 {
 	if (other->getType() == ObjectType::WALL)
@@ -175,21 +291,42 @@ void Kirby::handleCollision(GameObject* other)
 	{
 		static_cast<Enemy*>(other)->handleCollision(this);
 	}
+	else if (other->getType() == ObjectType::FLOOR)
+	{
+		sf::FloatRect kirbyBounds = getBounds();
+		sf::FloatRect floorBounds = other->getBounds();
+		sf::Vector2f kirbyPrevPos = getOldPosition();
+		const int floorHeight = floorBounds.height;
+
+		// Check if Kirby was coming from above in the previous frame
+		if (kirbyPrevPos.y + kirbyBounds.height / 2.f <= floorBounds.top)
+		{
+			// 1. Stop his vertical movement completely.
+			setVelocity({ getVelocity().x, 0.f });
+
+			// 2. Mark Kirby as being on the ground.
+			setGrounded(true);
+
+			// 3. Reposition him to be exactly on top of the floor.
+			setPosition({ getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
+		}
+
+		else if (kirbyPrevPos.x + kirbyBounds.width / 2.f <= floorBounds.left) // Coming from the left
+		{
+			// Stop horizontal movement and reposition Kirby to the left and on top of the floor
+			setVelocity({ 0.f, getVelocity().y });
+			setPosition({ floorBounds.left - (kirbyBounds.width / 2.f), getPosition().y - floorHeight });
+		}
+		else if (kirbyPrevPos.x - kirbyBounds.width / 2.f >= floorBounds.left + floorBounds.width) // Coming from the right
+		{
+			// Stop horizontal movement and reposition Kirby to the right and on top of the floor
+			setVelocity({ 0.f, getVelocity().y });
+			setPosition({ floorBounds.left + floorBounds.width + (kirbyBounds.width / 2.f), getPosition().y - floorHeight });
+		}
+	}
 	else 
 	{
 		other->handleCollision(this);
-	}
-}
-
-void Kirby::draw(sf::RenderTarget& target) const
-{
-	// First, draw the base Kirby sprite
-	MovingObject::draw(target);
-
-	// Then, allow the current state to draw any special effects over Kirby
-	if (m_state)
-	{
-		m_state->draw(target);
 	}
 }
 

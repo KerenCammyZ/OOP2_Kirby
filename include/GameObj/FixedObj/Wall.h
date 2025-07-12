@@ -8,7 +8,8 @@ public:
 	Wall() = default;  
 
 	void handleCollision(Kirby* kirby) override;  
-	void handleCollision(Door* door) override {}; // GameObject Inheritance  
+	void handleCollision(Door* door) override {}; // GameObject Inheritance 
+	void handleCollision(Enemy* enemy) override;
 
 	void draw(sf::RenderTarget& target) const override;
 	void setSize(const sf::Vector2f& size) override;

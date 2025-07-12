@@ -45,7 +45,7 @@ void MainMenuState::handleEvents(GameController& game)
 
             // Check if play button is clicked
             if (m_playButton.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                game.changeState(std::make_unique<PlayingState>(game));
+                game.changeGameState(std::make_unique<PlayingState>(game));
             }
 
             // Check if exit button is clicked
@@ -53,12 +53,15 @@ void MainMenuState::handleEvents(GameController& game)
                 window.close();
             }
         }
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P) {
+                game.changeGameState(std::make_unique<PlayingState>(game));
+        }
     }
 }
 
 void MainMenuState::update(float deltaTime, GameController& game)
 {
-
+    ;
 }
 
 void MainMenuState::draw(GameController& game)
