@@ -48,7 +48,7 @@ std::unique_ptr<KirbyState> KirbySparkAttackState::handleInput(Kirby& kirby)
 	//	}
 
 	//	// The attack is finished, transition back to the standing state.
-	//	// The power-up itself remains until the PresentManager's timer runs out.
+	//	// The power-up itself remains until the PowerUpManager's timer runs out.
 	//	return std::make_unique<KirbyStandingState>();
 	//}
 

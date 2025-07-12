@@ -1,8 +1,8 @@
 #pragma once
-#include "Commands/PresentCommand.h"
+#include "Commands/PowerUpCommand.h"
 #include "GameObj/MovingObj/Kirby.h" // Include Kirby to modify him
 
-class SpeedBoostCommand : public PresentCommand
+class SpeedBoostCommand : public PowerUpCommand
 {
 public:
 	void execute(Kirby& kirby) override

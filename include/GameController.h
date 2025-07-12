@@ -5,7 +5,7 @@
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/FixedObj/Floor.h"
 #include "GameObj/FixedObj/Wall.h"
-#include "GameObj/FixedObj/Present.h"
+#include "GameObj/FixedObj/PowerUp.h"
 #include "WorldMap.h"
 #include "GlobalSizes.h"
 #include "Level.h"

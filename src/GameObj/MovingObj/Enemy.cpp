@@ -129,7 +129,7 @@ void Enemy::update(float deltaTime)
 				if (dynamic_cast<SparkAttack*>(m_attackBehavior.get()))
 				{
 					// If it is, give Kirby the SparkCommand.
-					m_kirby->addPresentEffect(std::make_unique<SparkCommand>());
+					m_kirby->addPowerUpEffect(std::make_unique<SparkCommand>());
 				}
 				onSwallowed(); // This sets the state to SWALLOWED for deletion
 			}

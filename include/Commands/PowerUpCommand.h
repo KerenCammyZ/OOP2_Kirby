@@ -4,10 +4,10 @@
 class Kirby; // Forward-declaration to avoid circular dependencies
 
 // The abstract base class for all power-up commands
-class PresentCommand
+class PowerUpCommand
 {
 public:
-	virtual ~PresentCommand() = default;
+	virtual ~PowerUpCommand() = default;
 
 	// Applies the effect to Kirby
 	virtual void execute(Kirby& kirby) = 0;

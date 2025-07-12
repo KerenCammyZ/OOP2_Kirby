@@ -1,9 +1,9 @@
 #pragma once
-#include "Commands/PresentCommand.h"
+#include "Commands/PowerUpCommand.h"
 #include "GameObj/MovingObj/Kirby.h"
 
 // This command grants Kirby the Spark power-up for a limited time.
-class SparkCommand : public PresentCommand
+class SparkCommand : public PowerUpCommand
 {
 public:
 	// When executed, give Kirby the Spark power.

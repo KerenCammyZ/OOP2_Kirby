@@ -87,7 +87,7 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
                 {					
                   newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
                 }
-                if (newObject.get()->getType() == ObjectType::SPEED_PRESENT)
+                if (newObject.get()->getType() == ObjectType::SPEED_PowerUp)
                 {
                    newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
                 }

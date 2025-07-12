@@ -248,10 +248,10 @@ void GameController::update(float deltaTime)
 	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
 		[](const std::unique_ptr<GameObject>& obj)
 		{
-			if (Present* present = dynamic_cast<Present*>(obj.get()))
-			//if (obj.get()->getType() == ObjectType::PRESENT) -- to avoid dynamic casting
+			if (PowerUp* PowerUp = dynamic_cast<PowerUp*>(obj.get()))
+			//if (obj.get()->getType() == ObjectType::PowerUp) -- to avoid dynamic casting
 			{
-				return present->isCollected();
+				return PowerUp->isCollected();
 			}
 			return false;
 		});

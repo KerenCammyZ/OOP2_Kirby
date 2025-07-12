@@ -93,7 +93,7 @@ void Kirby::update(float deltaTime)
 	//m_isGrounded = false;
 
 	// Manager handles all item effect timing and logic
-	m_presentManager.update(deltaTime, *this);
+	m_PowerUpManager.update(deltaTime, *this);
 	
 	if (m_isInvincible) // set to true in function takeDamage
 		activateInvincibility(deltaTime);
@@ -246,9 +246,9 @@ float Kirby::getOriginalSpeed() const
 	return m_originalSpeed;
 }
 
-void Kirby::addPresentEffect(std::unique_ptr<PresentCommand> command)
+void Kirby::addPowerUpEffect(std::unique_ptr<PowerUpCommand> command)
 {
-	m_presentManager.add(std::move(command), *this);
+	m_PowerUpManager.add(std::move(command), *this);
 }
 
 bool Kirby::isHyper() const { return m_isHyper; }

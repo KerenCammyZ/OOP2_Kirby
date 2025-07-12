@@ -1,22 +1,22 @@
 #pragma once
 #include "GameObj/FixedObj/FixedObject.h"
 
-class Present : public FixedObject
+class PowerUp : public FixedObject
 {
 public:
-	Present() : m_isCollected(false)
+	PowerUp() : m_isCollected(false)
 	{
 		// Make the debug shape visible and give it a unique color
 		m_collisionShape.setFillColor(sf::Color(0, 255, 255, 100)); // Semi-transparent cyan
 	}
 
-	// This is the function each specific present will override
+	// This is the function each specific PowerUp will override
 	virtual void applyEffect(Kirby* kirby) = 0;
 
 	// When Kirby collides, apply the effect and mark for deletion
 	void handleCollision(Kirby* kirby) override final;
 
-	// Presents don't collide with doors
+	// PowerUps don't collide with doors
 	void handleCollision(Door* door) override {};
 
 	bool isCollected() const { return m_isCollected; }

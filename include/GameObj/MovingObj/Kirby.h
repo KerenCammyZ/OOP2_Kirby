@@ -2,12 +2,12 @@
 #pragma once
 #include "GameObj/MovingObj/MovingObject.h"
 #include "GameObj/MovingObj/Enemy.h"
-#include "PresentManager.h"
+#include "PowerUpManager.h"
 #include <memory>
 
 class KirbyState;
 class Wall;
-class PresentCommand;
+class PowerUpCommand;
 
 enum class PowerUpType { None, Spark };
 
@@ -27,8 +27,8 @@ public:
 	void setSpeed(float speed);
 	float getOriginalSpeed() const;
 
-	// The single public method to add any present's effect
-	void addPresentEffect(std::unique_ptr<PresentCommand> command);
+	// The single public method to add any PowerUp's effect
+	void addPowerUpEffect(std::unique_ptr<PowerUpCommand> command);
 
 	// --- NEW PHYSICS GETTERS/SETTERS ---
 	void setVelocity(const sf::Vector2f& velocity);
@@ -70,7 +70,7 @@ private:
 
 	std::unique_ptr<KirbyState> m_state;
 
-	PresentManager m_presentManager;
+	PowerUpManager m_PowerUpManager;
 	float m_originalSpeed;
 
 	// --- NEW PHYSICS MEMBERS ---
