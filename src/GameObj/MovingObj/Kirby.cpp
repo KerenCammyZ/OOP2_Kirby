@@ -11,6 +11,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <typeinfo> 
 
 Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 	: m_velocity(0.f, 0.f), m_isGrounded(false), m_inWater(false) // Initialize physics members
@@ -107,14 +108,17 @@ void Kirby::update(float deltaTime)
 
 	std::unique_ptr<KirbyState> newState = nullptr;
 
-	if (isInWater())
+	// High-priority check: Should we enter the water?
+	// This only runs if we are in the water but not already in a water-based state.
+	if (isInWater() &&
+		!dynamic_cast<KirbySwimmingState*>(m_state.get()) &&
+		!dynamic_cast<KirbyWaterAttackState*>(m_state.get()))
 	{
-		//std::cout << "UPDATE_DEBUG: -----> Condition MET. Creating new SwimmingState." << std::endl;
-		m_state = std::make_unique<KirbySwimmingState>();
+		newState = std::make_unique<KirbySwimmingState>();
 	}
 	else
 	{
-		//std::cout << "UPDATE_DEBUG: -----> handleInput returned a new state." << std::endl;
+		// If no high-priority change, let the current state handle input.
 		newState = m_state->handleInput(*this);
 	}
 

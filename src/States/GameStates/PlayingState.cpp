@@ -1,7 +1,7 @@
 #include "States/GameStates/PlayingState.h"
 #include "States/GameStates/MainMenuState.h"
 
-PlayingState::PlayingState(GameController& game) : m_currentLevel(1)
+PlayingState::PlayingState(GameController& game) : m_currentLevel(3)
 {
     // Load the first level when this state begins
    game.loadLevel(m_currentLevel);

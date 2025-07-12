@@ -2,7 +2,8 @@
 #include "States/KirbyStates/KirbySwimmingState.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
-
+#include <SFML/Graphics.hpp>
+#include <iostream>
 KirbyWaterAttackState::KirbyWaterAttackState(Kirby& kirby, std::vector<std::unique_ptr<Enemy>>& enemies)
 	: m_enemies(enemies), m_stateDuration(0.3f) // A quick, 0.3-second burst
 {
@@ -32,6 +33,7 @@ std::unique_ptr<KirbyState> KirbyWaterAttackState::handleInput(Kirby& kirby)
 
 void KirbyWaterAttackState::update(Kirby& kirby, float deltaTime)
 {
+	std::cout << "water attack updating\n";
 	// Countdown the attack's duration.
 	m_stateDuration -= deltaTime;
 
@@ -51,8 +53,8 @@ void KirbyWaterAttackState::update(Kirby& kirby, float deltaTime)
 		{
 			if (m_waterStreamHitbox.getGlobalBounds().intersects(enemy->getBounds()))
 			{
-				// When the water stream hits an enemy, stun them.
-				enemy->stun(2.0f);
+				// When the water stream hits an enemy, delete them.
+				enemy->onSwallowed();
 			}
 		}
 	}
