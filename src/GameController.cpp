@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 #include "States/GameStates/MainMenuState.h"
 #include "States/GameStates/PlayingState.h"
+#include "States/KirbyStates/KirbyFallingState.h"
 #include <iostream> // for debugging
 
 GameController::GameController():
@@ -11,8 +12,6 @@ GameController::GameController():
 	// Set the initial state to the Main Menu
 	m_currentState = std::make_unique<MainMenuState>();
 	m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
-	//loadLevel(m_currentLevel);
-	loadTextures(); // Load Textures of Kirby and Visual World
 	loadHUD(); // Load the HUD and set up the views for the game and HUD
 }
 
@@ -38,23 +37,6 @@ Level* GameController::getLevel()
 
 void GameController::run()
 {
-	//while (m_currentLevel <= m_maxLevels)
-	//{
-	//	loadLevel(m_currentLevel);
-
-	//	// run the current level until it's complete.
-	//	while (m_window.isOpen() && !m_level->getCompleted())
-	//	{
-	//		m_deltaTime = m_deltaClock.restart().asSeconds();
-
-	//		handleEvents();
-	//		update(m_deltaTime);
-	//		draw();
-	//		m_window.display();
-	//	}
-	//	m_currentLevel++;
-	//}
-	//std::cout << "Game Over! Thanks for playing!" << std::endl;
 	while (m_window.isOpen())
 	{
 		m_deltaTime = m_deltaClock.restart().asSeconds();
@@ -72,13 +54,12 @@ void GameController::run()
 
 void GameController::loadLevel(int levelNum)
 {
-	//m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
-	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position at the start of each level
-
 	m_level = std::make_unique<Level>(levelNum , m_kirby.get());
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_allGameObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
+
+	spawnKirby(); // Spawn Kirby at the starting position
 
 	// --- CAMERA SETUP PER LEVEL ---
 	if (m_worldMap)
@@ -147,6 +128,12 @@ void GameController::checkCollisions()
 	}
 }
 
+void GameController::spawnKirby()
+{
+	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
+	m_kirby->setState(std::make_unique<KirbyFallingState>());
+}
+
 // Update the view to follow Kirby's position
 void GameController::updateView()
 {
@@ -184,18 +171,6 @@ void GameController::updateView()
 
 	// Set the view's final center position for this frame.
 	m_gameView.setCenter(viewX, viewY);
-}
-
-// Load Kirby Texture
-void GameController::loadTextures()
-{
-	//m_kirbyTexture = std::make_shared<sf::Texture>();
-	//if (!m_kirbyTexture->loadFromFile("TestSprite.png"))
-	//{
-	//	throw std::runtime_error("Failed to load Kirby texture");
-	//}
-	//m_kirby = std::make_unique<Kirby>(m_kirbyTexture);
-	;
 }
 
 // This function is called every frame to update the game state.
@@ -248,10 +223,9 @@ void GameController::update(float deltaTime)
 	auto it = std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
 		[](const std::unique_ptr<GameObject>& obj)
 		{
-			if (PowerUp* PowerUp = dynamic_cast<PowerUp*>(obj.get()))
-			//if (obj.get()->getType() == ObjectType::PowerUp) -- to avoid dynamic casting
+			if (PowerUp* powerUp = dynamic_cast<PowerUp*>(obj.get()))
 			{
-				return PowerUp->isCollected();
+				return powerUp->isCollected();
 			}
 			return false;
 		});

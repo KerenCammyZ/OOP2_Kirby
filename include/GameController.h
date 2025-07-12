@@ -33,17 +33,11 @@ public:
 	void loadLevel(int levelNum);
 	void loadHUD();
 private:
-	/*void update(float deltaTime);
-	void handleEvents();*/
 	void processWindowEvents();
-	//void draw();
 	void drawHUD();
 	void updateView();
 	void checkCollisions();
-	void loadTextures();
-	//void loadLevel(int levelNum);
-	//void loadHUD();
-
+	void spawnKirby();
 
 
 	float m_deltaTime;
@@ -64,7 +58,6 @@ private:
 	std::unique_ptr<HUD> m_hud;
 	std::unique_ptr<GameState> m_currentState;
 
-	//std::shared_ptr<sf::Texture> m_kirbyTexture;
 
 	std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
 	std::vector<std::unique_ptr<Enemy>> m_enemies;

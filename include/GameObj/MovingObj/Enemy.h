@@ -47,6 +47,8 @@ public:
 	void setGrounded(bool grounded);
 	bool isGrounded() const;
 
+	EnemyState getState() const { return m_state; }
+
 private:
 	std::unique_ptr <MoveBehavior> m_moveBehavior;
 	std::unique_ptr <AttackBehavior> m_attackBehavior;

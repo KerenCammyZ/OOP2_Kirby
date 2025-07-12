@@ -70,6 +70,8 @@ public:
 	void setFacingDirection(FacingDirection dir);
 	FacingDirection getFacingDirection() const;
 
+	void setState(std::unique_ptr<KirbyState> state);
+
 
 private:
 	void activateInvincibility(float deltaTime);

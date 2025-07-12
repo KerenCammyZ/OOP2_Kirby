@@ -6,6 +6,7 @@
 #include "GlobalSizes.h"
 #include "GameObj/FixedObj/Wall.h"
 #include "States/KirbyStates/KirbySparkAttackState.h"
+#include "States/KirbyStates/KirbyWaterAttackState.h" 
 #include "States/KirbyStates/KirbyWalkingState.h" 
 #include <iostream>
 #include <thread>
@@ -29,6 +30,13 @@ Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
+	// If Kirby is in the swimming state, perform the water fountain attack.
+	if (dynamic_cast<KirbySwimmingState*>(m_state.get()))
+	{
+		this->setState(std::make_unique<KirbyWaterAttackState>(*this, enemies));
+		return; // Exit to prevent other attacks from running.
+	}
+
 	if (dynamic_cast<KirbySparkAttackState*>(m_state.get()))
 	{
 		return;
@@ -135,6 +143,19 @@ void Kirby::setFacingDirection(FacingDirection dir)
 FacingDirection Kirby::getFacingDirection() const
 {
 	return m_facingDirection;
+}
+
+void Kirby::setState(std::unique_ptr<KirbyState> state)
+{
+	if (state)
+	{
+		m_state = std::move(state);
+		m_state->enter(*this);
+	}
+	else
+	{
+		std::cerr << "Error: Attempted to set Kirby state to nullptr!" << std::endl;
+	}
 }
 
 void Kirby::handleCollision(GameObject* other)
