@@ -3,6 +3,15 @@
 #include "GlobalSizes.h"
 #include <iostream>
 
+struct HUDLayout {
+    sf::Vector2f kirbyStatePos{ 144, 8 };
+    sf::Vector2f kirbyIconPos{ 187, 20 };
+    sf::Vector2f livesPos{ };
+    sf::Vector2f healthBarPos{};
+    sf::Vector2f scorePos{};
+    // Add more as needed
+} layout;
+
 HUD::HUD()
     : m_currentHealth(6), m_maxHealth(6), m_lives(5), m_score(0), m_kirbyState("normal")
 {
@@ -38,30 +47,30 @@ bool HUD::loadSpriteSheet(const std::string& filePath) {
     }
 
     // Define your sprite types based on your specifications
-    m_spriteSheet->defineSpriteType("digit", 8, 8);
+    m_spriteSheet->defineSpriteType("digit", 8, 9);
     m_spriteSheet->defineSpriteType("state", 32, 40);
     m_spriteSheet->defineSpriteType("text", 50, 10);
-    m_spriteSheet->defineSpriteType("health", 8, 14);
+    m_spriteSheet->defineSpriteType("health", 8, 15);
     m_spriteSheet->defineSpriteType("star", 13, 12);
 
-   // std::cout << "Spritesheet setup complete. Add your sprite locations next." << std::endl;
+    // std::cout << "Spritesheet setup complete. Add your sprite locations next." << std::endl;
 
-    // TODO: You'll need to specify where these sprites are located in your spritesheet
-    // Example setup for digits 0-9 (you'll need to adjust coordinates):
-    // m_spriteSheet->addSpriteGrid("digit", 0, 0, 8, 8, 10, 10);
+     // TODO: You'll need to specify where these sprites are located in your spritesheet
+     // Example setup for digits 0-9 (you'll need to adjust coordinates):
+     // m_spriteSheet->addSpriteGrid("digit", 0, 0, 8, 8, 10, 10);
 
 
-	m_spriteSheet->addSprite("normal", 0, 30, 32, 40); // sprite for normal state
-    m_spriteSheet->addSprite("hyper", 32, 30, 32, 40); // sprite for hyper state
+    m_spriteSheet->addSprite("normal", 0, 42, 32, 40); // sprite for normal state
+    m_spriteSheet->addSprite("hyper", 32, 42, 32, 40); // sprite for hyper state
     //m_spriteSheet->addSprite("invincible", 64, 30, 32, 40); // sprite for invincible state
 
     m_spriteSheet->addSprite("kirbyText", 0, 0, 50, 10); // kirby title
     m_spriteSheet->addSprite("scoreText", 0, 10, 50, 10); // score title
 
-	m_spriteSheet->addSpriteGrid("digit", 0, 110, 8, 8, 10, 10); // digits 0-9
-    m_spriteSheet->addSpriteGrid("capsule", 100, 0, 8, 14, 3, 3);
+    m_spriteSheet->addSpriteGrid("digit", 0, 33, 8, 9, 10, 10); // digits 0-9
+    m_spriteSheet->addSpriteGrid("capsule", 60, 0, 8, 15, 3, 3);
 
-	m_spriteSheet->addSprite("kirbyIcon", 152, 0, 13, 12); // sprite for kirby lives
+    m_spriteSheet->addSprite("kirbyIcon", 60, 19, 13, 12); // sprite for kirby lives
 
 
     return true;
@@ -82,13 +91,13 @@ void HUD::draw(sf::RenderTarget& target) {
 
     // draw background first
     target.draw(m_hudSprite);
-    
+
     // draw state 'normal state' at HUD coordinate (577, 33)
-	sf::Vector2f scale = getHUDScale();
+    sf::Vector2f scale = getHUDScale();
     sf::Vector2f statePos = hudToScreen(144, 8);
     m_spriteSheet->drawSprite(target, m_kirbyState, statePos.x, statePos.y, scale.x, scale.y); // kirby state display
 
-	drawLives(target, 187, 20);
+    drawLives(target, 187, 20);
     drawHealthBar(target, 72, 13);
     drawScore(target, m_score, 72, 32);
 
@@ -107,8 +116,8 @@ void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float
 
     if (scoreStr.length() > 7) {
         scoreStr = std::to_string(9999999);
-		std::cerr << "Score exceeds maximum display length, resetting to 9999999." << std::endl;
-	}
+        std::cerr << "Score exceeds maximum display length, resetting to 9999999." << std::endl;
+    }
 
     sf::Vector2f scale = getHUDScale();
 
@@ -125,38 +134,38 @@ void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float
             int digitValue = digit - '0';
             sf::Vector2f digitPos = hudToScreen(digitPosX, digitPosY);
             m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, digitPos.x, digitPos.y, scale.x, scale.y);
-			digitPosX += 8; // each digit is 8 pixels wide
+            digitPosX += 8; // each digit is 8 pixels wide
         }
     }
 }
 
 void HUD::drawLives(sf::RenderTarget& target, float x, float y) {
     // Draw number of lives
-	sf::Vector2f scale = getHUDScale();
+    sf::Vector2f scale = getHUDScale();
 
     sf::Vector2f iconPos = hudToScreen(x, y);
-	m_spriteSheet->drawSprite(target, "kirbyIcon", iconPos.x, iconPos.y, scale.x, scale.y);
-        
+    m_spriteSheet->drawSprite(target, "kirbyIcon", iconPos.x, iconPos.y, scale.x, scale.y);
+
     std::string livesStr = std::to_string(m_lives);
-        
+
     if (livesStr.length() == 1) {
         livesStr = "0" + livesStr; // Ensure two digits for single-digit lives
     }
     float digitPosX = 208;
     float digitPosY = 24;
-        
+
     for (char digit : livesStr)
     {
         int digitValue = int(digit - '0'); // Convert char to int
         sf::Vector2f digitPos = hudToScreen(digitPosX, digitPosY);
         m_spriteSheet->drawSpriteByIndex(target, "digit", digitValue, digitPos.x, digitPos.y, scale.x, scale.y);
-		digitPosX += 8; // Move to next digit position
+        digitPosX += 8; // Move to next digit position
     }
 }
 
 void HUD::drawHealthBar(sf::RenderTarget& target, float x, float y) {
     // Draw health bar segments
-	sf::Vector2f scale = getHUDScale();
+    sf::Vector2f scale = getHUDScale();
 
     for (int i = 0; i < m_maxHealth; i++)
     {
@@ -191,8 +200,8 @@ void HUD::updateSprite()
     m_hudSprite.setScale(scaleX, scaleY);
     m_hudSprite.setPosition(m_displayArea.left, m_displayArea.top);
 
- /*   std::cout << "HUD stretched - Scale: (" << scaleX << ", " << scaleY
-        << ") Final size: " << m_displayArea.width << "x" << m_displayArea.height << std::endl;*/
+    /*   std::cout << "HUD stretched - Scale: (" << scaleX << ", " << scaleY
+           << ") Final size: " << m_displayArea.width << "x" << m_displayArea.height << std::endl;*/
 }
 
 sf::Vector2f HUD::hudToScreen(float hudX, float hudY) {
