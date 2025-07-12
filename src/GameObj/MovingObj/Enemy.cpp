@@ -1,5 +1,6 @@
 // Enemy.cpp
 #include <SFML/Graphics.hpp>
+#include <cmath>
 #include "GameObjectFactory.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/MovingObj/Kirby.h"
@@ -92,66 +93,6 @@ Enemy::~Enemy()
 	if (m_collisionBehavior) m_collisionBehavior->setOwner(nullptr);
 }
 
-
-
-//void Enemy::update(float deltaTime)
-//{
-//	// Hanlde state transitions first
-//	if (m_state == EnemyState::SPAWNING)
-//	{
-//		// Handle spawning state logic
-//		m_spawnTimer -= deltaTime;
-//		if (m_spawnTimer <= 0.0f)
-//		{
-//			m_state = EnemyState::ACTIVE;
-//		}
-//		GameObject::update(deltaTime);
-//		return;
-//	}
-//	else if (m_state == EnemyState::STUNNED)
-//	{
-//		// Handle stunned state logic
-//		m_stunTimer -= deltaTime;
-//		if (m_stunTimer <= 0.0f)
-//		{
-//			m_state = EnemyState::ACTIVE;
-//		}
-//		GameObject::update(deltaTime);
-//		return;
-//	}
-//	if (m_state == EnemyState::SWALLOWED)
-//	{
-//		// removal is handled by the GameController
-//		// GameController::update(float deltaTime)
-//
-//		;
-//	}
-//	if (m_state == EnemyState::ACTIVE)
-//	{
-//		// Handle active state logic
-//		m_oldPosition = m_position;
-//		move(deltaTime);
-//		//attack(deltaTime);
-//		GameObject::update(deltaTime);
-//		return;
-//		
-//	}
-//
-//	if(m_state == EnemyState::ATTACKING)
-//	{
-//		// Handle attacking state logic
-//		//m_attackTimer -= deltaTime;
-//		//attack(deltaTime);
-//		//if (m_attackTimer <= 0.0f)
-//		//{
-//		//	m_state = EnemyState::ACTIVE; // Return to active state after attack
-//		//}
-//		return;
-//	}
-//
-//	GameObject::update(deltaTime);
-//}
-
 void Enemy::update(float deltaTime)
 {
 	// Handle non-active states first
@@ -169,6 +110,36 @@ void Enemy::update(float deltaTime)
 		// No updates needed for these states, just let them exist
 		GameObject::update(deltaTime);
 		return;
+	}
+	// --- NEW LOGIC FOR BEING_SWALLOWED STATE ---
+	else if (m_state == EnemyState::BEING_SWALLOWED)
+	{
+		// This logic will run every frame the enemy is being inhaled.
+		if (m_kirby) // Make sure Kirby still exists
+		{
+			// Calculate the vector pointing from the enemy to Kirby
+			sf::Vector2f vectorToKirby = m_kirby->getPosition() - getPosition();
+			float distance = std::sqrt(vectorToKirby.x * vectorToKirby.x + vectorToKirby.y * vectorToKirby.y);
+
+			// If the enemy is very close to Kirby, finish the swallow
+			if (distance < 10.0f)
+			{
+				onSwallowed(); // This sets the state to SWALLOWED for deletion
+			}
+			else
+			{
+				// Move the enemy a fraction of the distance towards Kirby.
+				// This creates a nice "sucking in" effect that speeds up as it gets closer.
+				// You can change 0.1f to a different value to make it faster or slower.
+				float suckFactor = 0.1f;
+				setPosition(getPosition() + vectorToKirby * suckFactor);
+			}
+		}
+		else
+		{
+			// If Kirby is gone for some reason, just go back to active state.
+			m_state = EnemyState::ACTIVE;
+		}
 	}
 
 	// --- State Logic for Active and Attacking ---
@@ -241,6 +212,14 @@ void Enemy::reverseDirection()
 // Handle collision with Kirby
 void Enemy::handleCollision(Kirby* kirby)
 {
+	// --- THIS IS THE FIX ---
+	// If the enemy is being swallowed, is stunned, or has already been eaten,
+	// it should not do anything when colliding with Kirby.
+	if (m_state == EnemyState::BEING_SWALLOWED || m_state == EnemyState::SWALLOWED || m_state == EnemyState::STUNNED)
+	{
+		return; // Do nothing.
+	}
+
 	stun(1.0f); // Stun the enemy for 1 second on collision with Kirby
 	if (!kirby->isInvincible())
 	{
@@ -311,4 +290,9 @@ void Enemy::setGrounded(bool grounded)
 bool Enemy::isGrounded() const
 {
 	return m_isGrounded;
+}
+
+void Enemy::startBeingSwallowed()
+{
+	m_state = EnemyState::BEING_SWALLOWED;
 }

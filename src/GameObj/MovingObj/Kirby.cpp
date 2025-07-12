@@ -30,24 +30,31 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 	bool facingLeft = m_velocity.x < 0 ? true : false;
 	for (auto& enemy : enemies)
 	{
-		float yBuffer = 0.5f; // Buffer to account for slight vertical differences
+		
 		float distanceX = enemy->getPosition().x - getPosition().x;
-		float distanceY = enemy->getPosition().y - getPosition().y + yBuffer;
-		bool inRange = std::abs(distanceX) <= range && std::abs(distanceY) < 2.5f;
+		float distanceY = enemy->getPosition().y - getPosition().y;
+
+		// The vertical tolerance is now much larger (ENTITY_SIZE / 2.0f),
+		// allowing Kirby to swallow enemies that are not perfectly aligned.
+		bool inVerticalRange = std::abs(distanceY) < (ENTITY_SIZE / 2.0f);
+		bool inHorizontalRange = std::abs(distanceX) <= range;
+
+		// An enemy is in range if it's within the vertical and horizontal distances.
+		bool inRange = inVerticalRange && inHorizontalRange;
 
 		if (collidesWith(*enemy))
 			continue; // do nothing
 
 		if (facingLeft && distanceX < 0 && inRange)
 		{
-			enemy->onSwallowed();
-			std::cout << "Swallowed enemy from the left!" << std::endl;
+			enemy->startBeingSwallowed();
+			std::cout << "Swallowing enemy from the left!" << std::endl;
 			break;
 		}
 		else if (distanceX > 0 && inRange)
 		{
-			enemy->onSwallowed();
-			std::cout << "Swallowed enemy from the right!" << std::endl;
+			enemy->startBeingSwallowed();
+			std::cout << "Swallowing enemy from the right!" << std::endl;
 			break;
 		}
 	}

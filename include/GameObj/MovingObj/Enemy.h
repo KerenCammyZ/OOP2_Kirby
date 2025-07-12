@@ -8,7 +8,7 @@
 #include "Behaviors/CollisionBehavior.h"
 
 class Kirby;
-enum class EnemyState { SPAWNING, ACTIVE, SWALLOWED, STUNNED, ATTACKING };
+enum class EnemyState { SPAWNING, ACTIVE, SWALLOWED, STUNNED, ATTACKING, BEING_SWALLOWED };
 
 class Enemy : public MovingObject
 {
@@ -24,6 +24,7 @@ public:
 	void stun(float duration);
 	void onSwallowed();
 	void reverseDirection();
+	void startBeingSwallowed();
 	
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override;
