@@ -3,6 +3,8 @@
 #include "GameObj/MovingObj/MovingObject.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "PresentManager.h"
+#include "Animation.h"
+#include "AnimationManager.h"
 #include <memory>
 #include <vector>
 
@@ -19,11 +21,20 @@ class Kirby : public MovingObject
 public:
 	Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture);
 
+	// Debug methods - add these temporarily
+	void debugAnimationState() const;
+	std::string getCurrentAnimationName() const;
+
 	// We override MovingObject's update to handle our new physics logic
 	void update(float deltaTime) override;
 	void move(float deltaTime) override {};
 	void move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles);
 	
+	void draw(sf::RenderTarget& target) const override;
+	void setupAnimations();
+	void updateAnimation(const std::string& stateName, float deltaTime);
+    std::unique_ptr<AnimationManager> getAnimationManager() { return std::move(m_animationManager); }
+
 
 	//void move(float deltaTime) override;
 	void attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range);
@@ -63,15 +74,23 @@ public:
 	void setHyper(bool hyper);
 	bool isInvincible() const;
 
+	bool isMovingHorizontally() const { return std::abs(m_velocity.x) > 0.1f; }
+	bool isFacingLeft() const { return m_velocity.x < 0; }
+
 private:
 	void activateInvincibility(float deltaTime);
-	bool willCollideAt(const sf::Vector2f& testPosition,
+	bool willCollideAt(const sf::Vector2f& testPosition, // TODO: change function name to CheckCollisionAt
 		const std::vector<std::unique_ptr<GameObject>>& obstacles) const;
 
 	std::unique_ptr<KirbyState> m_state;
 
 	PresentManager m_presentManager;
 	float m_originalSpeed;
+
+	// Animation system
+	std::shared_ptr<SpriteSheet> m_spriteSheet;
+	std::unique_ptr<AnimationManager> m_animationManager;
+	std::string m_currentAnimationState;
 
 	// --- NEW PHYSICS MEMBERS ---
 	sf::Vector2f m_velocity;

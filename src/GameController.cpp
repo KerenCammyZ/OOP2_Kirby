@@ -172,6 +172,12 @@ void GameController::update(float deltaTime)
 	m_kirby->setInWater(false);
 	m_kirby->setGrounded(false);
 
+
+	// Update HUD animations
+	/*if (m_hud) {
+		m_hud->update(deltaTime);
+	}*/
+
 	// update the camera
 	updateView();
 
@@ -366,7 +372,13 @@ void GameController::drawHUD()
 
 void GameController::addScore(unsigned int points)
 {
+	unsigned int oldScore = m_score;
 	m_score += points;
+
+	// Trigger score animation in HUD when score increases
+	//if (m_hud && m_score > oldScore) {
+	//	m_hud->triggerScoreAnimation();
+	//}
 }
 
 unsigned int GameController::getScore() const
