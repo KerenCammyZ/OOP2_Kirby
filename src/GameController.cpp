@@ -344,7 +344,7 @@ void GameController::drawHUD()
 {
 	// Set the HUD view for the bottom section
 	m_window.setView(m_hudView);
-	
+
 	// Update HUD with current game data
 	int kirbyHealth = m_kirby->getHealth();
 	int lives = m_kirby->getLives();

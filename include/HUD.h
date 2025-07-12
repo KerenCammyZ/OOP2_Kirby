@@ -53,5 +53,5 @@ private:
     int m_lives;
     int m_currentHealth;
     int m_maxHealth;
-	std::string m_kirbyState; // special powers or states ("normal", "hyper", "spark", "invincible", etc.)
+    std::string m_kirbyState; // special powers or states ("normal", "hyper", "spark", "invincible", etc.)
 };
