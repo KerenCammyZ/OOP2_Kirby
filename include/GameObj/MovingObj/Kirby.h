@@ -76,14 +76,17 @@ public:
 	// --- NEW DIRECTION FUNCTIONS ---
 	void setFacingDirection(FacingDirection dir);
 	FacingDirection getFacingDirection() const;
+	
 
 	void setState(std::unique_ptr<KirbyState> state);
 	void setAnimation(const std::string& name);
 
 
-	bool isMovingHorizontally() const { return std::abs(m_velocity.x) > 0.1f; }
 	bool isFacingLeft() const { return m_facingLeft; }
 	void setFacingLeft(bool facingLeft) { m_facingLeft = facingLeft; }
+	bool isMovingHorizontally() const { return std::abs(m_velocity.x) > 0.1f; }
+	float getDistanceToFloor() const;
+	void initObstacles(const std::vector<std::unique_ptr<GameObject>>* obstacles);
 
 private:
 	void activateInvincibility(float deltaTime);
@@ -117,6 +120,7 @@ private:
 	int m_health = 6;
 	int m_maxHealth = 6;
 	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
+	const std::vector<std::unique_ptr<GameObject>>* m_obstacles = nullptr;
 
 	PowerUpType m_currentPower = PowerUpType::None;
 	FacingDirection m_facingDirection = FacingDirection::Right;

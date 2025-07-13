@@ -202,8 +202,8 @@ void Enemy::stun(float duration)
 // Handle the enemy being swallowed by Kirby
 void Enemy::onSwallowed()
 {
+	// removes enemy from the game world
 	m_state = EnemyState::SWALLOWED;
-	// remove enemy from the game world
 }
 
 // Reverse the enemy's direction

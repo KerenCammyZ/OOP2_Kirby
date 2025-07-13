@@ -11,7 +11,7 @@ std::unique_ptr<KirbyState> KirbyWalkingState::handleInput(Kirby& kirby)
 {
 	// --- THIS IS THE "WALK OFF A CLIFF" LOGIC ---
 	// If we are no longer on the ground, we must be falling.
-	if (!kirby.isGrounded())
+	if (!kirby.isGrounded() && kirby.getDistanceToFloor() > 0.f)
 	{
 		return std::make_unique<KirbyFallingState>();
 	}

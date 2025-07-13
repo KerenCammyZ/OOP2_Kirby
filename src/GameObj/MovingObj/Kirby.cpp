@@ -45,7 +45,7 @@ void Kirby::setupAnimations() {
 	m_animator->addGridAnimation("swallowing", 0, 48, 16, 16, 3, 0.2f, false);
 	m_animator->addGridAnimation("jumping", 0, 63, 16, 16, 2, 0.2f, false);
 	m_animator->addGridAnimation("swimming", 0, 79, 16, 16, 4, 0.25f, true);
-	m_animator->addGridAnimation("water_attack", 0, 111, 16, 16, 4, 0.5f, false);
+	//m_animator->addGridAnimation("water_attack", 16, 111, 16, 16, 3, 0.5f, false);
 	m_animator->addGridAnimation("spark_attack", 0, 175, 16, 16, 4, 0.5f, false);
 }
 
@@ -383,6 +383,35 @@ void Kirby::loseLife()
 	{
 		std::cout << "Game Over!" << std::endl;
 	}
+}
+
+float Kirby::getDistanceToFloor() const
+{
+	if (!m_obstacles) return -1.f;
+
+	sf::FloatRect kirbyBounds = getBounds();
+	float kirbyBottom = kirbyBounds.top + kirbyBounds.height;
+	float minDistance = std::numeric_limits<float>::max();
+
+	for (const auto& obj : *m_obstacles)
+	{
+		if (obj->getType() == ObjectType::FLOOR)
+		{
+			sf::FloatRect floorBounds = obj->getBounds();
+			if (floorBounds.top >= kirbyBottom)
+			{
+				float distance = floorBounds.top - kirbyBottom;
+				if (distance < minDistance)
+					minDistance = distance;
+			}
+		}
+	}
+	return (minDistance != std::numeric_limits<float>::max()) ? minDistance : -1.f;
+}
+
+void Kirby::initObstacles(const std::vector<std::unique_ptr<GameObject>>* obstacles)
+{
+	m_obstacles = obstacles;
 }
 
 // Prevents rapid damage by setting invincibility timer
