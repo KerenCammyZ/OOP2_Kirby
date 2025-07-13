@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include "GameObjectFactory.h"
-#include "ResourceManager.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include "Behaviors/PatrolMove.h"

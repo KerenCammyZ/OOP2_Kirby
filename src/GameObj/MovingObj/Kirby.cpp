@@ -385,32 +385,15 @@ void Kirby::loseLife()
 	}
 }
 
-float Kirby::getDistanceToFloor() const
+
+void Kirby::addLife(int lifeAmount)
 {
-	if (!m_obstacles) return -1.f;
-
-	sf::FloatRect kirbyBounds = getBounds();
-	float kirbyBottom = kirbyBounds.top + kirbyBounds.height;
-
-	for (const auto& obj : *m_obstacles)
+	m_lives += lifeAmount;
+	//std::cout << "Life added! Lives remaining: " << m_lives << std::endl;
+	if (m_lives > 9) // Cap lives at 9
 	{
-		if (obj->getType() == ObjectType::FLOOR)
-		{
-			sf::FloatRect floorBounds = obj->getBounds();
-			if (floorBounds.top >= kirbyBottom)
-			{
-				float distance = floorBounds.top - kirbyBottom;
-				if (distance > 0)
-					return distance;
-			}
-		}
+		m_lives = 9;
 	}
-	return -1.f; // No floor found below Kirby
-}
-
-void Kirby::initObstacles(const std::vector<std::unique_ptr<GameObject>>* obstacles)
-{
-	m_obstacles = obstacles;
 }
 
 // Prevents rapid damage by setting invincibility timer
@@ -484,4 +467,15 @@ int Kirby::getHealth() const
 int Kirby::getMaxHealth() const 
 { 
 	return m_maxHealth; 
+}
+
+// This is the double-dispatch target. It just calls the specific handler.
+void Kirby::handleCollision(Spike* spike)
+{
+	// First, check if Kirby is already invincible from another source.
+	if (isInvincible()) return;
+
+
+	// If we are not immune, take 1 damage.
+	takeDamage(1);
 }

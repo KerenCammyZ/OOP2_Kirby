@@ -5,7 +5,6 @@ PlayingState::PlayingState(GameController& game) : m_currentLevel(1)
 {
     // Load the first level when this state begins
    game.loadLevel(m_currentLevel);
-   // game.loadHUD();
 }
 
 void PlayingState::handleEvents(GameController& game)
@@ -21,7 +20,7 @@ void PlayingState::update(float deltaTime, GameController& game)
         m_currentLevel++;
         if (m_currentLevel > m_maxLevels) {
             // Game finished, go back to menu
-            game.changeGameState(std::make_unique<MainMenuState>());
+            game.changeGameState(std::make_unique<MainMenuState>(game));
             return;
         }
         game.loadLevel(m_currentLevel);

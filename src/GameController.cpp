@@ -1,6 +1,5 @@
 // GameController.cpp
 #include "GameController.h"
-#include "ResourceManager.h"
 #include "States/GameStates/MainMenuState.h"
 #include "States/GameStates/PlayingState.h"
 #include "States/KirbyStates/KirbyFallingState.h"
@@ -10,8 +9,10 @@ GameController::GameController():
 	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1), m_score(0)
 {
 	// Set the initial state to the Main Menu
-	m_currentState = std::make_unique<MainMenuState>();
-	m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
+	m_currentState = std::make_unique<MainMenuState>(*this);
+	auto kirbyTexture = std::make_shared<sf::Texture>();
+	kirbyTexture->loadFromFile("TestSprite.png");
+	m_kirby = std::make_unique<Kirby>(kirbyTexture);
 	loadHUD(); // Load the HUD and set up the views for the game and HUD
 }
 
@@ -27,6 +28,11 @@ void GameController::changeGameState(std::unique_ptr<GameState> newState)
 sf::RenderWindow& GameController::getWindow() 
 {
 	return m_window;
+}
+
+MusicManager& GameController::getMusicManager()
+{
+	return m_musicManager;
 }
 
 Level* GameController::getLevel()
@@ -55,11 +61,13 @@ void GameController::run()
 
 void GameController::loadLevel(int levelNum)
 {
+	std::string musicFilename = "Level" + std::to_string(levelNum) + ".ogg";
+
+	m_musicManager.play(musicFilename);
 	m_level = std::make_unique<Level>(levelNum, m_kirby.get());
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_fixedObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
-    m_kirby->initObstacles(&m_fixedObjects);
 
 	spawnKirby(); // Spawn Kirby at the starting position
 
@@ -189,13 +197,14 @@ void GameController::update(float deltaTime)
 	// 1. CHECK THE ENVIRONMENT
 	// Run collision checks based on the objects' positions from the last frame.
 	// This will set all environmental flags (isGrounded, isInWater, etc.)
-	checkCollisions();
+	//checkCollisions();
 
 	// 2. ACT ON THE ENVIRONMENT
 	// Now that all flags are correctly set for this frame, update all objects.
 	// Kirby's state machine will now see the correct values for m_isGrounded and m_isInWater.
 	m_kirby->update(deltaTime);
 	m_kirby->move(deltaTime, m_fixedObjects);
+	checkCollisions();
 	 
 	for (auto& obj : m_fixedObjects)
 	{

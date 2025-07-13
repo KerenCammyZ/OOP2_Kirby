@@ -10,8 +10,9 @@ public:
 	Floor() = default;
 
 	void handleCollision(Kirby* kirby) override;
-	//void handleCollision(Door* door) override {};
+	void handleCollision(Door* door) override {};
 	void handleCollision(Enemy* enemy) override;
+	void handleCollision(Spike* spike) override {};
 private:
 	static bool m_registeritem; // Static member to register this type with the factory
 };

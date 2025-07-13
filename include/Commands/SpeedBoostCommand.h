@@ -20,6 +20,6 @@ public:
 
 	sf::Time getDuration() const override
 	{
-		return sf::seconds(60.f);
+		return sf::seconds(10.f);
 	}
 };
