@@ -9,12 +9,8 @@ class Exit : public FixedObject
 public:
 	Exit() = default;
 
-	// This can be empty because the controller handles the logic.
 	void handleCollision(Kirby* kirby) override {};
-
-	// Fulfills the abstract base class requirement.
-	//void handleCollision(Door* door) override {};
-
+	void handleCollision(Door* door) override {};
 	void handleCollision(Spike* spike) override {};
 
 	// Returns its unique type.

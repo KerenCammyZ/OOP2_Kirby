@@ -25,10 +25,10 @@ void Wall::handleCollision(Kirby* kirby)
 	;
 }
 
-void Wall::handleCollision(Enemy* enemy)
-{
-	;
-}
+//void Wall::handleCollision(Enemy* enemy)
+//{
+//	;
+//}
 
 void Wall::draw(sf::RenderTarget& target) const
 {
