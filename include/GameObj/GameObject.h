@@ -2,7 +2,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GlobalSizes.h"
-//#include "ResourceManager.h"
 
 enum class ObjectType 
   { DOOR, 
@@ -36,7 +35,6 @@ public:
 	virtual void handleCollision(Enemy* enemy) = 0;
 	virtual void handleCollision(Spike* spike) = 0;
 
-	// --- VIRTUAL SETTERS AND GETTERS ---
 	virtual void setPosition(const sf::Vector2f& position);
 	sf::Vector2f getPosition() const;
 

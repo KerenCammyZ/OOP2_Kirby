@@ -1,22 +1,18 @@
 #include "GameObj/FixedObj/HealthPowerUp.h"
-#include "Commands/HealthCommand.h" // Include the new command
+#include "Commands/HealthCommand.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include <iostream>
 
-// Choose a new, unique color for the health power-up in your collision map.
-// This example uses Hot Pink.
-const sf::Color healthPowerUpColor(255, 105, 180);
+const sf::Color healthPowerUpColor(255, 105, 180); // Hot Pink
 
-// Register this new object with the GameObjectFactory.
 bool HealthPowerUp::m_registerHealthPowerUp = GameObjectFactory::registerType(
 	healthPowerUpColor,
 	[](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject>
 	{
 		auto powerUp = std::make_unique<HealthPowerUp>();
 
-		// You will need to create a "HealthPowerUp.png" sprite for this.
-		auto powerUpTexture = std::make_shared<sf::Texture>();
-		if (powerUpTexture->loadFromFile("HealthPowerUp.png"))
+		auto powerUpTexture = ResourceManager::getInstance().getTexture("HealthPowerUp.png");
+		if (powerUpTexture)
 		{
 			powerUp->setTexture(powerUpTexture);
 			powerUp->setSize({ ENTITY_SIZE, ENTITY_SIZE });
@@ -32,7 +28,6 @@ bool HealthPowerUp::m_registerHealthPowerUp = GameObjectFactory::registerType(
 
 void HealthPowerUp::applyEffect(Kirby* kirby)
 {
-	// When Kirby collides, create the instant health command
-	// and give it to his manager.
+	// When Kirby collides with this power-up, apply the health effect
 	kirby->addPowerUpEffect(std::make_unique<HealthCommand>());
 }

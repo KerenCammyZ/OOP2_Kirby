@@ -1,4 +1,4 @@
-﻿configure_file ("TestSprite.png" ${CMAKE_BINARY_DIR} COPYONLY)
+﻿configure_file ("KirbySprite.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("WaddleDeeSprite.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("TwizzySprite.png" ${CMAKE_BINARY_DIR} COPYONLY)
 configure_file ("SparkySprite.png" ${CMAKE_BINARY_DIR} COPYONLY)

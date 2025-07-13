@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObj/FixedObj/FixedObject.h"
+#include "ResourceManager.h"
 
 class PowerUp : public FixedObject
 {
@@ -23,14 +24,6 @@ public:
 
 	bool isCollected() const { return m_isCollected; }
 
-	//// --- NEW: Override the draw function for debugging ---
-	//void draw(sf::RenderTarget& target) const override
-	//{
-	//	// First, call the base GameObject draw to try and draw the sprite
-	//	GameObject::draw(target);
-	//	// Then, explicitly draw the collision shape on top
-	//	target.draw(m_collisionShape);
-	//}
 
 private:
 	bool m_isCollected;

@@ -14,7 +14,7 @@
 
 const sf::Color waterColor(0, 0, 200);
 
-// Constructor: sets up the visual sprite and calculates the scale
+// Initialize background texture and calculate the scale
 WorldMap::WorldMap(std::shared_ptr<sf::Texture> backgroundTexture)
 {
 	if (!backgroundTexture)
@@ -28,12 +28,9 @@ WorldMap::WorldMap(std::shared_ptr<sf::Texture> backgroundTexture)
 	sf::Vector2f targetMapSize((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
 	m_scale = { targetMapSize.x / originalMapSize.x, targetMapSize.y / originalMapSize.y };
 
-	// Initialize the sprite with the correct texture and scale
 	init(m_backgroundTexture);
 	setSize(targetMapSize);
 }
-
-// WorldMap::~WorldMap() = default;
 
 // Initialize the background sprite
 void WorldMap::init(std::shared_ptr<sf::Texture> backgroundTexture)
@@ -48,6 +45,10 @@ void WorldMap::draw(sf::RenderTarget& target) const
 	target.draw(m_backgroundSprite);
 }
 
+
+// Load objects from a collision map file.
+// This function reads the pixel colors from the image and creates game objects accordingly.
+// Special markers (like doors and water zones) are handled separately.
 std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std::string& filePath, Kirby* kirby)
 {
     sf::Image collisionImage;
@@ -57,11 +58,10 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
     }
 
     std::vector<std::unique_ptr<GameObject>> createdObjects;
-    // This map will store locations of special, non-factory objects (doors, water markers)
+
     std::map<sf::Color, std::vector<sf::Vector2f>, ColorComparator> specialLocations;
     const float TILE_SIZE = 1.0f;
 
-    // --- PASS 1: Create factory objects and find marker locations ---
     for (unsigned int y = 0; y < collisionImage.getSize().y; ++y)
     {
         for (unsigned int x = 0; x < collisionImage.getSize().x; ++x)
@@ -74,44 +74,36 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
                 (y * TILE_SIZE * m_scale.y) + (TILE_SIZE * m_scale.y / 2.f)
             );
 
-            // Try to create standard objects with the factory
             auto newObject = GameObjectFactory::create(pixelColor, position, kirby);
 
             if (newObject)
             {
-                // Standard object creation...
                 newObject->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
                 newObject->setPosition(position);
 
-                // Add a check for all object types that should be ENTITY_SIZE.
                 ObjectType type = newObject->getType();
                 if (type == ObjectType::ENEMY ||
                     type == ObjectType::POWERUP)
                 {
-                    // If it's an enemy or a power-up, reset its size to the correct, larger size.
                     newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
                 }
-
                 createdObjects.push_back(std::move(newObject));
-            }
-            else
+            }            
+            else // pixel color is a special marker (a door or water zone)
             {
-                // If the factory can't create it, it's a special marker (door or water)
                 specialLocations[pixelColor].push_back(position);
             }
         }
     }
-
-    // --- PASS 2: Process the special markers ---
+	// Handle special locations (doors and water zones)
     for (const auto& pair : specialLocations)
     {
         const auto& colorKey = pair.first;
         const auto& locations = pair.second;
 
-        // --- NEW: Handle Water Zone Markers ---
+        // 
         if (colorKey == waterColor)
         {
-            // First, check if there's an odd number of markers, which is an error.
             if (locations.size() % 2 != 0)
             {
                 std::cerr << "Warning: Odd number of water markers found (" << locations.size()
@@ -139,12 +131,9 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
                 std::cout << "Created Water Zone at: (" << left << "," << top << ") with size (" << width << "," << height << ")\n";
             }
         }
-        // --- Handle Doors (your existing logic) ---
-        else
+        else if (locations.size() == 2)
         {
-            // This is your original door logic, it can stay as is
-            if (locations.size() == 2) {
-                // Create Door A, which leads to B's location
+            // Create Door A, which leads to B's location
 			auto doorA = std::make_unique<Door>(locations[1]);
 			doorA->setPosition(locations[0]);
 			doorA->setSize({ TILE_SIZE * m_scale.x * 4, TILE_SIZE * m_scale.y * 4 }); // Make doors larger
@@ -155,17 +144,12 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
 			doorB->setSize({ TILE_SIZE * m_scale.x * 4, TILE_SIZE * m_scale.y * 4 });
 
 			createdObjects.push_back(std::move(doorA));
-			createdObjects.push_back(std::move(doorB));
-            }
+			createdObjects.push_back(std::move(doorB));     
         }
     }
-
     return createdObjects;
 }
 
-
-
-// --- Getters and Setters ---
 
 // Return the size of the world map sprite
 sf::Vector2f WorldMap::getSize() const
@@ -183,7 +167,6 @@ void WorldMap::setSize(const sf::Vector2f& size)
 	}
 }
 
-// Get the bounds of the world map sprite
 sf::FloatRect WorldMap::getBounds() const
 {
 	return m_backgroundSprite.getGlobalBounds();
