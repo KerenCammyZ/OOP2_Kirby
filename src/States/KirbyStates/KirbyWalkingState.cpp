@@ -11,9 +11,9 @@ std::unique_ptr<KirbyState> KirbyWalkingState::handleInput(Kirby& kirby)
 {
 	// --- THIS IS THE "WALK OFF A CLIFF" LOGIC ---
 	// If we are no longer on the ground, we must be falling.
-	if (!kirby.isGrounded() && kirby.getDistanceToFloor() > 0.f)
-	{
-		return std::make_unique<KirbyFallingState>();
+	// Only transition to falling if Kirby is not grounded AND is moving downward
+	if (!kirby.isGrounded()) {
+			return std::make_unique<KirbyAirborneState>();
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -46,9 +46,6 @@ void KirbyWalkingState::update(Kirby& kirby, float deltaTime)
 		horizontalVelocity += speed;
 		kirby.setFacingDirection(FacingDirection::Right);
 	}
-
-	// Debug: Show current facing direction
-	std::cout << "Kirby facing left: " << (kirby.isFacingLeft() ? "YES" : "NO") << std::endl;
 
 	// The walking state now controls horizontal velocity.
 	kirby.setVelocity({ horizontalVelocity, 0.f });

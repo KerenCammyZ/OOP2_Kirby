@@ -11,7 +11,7 @@ struct HUDLayout {
     sf::Vector2f livesPos{ };
     sf::Vector2f healthBarPos{};
     sf::Vector2f scorePos{};
-    // Add more as needed
+
 } layout;
 
 HUD::HUD()
@@ -47,7 +47,6 @@ bool HUD::loadSpriteSheet(const std::string& filePath) {
     if (!m_spriteSheet->loadTexture(filePath)) {
         return false;
     }
-
     // Define your sprite types based on your specifications
     m_spriteSheet->defineSpriteType("digit", 8, 9);
     m_spriteSheet->defineSpriteType("state", 32, 40);
@@ -55,26 +54,21 @@ bool HUD::loadSpriteSheet(const std::string& filePath) {
     m_spriteSheet->defineSpriteType("health", 8, 15);
     m_spriteSheet->defineSpriteType("star", 13, 12);
 
-    // std::cout << "Spritesheet setup complete. Add your sprite locations next." << std::endl;
-
-     // TODO: You'll need to specify where these sprites are located in your spritesheet
-     // Example setup for digits 0-9 (you'll need to adjust coordinates):
-     // m_spriteSheet->addSpriteGrid("digit", 0, 0, 8, 8, 10, 10);
 
 
-    m_spriteSheet->addSprite("normal", 0, 42, 32, 41); // sprite for normal state
-    m_spriteSheet->addSprite("hyper", 32, 42, 32, 41); // sprite for hyper state
-    m_spriteSheet->addSprite("spark", 64, 42, 32, 41); // sprite for spark power up state
-    m_spriteSheet->addSprite("invincible", 96, 42, 32, 41); // sprite for invincible state
+    // Sprite locations
+    m_spriteSheet->addSprite("normal", 0, 42, 32, 40); 
+    m_spriteSheet->addSprite("hyper", 32, 42, 32, 40); 
+    m_spriteSheet->addSprite("spark", 64, 42, 32, 40);
+    m_spriteSheet->addSprite("invincible", 96, 42, 32, 40);
 
-    m_spriteSheet->addSprite("kirbyText", 0, 0, 50, 10); // kirby title
-    m_spriteSheet->addSprite("scoreText", 0, 10, 50, 10); // score title
+    m_spriteSheet->addSprite("kirbyText", 0, 0, 50, 10); 
+    m_spriteSheet->addSprite("scoreText", 0, 10, 50, 10);
 
     m_spriteSheet->addSpriteGrid("digit", 0, 33, 8, 9, 10, 10); // digits 0-9
     m_spriteSheet->addSpriteGrid("capsule", 60, 0, 8, 15, 3, 3);
 
-    m_spriteSheet->addSprite("kirbyIcon", 60, 19, 13, 12); // sprite for kirby lives
-
+    m_spriteSheet->addSprite("kirbyIcon", 60, 19, 13, 12);
 
     return true;
 }
@@ -137,7 +131,6 @@ void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float
     }
 }
 
-// Display Kirby's State
 void HUD::drawState(sf::RenderTarget& target, float x, float y)
 {
     sf::Vector2f scale = getHUDScale();

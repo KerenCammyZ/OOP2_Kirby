@@ -40,13 +40,13 @@ Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 
 void Kirby::setupAnimations() {
 	m_animator->addGridAnimation("idle", 0, 0, 16, 16, 1, 0.5f, true);
-	m_animator->addGridAnimation("walking", 0, 16, 16, 16, 4, 0.15f, true);
+	m_animator->addGridAnimation("walking", 0, 16, 16, 16, 4, 0.15f, false);
 	m_animator->addGridAnimation("falling", 0, 31, 16, 16, 1, 0.3f, true);
 	m_animator->addGridAnimation("swallowing", 0, 48, 16, 16, 3, 0.2f, false);
 	m_animator->addGridAnimation("jumping", 0, 63, 16, 16, 2, 0.2f, false);
 	m_animator->addGridAnimation("swimming", 0, 79, 16, 16, 4, 0.25f, true);
-	//m_animator->addGridAnimation("water_attack", 16, 111, 16, 16, 3, 0.5f, false);
 	m_animator->addGridAnimation("spark_attack", 0, 175, 16, 16, 4, 0.5f, false);
+	//m_animator->addGridAnimation("water_attack", 16, 111, 16, 16, 3, 0.5f, false);
 }
 
 void Kirby::setAnimation(const std::string& name) {
@@ -391,7 +391,6 @@ float Kirby::getDistanceToFloor() const
 
 	sf::FloatRect kirbyBounds = getBounds();
 	float kirbyBottom = kirbyBounds.top + kirbyBounds.height;
-	float minDistance = std::numeric_limits<float>::max();
 
 	for (const auto& obj : *m_obstacles)
 	{
@@ -401,12 +400,12 @@ float Kirby::getDistanceToFloor() const
 			if (floorBounds.top >= kirbyBottom)
 			{
 				float distance = floorBounds.top - kirbyBottom;
-				if (distance < minDistance)
-					minDistance = distance;
+				if (distance > 0)
+					return distance;
 			}
 		}
 	}
-	return (minDistance != std::numeric_limits<float>::max()) ? minDistance : -1.f;
+	return -1.f; // No floor found below Kirby
 }
 
 void Kirby::initObstacles(const std::vector<std::unique_ptr<GameObject>>* obstacles)

@@ -59,6 +59,7 @@ void GameController::loadLevel(int levelNum)
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_fixedObjects = m_level->getObjects(); // Load all objects from the level
 	m_enemies = m_level->getEnemies(); // Load all enemies from the level
+    m_kirby->initObstacles(&m_fixedObjects);
 
 	spawnKirby(); // Spawn Kirby at the starting position
 
@@ -261,27 +262,8 @@ void GameController::handleEvents()
 		float attackRange = 100.0f; // Define the attack range
 		m_kirby->attack(m_enemies, attackRange); // Attack enemies within range
 	}
-	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		m_kirby->moveLeft();
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		m_kirby->moveRight();
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		m_kirby->jump();
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		m_kirby->crouch();
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-	{
-		m_kirby->attack();
-	}*/
 }
+
 void GameController::draw()
 {
 	m_window.clear(sf::Color::Black);
