@@ -14,9 +14,8 @@ class Enemy : public MovingObject
 {
 public:
 	Enemy() = default;
-	~Enemy();
-	//Enemy(std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition);
 	Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, Kirby* kirby);
+	~Enemy();
 
 	void update(float deltaTime) override;
 	void move(float deltaTime) override;
@@ -29,7 +28,7 @@ public:
 	
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override;
-	void handleCollision(Door* door) override {};
+	//void handleCollision(Door* door) override {};
 
 	// Setters for strategies
 	void setMoveBehavior(std::unique_ptr<MoveBehavior> moveBehavior);

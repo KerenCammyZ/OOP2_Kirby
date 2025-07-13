@@ -10,6 +10,7 @@ void KirbySwimmingState::enter(Kirby& kirby)
 	std::cout << "entered swimming state\n";
 	// When entering water, kill any existing vertical velocity from a jump/fall.
 	kirby.setVelocity({ kirby.getVelocity().x, 0.f });
+	kirby.setAnimation("swimming");
 }
 
 std::unique_ptr<KirbyState> KirbySwimmingState::handleInput(Kirby& kirby)
@@ -61,3 +62,4 @@ void KirbySwimmingState::update(Kirby& kirby, float deltaTime)
 
 	kirby.setVelocity(velocity);
 }
+

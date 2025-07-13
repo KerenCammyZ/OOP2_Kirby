@@ -53,7 +53,8 @@ public:
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override {};
-	void handleCollision(Door* door) override;
+	//void handleCollision(Door* door) override;
+	void handleCollision(Door* door);
 
 	// Kirby's health and lives management
 	void heal(int healAmount);
@@ -77,6 +78,7 @@ public:
 	FacingDirection getFacingDirection() const;
 
 	void setState(std::unique_ptr<KirbyState> state);
+	void setAnimation(const std::string& name);
 
 
 	bool isMovingHorizontally() const { return std::abs(m_velocity.x) > 0.1f; }

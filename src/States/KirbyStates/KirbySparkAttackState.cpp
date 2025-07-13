@@ -22,6 +22,8 @@ void KirbySparkAttackState::enter(Kirby& kirby)
 	m_isCharging = true;
 	m_chargeTime = 0.f;
 	kirby.setVelocity({ 0.f, 0.f }); // Stop Kirby from moving while charging
+
+	kirby.setAnimation("spark_attack"); // Set the animation for the spark attack
 }
 
 std::unique_ptr<KirbyState> KirbySparkAttackState::handleInput(Kirby& kirby)

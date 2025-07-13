@@ -19,6 +19,7 @@ void KirbyWaterAttackState::enter(Kirby& kirby)
 	// You could play a "spit" sound effect here.
 	// We stop Kirby's movement to make the attack feel more deliberate.
 	kirby.setVelocity({ 0.f, kirby.getVelocity().y });
+	kirby.setAnimation("water_attack");
 }
 
 std::unique_ptr<KirbyState> KirbyWaterAttackState::handleInput(Kirby& kirby)

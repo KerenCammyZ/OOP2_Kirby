@@ -28,3 +28,8 @@ void KirbyStandingState::update(Kirby& kirby, float deltaTime)
 	// him from sliding and stops gravity from accumulating.
 	kirby.setVelocity({ 0.f, 0.f });
 }
+
+void KirbyStandingState::enter(Kirby& kirby)
+{
+	kirby.setAnimation("idle");
+}

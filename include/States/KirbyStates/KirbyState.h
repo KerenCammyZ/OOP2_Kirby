@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include "Animator.h"
 
 class Kirby; // Forward-declaration to avoid circular includes
 

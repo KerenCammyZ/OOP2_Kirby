@@ -21,7 +21,7 @@ public:
 
 	virtual void handleCollision(GameObject* other) = 0;
 	virtual void handleCollision(Kirby* kirby) = 0;
-	virtual void handleCollision(Door* door) = 0;
+	//virtual void handleCollision(Door* door) = 0;
 	virtual void handleCollision(Enemy* enemy) = 0;
 
 	// enforce override in moving objects only

@@ -26,6 +26,8 @@ std::unique_ptr<KirbyState> KirbyWalkingState::handleInput(Kirby& kirby)
 	{
 		return std::make_unique<KirbyStandingState>();
 	}
+
+
 	return nullptr;
 }
 
@@ -51,3 +53,9 @@ void KirbyWalkingState::update(Kirby& kirby, float deltaTime)
 	// The walking state now controls horizontal velocity.
 	kirby.setVelocity({ horizontalVelocity, 0.f });
 }
+
+void KirbyWalkingState::enter(Kirby& kirby)
+{
+	kirby.setAnimation("walking");
+}
+

@@ -13,7 +13,7 @@ public:
 	void handleCollision(Kirby* kirby) override {};
 
 	// Fulfills the abstract base class requirement.
-	void handleCollision(Door* door) override {};
+	//void handleCollision(Door* door) override {};
 
 	// Returns its unique type.
 	ObjectType getType() const override { return ObjectType::EXIT; }

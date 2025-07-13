@@ -43,8 +43,6 @@ private:
 	void checkCollisions();
 	void spawnKirby();
 
-
-	//void loadTextures();
 	float m_deltaTime;
 	sf::Clock m_deltaClock;
 
@@ -63,7 +61,7 @@ private:
 	std::unique_ptr<WorldMap> m_worldMap;
 	std::unique_ptr<GameState> m_currentState;
 
-	//std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
 	std::vector<std::unique_ptr<Enemy>> m_enemies;
 	std::vector<std::unique_ptr<GameObject>> m_fixedObjects;
+	//std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
 };

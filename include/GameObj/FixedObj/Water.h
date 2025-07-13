@@ -8,7 +8,7 @@ public:
 	Water() = default;
 
 	void handleCollision(Kirby* kirby) override;
-	void handleCollision(Door* door) override {};
+	//void handleCollision(Door* door) override {};
 	ObjectType getType() const override { return ObjectType::WATER; }
 
 	// Override draw to do nothing, making the water zone invisible.

@@ -17,7 +17,7 @@ public:
 	void handleCollision(Kirby* kirby) override final;
 
 	// PowerUps don't collide with doors
-	void handleCollision(Door* door) override {};
+	//void handleCollision(Door* door) override {};
 
 	bool isCollected() const { return m_isCollected; }
 

@@ -14,7 +14,7 @@ void SparkAttack::attack(float deltaTime)
         m_flashTimer = 0.0f;
 
         // Get the sprite to modify it
-        sf::Sprite& sprite = m_owner->getSprite(); // You will need to add this getter to Enemy.h
+        sf::Sprite& sprite = m_owner->getSprite();
 
         // Toggle between semi-transparent yellow and white
         if (sprite.getColor() == sf::Color::White) {
