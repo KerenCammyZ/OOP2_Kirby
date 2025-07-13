@@ -12,24 +12,24 @@
 #include "Behaviors/IgnoreWalls.h"
 #include "Commands/SparkCommand.h"
 
-sf::Color WaddleDeeColor(0, 0, 40); // Define Waddle Dee's color key
-sf::Color TwizzyColor(0, 0, 80); // Define Twizzy's color key
+sf::Color WaddleDeeColor(0, 0, 40);
+sf::Color TwizzyColor(0, 0, 80);
 sf::Color sparkyColor(0, 0, 120);
 
 // Static registration for WaddleDee
 bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 	WaddleDeeColor, [](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject> {
-		auto enemyTexture = std::make_shared<sf::Texture>();
-		if (!enemyTexture->loadFromFile("WaddleDeeSprite.png")) {
+		auto enemyTexture = ResourceManager::getInstance().getTexture("WaddleDeeSprite.png");
+		if (!enemyTexture) {
 			throw std::runtime_error("Failed to load Waddle Dee texture");
 		}
 		auto enemy = std::make_unique<Enemy>(enemyTexture, position, kirby);
 		enemy->setMoveBehavior(std::make_unique<PatrolMove>());
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
-		enemy->setSpeed(100.0f); // Set a slower speed for Waddle Dee
-		enemy->setDamageAmount(1); // Set damage amount for Waddle Dee
-		enemy->setScoreValue(10); // number of points awarded for defeating Waddle Dee
+		enemy->setSpeed(100.0f);
+		enemy->setDamageAmount(1);
+		enemy->setScoreValue(10);
 		enemy->setGrounded(true);
 		return enemy;
 	}  
@@ -38,8 +38,8 @@ bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
 // Static registration for Twizzy 
 bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 	TwizzyColor, [](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject> {
-		auto enemyTexture = std::make_shared<sf::Texture>();
-		if (!enemyTexture->loadFromFile("TwizzySprite.png")) {
+		auto enemyTexture = ResourceManager::getInstance().getTexture("TwizzySprite.png");
+		if (!enemyTexture) {
 			throw std::runtime_error("Failed to load Twizzy texture");
 		}
 		auto enemy = std::make_unique<Enemy>(enemyTexture, position, kirby);
@@ -47,7 +47,7 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 		enemy->setAttackBehavior(std::make_unique<SimpleAttack>());
 		enemy->setCollisionBehavior(std::make_unique<IgnoreWalls>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
-		enemy->setDamageAmount(1); // Set damage amount for Twizzy
+		enemy->setDamageAmount(1);
 		enemy->setScoreValue(25);
 		enemy->setGrounded(false);
 		return enemy;  
@@ -58,17 +58,17 @@ bool Enemy::m_registerTwizzy = GameObjectFactory::registerType(
 bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 	sparkyColor,
 	[](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject> {
-		auto enemyTexture = std::make_shared<sf::Texture>();
-		if (!enemyTexture->loadFromFile("SparkySprite.png")) {
+		auto enemyTexture = ResourceManager::getInstance().getTexture("SparkySprite.png");
+		if (!enemyTexture) {
 			throw std::runtime_error("Failed to load Sparky texture");
 		}
 		auto enemy = std::make_unique<Enemy>(enemyTexture, position, kirby);
 		enemy->setMoveBehavior(std::make_unique<HoppingMove>());
 		enemy->setAttackBehavior(std::make_unique<SparkAttack>());
 		enemy->setDirection(sf::Vector2f(-1.f, 0.f));
-		enemy->setDamageAmount(2); // Set damage amount for Sparky
+		enemy->setDamageAmount(2);
 		enemy->setScoreValue(200);
-		enemy->setGrounded(false); // this will change in Hopping Behavior
+		enemy->setGrounded(false);
 		return enemy;
 	}
 );
@@ -76,7 +76,7 @@ bool Enemy::m_registerSparky = GameObjectFactory::registerType(
 
 Enemy::Enemy(const std::shared_ptr<sf::Texture>& enemyTexture, sf::Vector2f startPosition, Kirby* kirby)
 	: m_state(EnemyState::SPAWNING),
-	m_kirby(kirby) // Initialize the new member
+	m_kirby(kirby)
 {
 	setTexture(enemyTexture);
 	setPosition(startPosition);
@@ -108,11 +108,9 @@ void Enemy::update(float deltaTime)
 	}
 	else if (m_state == EnemyState::STUNNED || m_state == EnemyState::SWALLOWED)
 	{
-		// No updates needed for these states, just let them exist
 		GameObject::update(deltaTime);
 		return;
 	}
-	// --- NEW LOGIC FOR BEING_SWALLOWED STATE ---
 	else if (m_state == EnemyState::BEING_SWALLOWED)
 	{
 		// This logic will run every frame the enemy is being inhaled.
@@ -144,13 +142,10 @@ void Enemy::update(float deltaTime)
 		}
 		else
 		{
-			// If Kirby is gone for some reason, just go back to active state.
 			m_state = EnemyState::ACTIVE;
 		}
 	}
-
 	// --- State Logic for Active and Attacking ---
-
 	if (m_state == EnemyState::ACTIVE)
 	{
 		// Countdown the timer until the next attack
@@ -214,12 +209,8 @@ void Enemy::reverseDirection()
 	m_direction.x = -m_direction.x;
 }
 
-// Handle collision with Kirby
 void Enemy::handleCollision(Kirby* kirby)
 {
-	// --- THIS IS THE FIX ---
-	// If the enemy is being swallowed, is stunned, or has already been eaten,
-	// it should not do anything when colliding with Kirby.
 	if (m_state == EnemyState::BEING_SWALLOWED || m_state == EnemyState::SWALLOWED || m_state == EnemyState::STUNNED)
 	{
 		return; // Do nothing.
@@ -232,14 +223,13 @@ void Enemy::handleCollision(Kirby* kirby)
 	}
 }
 
-// Handle collision with other game objects
 void Enemy::handleCollision(GameObject* other)
 {
-	if (m_collisionBehavior) { // owner has special collision behavior
+	if (m_collisionBehavior) {
 		m_collisionBehavior->handleCollision(other);
 		return;
 	}
-	else { // Default collision handling
+	else { 
 		if (other->getType() == ObjectType::WALL)
 		{
 			// Handle collision by reversing direction
@@ -253,7 +243,6 @@ void Enemy::handleCollision(GameObject* other)
 		}
 	}
 }
-
 
 void Enemy::move(float deltaTime)
 {
