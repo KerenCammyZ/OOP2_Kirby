@@ -196,13 +196,14 @@ void GameController::update(float deltaTime)
 	// 1. CHECK THE ENVIRONMENT
 	// Run collision checks based on the objects' positions from the last frame.
 	// This will set all environmental flags (isGrounded, isInWater, etc.)
-	checkCollisions();
+	//checkCollisions();
 
 	// 2. ACT ON THE ENVIRONMENT
 	// Now that all flags are correctly set for this frame, update all objects.
 	// Kirby's state machine will now see the correct values for m_isGrounded and m_isInWater.
 	m_kirby->update(deltaTime);
 	m_kirby->move(deltaTime, m_fixedObjects);
+	checkCollisions();
 	 
 	for (auto& obj : m_fixedObjects)
 	{
