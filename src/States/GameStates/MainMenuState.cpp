@@ -64,7 +64,7 @@ void MainMenuState::update(float deltaTime, GameController& game)
 void MainMenuState::draw(GameController& game)
 {
     sf::RenderWindow& window = game.getWindow();
-
+	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
     window.clear(sf::Color(135, 206, 250)); // A sky blue color
     window.draw(m_title);
     window.draw(m_playButton);
