@@ -11,11 +11,13 @@ enum class ObjectType
 	POWERUP,  
 	EXIT ,
 	WATER, 
-	DEFAULT,  };
+	DEFAULT,
+	SPIKE,};
 
 class Kirby;
 class Door;
 class Enemy;
+class Spike;
 
 class GameObject
 {
@@ -31,6 +33,7 @@ public:
 	virtual void handleCollision(Kirby* kirby) = 0;
 	virtual void handleCollision(Door* door) = 0;
 	virtual void handleCollision(Enemy* enemy) = 0;
+	virtual void handleCollision(Spike* spike) = 0;
 
 	// --- VIRTUAL SETTERS AND GETTERS ---
 	virtual void setPosition(const sf::Vector2f& position);

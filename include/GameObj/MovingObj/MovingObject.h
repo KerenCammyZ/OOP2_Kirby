@@ -21,6 +21,7 @@ public:
 	void setDirection(const sf::Vector2f& direction);
 
 	void handleCollision(Enemy* enemy) override {};
+	void handleCollision(Spike* spike) override {};
 protected:
 	float m_speed = 250.0f;
 	sf::Vector2f m_direction;

@@ -321,3 +321,29 @@ int Kirby::getMaxHealth() const
 { 
 	return m_maxHealth; 
 }
+
+// This is the double-dispatch target. It just calls the specific handler.
+void Kirby::handleCollision(Spike* spike)
+{
+	handleSpikeCollision(spike);
+}
+
+// This function contains the actual logic for spike interactions.
+void Kirby::handleSpikeCollision(Spike* spike)
+{
+	// First, check if Kirby is already invincible from another source.
+	if (isInvincible()) return;
+
+	// Next, check if this specific spike is in our immunity map.
+	if (m_spikeImmunityMap.find(spike) != m_spikeImmunityMap.end())
+	{
+		// We are currently immune to this spike, so do nothing.
+		return;
+	}
+
+	// If we are not immune, take 1 damage.
+	takeDamage(1);
+
+	// Add this spike to the immunity map with a new clock to start the 30s timer.
+	m_spikeImmunityMap[spike] = sf::Clock();
+}
