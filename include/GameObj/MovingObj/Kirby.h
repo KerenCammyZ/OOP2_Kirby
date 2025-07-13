@@ -4,7 +4,6 @@
 #include "GameObj/MovingObj/Enemy.h"
 #include "PowerUpManager.h"
 #include <memory>
-#include <map> 
 
 class KirbyState;
 class Wall;
@@ -49,8 +48,6 @@ public:
 	void handleCollision(Kirby* kirby) override {};
 	void handleCollision(Door* door) override;
 	void handleCollision(Spike* spike) override;
-
-	void handleSpikeCollision(Spike* spike);
 
 	// Kirby's health and lives management
 	void heal(int healAmount);
@@ -101,8 +98,4 @@ private:
 
 	PowerUpType m_currentPower = PowerUpType::None;
 	FacingDirection m_facingDirection = FacingDirection::Right;
-
-	// --- NEW: Map to manage immunity to specific spikes ---
-	// It maps a pointer to a Spike object to a clock that tracks its cooldown.
-	std::map<Spike*, sf::Clock> m_spikeImmunityMap;
 };

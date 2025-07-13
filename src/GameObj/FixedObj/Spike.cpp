@@ -18,8 +18,7 @@ bool Spike::m_register = GameObjectFactory::registerType(
 
 void Spike::handleCollision(Kirby* kirby)
 {
-	// Delegate the complex cooldown logic to a new function on Kirby.
-	kirby->handleSpikeCollision(this);
+	kirby->handleCollision(this);
 }
 
 void Spike::handleCollision(Enemy* enemy)
