@@ -12,6 +12,7 @@
 #include "Level.h"
 #include "HUD.h"
 #include "SpriteSheet.h"
+#include "MusicManager.h"
 #include <vector>
 #include <memory>
 
@@ -32,6 +33,7 @@ public:
 
 	Level* getLevel();
 	sf::RenderWindow& getWindow();
+	MusicManager& getMusicManager();
 
 	void addScore(unsigned int);
 	unsigned int getScore() const;
@@ -60,8 +62,8 @@ private:
 	std::unique_ptr<Kirby> m_kirby;
 	std::unique_ptr<WorldMap> m_worldMap;
 	std::unique_ptr<GameState> m_currentState;
+	MusicManager m_musicManager;
 
 	std::vector<std::unique_ptr<Enemy>> m_enemies;
 	std::vector<std::unique_ptr<GameObject>> m_fixedObjects;
-	//std::vector<std::unique_ptr<GameObject>> m_allGameObjects;
 };

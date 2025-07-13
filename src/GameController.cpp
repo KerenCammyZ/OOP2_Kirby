@@ -10,7 +10,7 @@ GameController::GameController():
 	m_window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Kirby"), m_currentLevel(1), m_score(0)
 {
 	// Set the initial state to the Main Menu
-	m_currentState = std::make_unique<MainMenuState>();
+	m_currentState = std::make_unique<MainMenuState>(*this);
 	m_kirby = std::make_unique<Kirby>(ResourceManager::getTexture("TestSprite.png"));
 	loadHUD(); // Load the HUD and set up the views for the game and HUD
 }
@@ -27,6 +27,11 @@ void GameController::changeGameState(std::unique_ptr<GameState> newState)
 sf::RenderWindow& GameController::getWindow() 
 {
 	return m_window;
+}
+
+MusicManager& GameController::getMusicManager()
+{
+	return m_musicManager;
 }
 
 Level* GameController::getLevel()
@@ -55,6 +60,9 @@ void GameController::run()
 
 void GameController::loadLevel(int levelNum)
 {
+	std::string musicFilename = "Level" + std::to_string(levelNum) + ".ogg";
+
+	m_musicManager.play(musicFilename);
 	m_level = std::make_unique<Level>(levelNum, m_kirby.get());
 	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
 	m_fixedObjects = m_level->getObjects(); // Load all objects from the level

@@ -2,8 +2,10 @@
 #include "States/GameStates/PlayingState.h"
 #include <iostream>
 
-MainMenuState::MainMenuState()
+MainMenuState::MainMenuState(GameController& game)
 {
+    std::cout << "DEBUG: MainMenuState is being created." << std::endl;
+    game.getMusicManager().play("MainMenu.ogg");
 	// You should use a resource manager, but for simplicity:
     if (!m_font.loadFromFile("Kirbys-Adventure.ttf")) {
         std::cerr << "Error: Could not load font!" << std::endl;
@@ -61,7 +63,7 @@ void MainMenuState::handleEvents(GameController& game)
 
 void MainMenuState::update(float deltaTime, GameController& game)
 {
-    ;
+    
 }
 
 void MainMenuState::draw(GameController& game)
