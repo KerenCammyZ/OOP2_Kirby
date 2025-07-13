@@ -1,7 +1,6 @@
 #pragma once
 #include "PowerUp.h" // The base class
 #include "GameObjectFactory.h" // For factory registration
-#include "GlobalSizes.h" // For colors
 
 class SpeedPowerUp : public PowerUp
 {
@@ -10,7 +9,7 @@ public:
 	void applyEffect(Kirby* kirby) override;
 	void draw();
 
-	ObjectType getType() const { return ObjectType::SPEED_PowerUp; }
+	ObjectType getType() const { return ObjectType::POWERUP; }
 
 private:
 	static bool m_registerSpeedPowerUp;

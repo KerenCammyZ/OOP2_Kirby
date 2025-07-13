@@ -3,7 +3,15 @@
 #include <SFML/Graphics.hpp>
 #include "GlobalSizes.h"
 
-enum class ObjectType { DOOR, FLOOR, WALL, ENEMY, PowerUp, SPEED_PowerUp, EXIT , WATER, DEFAULT };
+enum class ObjectType 
+  { DOOR, 
+	FLOOR, 
+	WALL, 
+	ENEMY, 
+	POWERUP,  
+	EXIT ,
+	WATER, 
+	DEFAULT,  };
 
 class Kirby;
 class Door;
@@ -23,9 +31,6 @@ public:
 	virtual void handleCollision(Kirby* kirby) = 0;
 	virtual void handleCollision(Door* door) = 0;
 	virtual void handleCollision(Enemy* enemy) = 0;
-
-	// enforce override in moving objects only
-	// virtual void handleCollision(Wall* wall) {}
 
 	// --- VIRTUAL SETTERS AND GETTERS ---
 	virtual void setPosition(const sf::Vector2f& position);

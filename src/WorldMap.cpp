@@ -83,13 +83,13 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
                 newObject->setSize({ TILE_SIZE * m_scale.x, TILE_SIZE * m_scale.y });
                 newObject->setPosition(position);
 
-                if (newObject.get()->getType() == ObjectType::ENEMY)
-                {					
-                  newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
-                }
-                if (newObject.get()->getType() == ObjectType::SPEED_PowerUp)
+                // Add a check for all object types that should be ENTITY_SIZE.
+                ObjectType type = newObject->getType();
+                if (type == ObjectType::ENEMY ||
+                    type == ObjectType::POWERUP)
                 {
-                   newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
+                    // If it's an enemy or a power-up, reset its size to the correct, larger size.
+                    newObject->setSize({ ENTITY_SIZE, ENTITY_SIZE });
                 }
 
                 createdObjects.push_back(std::move(newObject));

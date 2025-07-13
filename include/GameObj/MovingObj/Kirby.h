@@ -51,6 +51,7 @@ public:
 	void heal(int healAmount);
 	void takeDamage(int damageAmount);
 	void loseLife();
+	void addLife(int lifeAmount);
 	int getLives() const;
 	int getHealth() const;
 	int getMaxHealth() const;
