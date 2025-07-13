@@ -203,10 +203,12 @@ void GameController::update(float deltaTime)
 
 	for (auto& enemy : m_enemies)
 	{
+
+		enemy->update(deltaTime);
+		
 		if(enemy->isSwallowed())
 			addScore(enemy->getScoreValue());
 
-		enemy->update(deltaTime);
 	}
 
 	m_kirby->setInWater(false);

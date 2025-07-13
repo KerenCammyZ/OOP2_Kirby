@@ -202,9 +202,7 @@ void Enemy::stun(float duration)
 // Handle the enemy being swallowed by Kirby
 void Enemy::onSwallowed()
 {
-	m_sprite.setColor(sf::Color::Red);
 	m_state = EnemyState::SWALLOWED;
-	std::cout << "Enemy swallowed!" << std::endl;
 	// remove enemy from the game world
 }
 
