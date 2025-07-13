@@ -2,6 +2,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "GlobalSizes.h"
+#include "ResourceManager.h"
 
 enum class ObjectType { DOOR, FLOOR, WALL, ENEMY, PowerUp, SPEED_PowerUp, EXIT , WATER, DEFAULT };
 

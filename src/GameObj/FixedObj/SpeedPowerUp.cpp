@@ -13,18 +13,18 @@ bool SpeedPowerUp::m_registerSpeedPowerUp = GameObjectFactory::registerType(
 
 		// --- NEW: Load and set the texture for the PowerUp ---
 		auto PowerUpTexture = std::make_shared<sf::Texture>();
-		if (PowerUpTexture->loadFromFile("SpeedPowerUp.png"))
-		{
+
+		// Use ResourceManager to get the texture
+		try {
+			auto PowerUpTexture = ResourceManager::getInstance().getTexture("SpeedPowerUp.png");
 			PowerUp->setTexture(PowerUpTexture);
 			// --- THIS IS THE FIX ---
 			// After setting the texture, we must also set the size.
 			// This forces the sprite's scale to be calculated correctly.
 			PowerUp->setSize({ ENTITY_SIZE, ENTITY_SIZE });
 		}
-		else
-		{
-			// Optional: Log an error if the texture can't be found
-			std::cerr << "Failed to load SpeedPowerUp.png\n";
+		catch (const std::exception& e) {
+			std::cerr << "Failed to load SpeedPowerUp.png: " << e.what() << std::endl;
 		}
 
 		return PowerUp;
