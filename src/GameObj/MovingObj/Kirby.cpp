@@ -385,6 +385,16 @@ void Kirby::loseLife()
 	}
 }
 
+void Kirby::addLife(int lifeAmount)
+{
+	m_lives += lifeAmount;
+	//std::cout << "Life added! Lives remaining: " << m_lives << std::endl;
+	if (m_lives > 9) // Cap lives at 9
+	{
+		m_lives = 9;
+	}
+}
+
 // Prevents rapid damage by setting invincibility timer
 void Kirby::activateInvincibility(float deltaTime)
 {
@@ -456,4 +466,15 @@ int Kirby::getHealth() const
 int Kirby::getMaxHealth() const 
 { 
 	return m_maxHealth; 
+}
+
+// This is the double-dispatch target. It just calls the specific handler.
+void Kirby::handleCollision(Spike* spike)
+{
+	// First, check if Kirby is already invincible from another source.
+	if (isInvincible()) return;
+
+
+	// If we are not immune, take 1 damage.
+	takeDamage(1);
 }

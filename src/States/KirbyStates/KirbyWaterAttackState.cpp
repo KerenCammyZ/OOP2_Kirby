@@ -8,7 +8,7 @@ KirbyWaterAttackState::KirbyWaterAttackState(Kirby& kirby, std::vector<std::uniq
 	: m_enemies(enemies), m_stateDuration(0.3f) // A quick, 0.3-second burst
 {
 	// Configure the visual and hitbox for the water stream.
-	float streamLength = 70.f; // How far the water shoots
+	float streamLength = 35.f; // How far the water shoots
 	float streamHeight = 12.f; // How thick the stream is
 	m_waterStreamHitbox.setSize({ streamLength, streamHeight });
 	m_waterStreamHitbox.setFillColor(sf::Color(120, 180, 255, 180)); // A nice water-blue

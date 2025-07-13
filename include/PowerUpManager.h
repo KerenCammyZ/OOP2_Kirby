@@ -11,6 +11,7 @@ class PowerUpManager
 public:
 	void add(std::unique_ptr<PowerUpCommand> command, Kirby& kirby);
 	void update(float deltaTime, Kirby& kirby);
+	PowerUpCommand getLastPowerUpEffect();
 
 private:
 	struct ActivePowerUpEffect

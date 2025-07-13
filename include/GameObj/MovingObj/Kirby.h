@@ -12,6 +12,7 @@
 class KirbyState;
 class Wall;
 class PowerUpCommand;
+class Spike;
 
 enum class PowerUpType { None, Spark };
 enum class FacingDirection { Left = -1, Right = 1 };
@@ -53,13 +54,14 @@ public:
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override {};
-	//void handleCollision(Door* door) override;
-	void handleCollision(Door* door);
+	void handleCollision(Door* door) override;
+	void handleCollision(Spike* spike) override;
 
 	// Kirby's health and lives management
 	void heal(int healAmount);
 	void takeDamage(int damageAmount);
 	void loseLife();
+	void addLife(int lifeAmount);
 	int getLives() const;
 	int getHealth() const;
 	int getMaxHealth() const;

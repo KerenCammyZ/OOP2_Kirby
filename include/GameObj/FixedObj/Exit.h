@@ -15,6 +15,8 @@ public:
 	// Fulfills the abstract base class requirement.
 	//void handleCollision(Door* door) override {};
 
+	void handleCollision(Spike* spike) override {};
+
 	// Returns its unique type.
 	ObjectType getType() const override { return ObjectType::EXIT; }
 };

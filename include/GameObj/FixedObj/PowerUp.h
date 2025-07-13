@@ -19,6 +19,8 @@ public:
 	// PowerUps don't collide with doors
 	//void handleCollision(Door* door) override {};
 
+	void handleCollision(Spike* spike) override {};
+
 	bool isCollected() const { return m_isCollected; }
 
 	//// --- NEW: Override the draw function for debugging ---
