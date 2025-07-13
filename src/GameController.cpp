@@ -359,13 +359,19 @@ void GameController::drawHUD()
 	int lives = m_kirby->getLives();
 	int score = getScore();
 
+	PowerUpType powerUp = m_kirby->getCurrentPower();
+
 	std::string kirbyState;
-	//if (m_kirby->isInvincible())
-		//state = "invincible"; // TODO: Replace with a m_kirby->get() function
-	if (m_kirby->isHyper())
+	if (powerUp == PowerUpType::Spark)
+		kirbyState = "spark";
+	else if (m_kirby->isInvincible())
+		kirbyState = "invincible";
+	else if (m_kirby->isHyper())
 		kirbyState = "hyper";      // maybe getCurrentPower() / getCurrentState() / getStateDisplay(), ..
 	else
 		kirbyState = "normal";
+	
+
 
 	m_hud->updateGameData(kirbyHealth, lives, score, kirbyState);
 

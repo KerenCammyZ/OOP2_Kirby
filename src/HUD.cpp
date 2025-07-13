@@ -1,6 +1,8 @@
 // HUD.cpp
+#pragma once
 #include "HUD.h"
 #include "GlobalSizes.h"
+#include "GameController.h"
 #include <iostream>
 
 struct HUDLayout {
@@ -60,9 +62,10 @@ bool HUD::loadSpriteSheet(const std::string& filePath) {
      // m_spriteSheet->addSpriteGrid("digit", 0, 0, 8, 8, 10, 10);
 
 
-    m_spriteSheet->addSprite("normal", 0, 42, 32, 40); // sprite for normal state
-    m_spriteSheet->addSprite("hyper", 32, 42, 32, 40); // sprite for hyper state
-    //m_spriteSheet->addSprite("invincible", 64, 30, 32, 40); // sprite for invincible state
+    m_spriteSheet->addSprite("normal", 0, 42, 32, 41); // sprite for normal state
+    m_spriteSheet->addSprite("hyper", 32, 42, 32, 41); // sprite for hyper state
+    m_spriteSheet->addSprite("spark", 64, 42, 32, 41); // sprite for spark power up state
+    m_spriteSheet->addSprite("invincible", 96, 42, 32, 41); // sprite for invincible state
 
     m_spriteSheet->addSprite("kirbyText", 0, 0, 50, 10); // kirby title
     m_spriteSheet->addSprite("scoreText", 0, 10, 50, 10); // score title
@@ -88,15 +91,10 @@ void HUD::draw(sf::RenderTarget& target) {
     if (!m_hudTexture) {
         return; // No texture loaded
     }
-
     // draw background first
     target.draw(m_hudSprite);
 
-    // draw state 'normal state' at HUD coordinate (577, 33)
-    sf::Vector2f scale = getHUDScale();
-    sf::Vector2f statePos = hudToScreen(144, 8);
-    m_spriteSheet->drawSprite(target, m_kirbyState, statePos.x, statePos.y, scale.x, scale.y); // kirby state display
-
+    drawState(target, 144, 8);
     drawLives(target, 187, 20);
     drawHealthBar(target, 72, 13);
     drawScore(target, m_score, 72, 32);
@@ -137,6 +135,14 @@ void HUD::drawScore(sf::RenderTarget& target, unsigned int score, float x, float
             digitPosX += 8; // each digit is 8 pixels wide
         }
     }
+}
+
+// Display Kirby's State
+void HUD::drawState(sf::RenderTarget& target, float x, float y)
+{
+    sf::Vector2f scale = getHUDScale();
+    sf::Vector2f statePos = hudToScreen(144, 8);
+    m_spriteSheet->drawSprite(target, m_kirbyState, statePos.x, statePos.y, scale.x, scale.y);
 }
 
 void HUD::drawLives(sf::RenderTarget& target, float x, float y) {

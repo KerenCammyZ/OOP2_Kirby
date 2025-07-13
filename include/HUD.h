@@ -26,6 +26,7 @@ public:
 
     // Example HUD element drawing functions
     void drawScore(sf::RenderTarget& target, unsigned int score, float x, float y);
+    void drawState(sf::RenderTarget& target, float x, float y);
     void drawLives(sf::RenderTarget& target, float x, float y);
     void drawHealthBar(sf::RenderTarget& target, float x, float y);
 
