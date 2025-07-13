@@ -4,10 +4,12 @@
 
 MainMenuState::MainMenuState(GameController& game)
 {
-    std::cout << "DEBUG: MainMenuState is being created." << std::endl;
     game.getMusicManager().play("MainMenu.ogg");
-	// You should use a resource manager, but for simplicity:
-    if (!m_font.loadFromFile("Kirbys-Adventure.ttf")) {
+	
+	auto fontPtr = ResourceManager::getInstance().getFont("Kirbys-Adventure.ttf");
+    if (fontPtr) {
+        m_font = *fontPtr;
+    } else {
         std::cerr << "Error: Could not load font!" << std::endl;
     }
 

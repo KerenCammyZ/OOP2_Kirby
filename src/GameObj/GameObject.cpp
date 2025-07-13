@@ -5,17 +5,15 @@
 
 GameObject::GameObject()
 {
-	setPosition(sf::Vector2f(0.f, 0.f)); // Initialize position to (0, 0)
-	setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE)); // Default size based on ENTITY_SIZE
-	//setPosition(m_position);
+	setPosition(sf::Vector2f(0.f, 0.f)); 
+	setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE)); 
 }
 
 GameObject::GameObject(const std::shared_ptr<sf::Texture>& texture)
 {
-	setTexture(texture); // Set the texture for the sprite
-	setPosition(sf::Vector2f(0.f, 0.f)); // Initialize position to (0, 0)
-	setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE)); // Default size based on ENTITY_SIZE
-	//setPosition(m_position);
+	setTexture(texture);
+	setPosition(sf::Vector2f(0.f, 0.f));
+	setSize(sf::Vector2f(ENTITY_SIZE, ENTITY_SIZE)); 
 }
 
 bool GameObject::collidesWith(GameObject& other) const
@@ -35,8 +33,8 @@ void GameObject::draw(sf::RenderTarget& target) const
 void GameObject::update(float dt)
 {
 	if (m_texture) {
-		sf::Vector2u texSize = m_texture->getSize();      // 16×16
-		m_sprite.setOrigin(texSize.x / 2.f, texSize.y / 2.f);  // Origin at (8, 8)
+		sf::Vector2u texSize = m_texture->getSize();  
+		m_sprite.setOrigin(texSize.x / 2.f, texSize.y / 2.f);
 	}
 	m_sprite.setPosition(m_position);
 }
@@ -53,16 +51,16 @@ sf::Vector2f GameObject::getPosition() const
 	return m_position;
 }
 
-// Sets GameObject size and centers origin by scaling sprite to match texture dimensions.
+// Sets GameObject size and centers origin by scaling sprite to match texture dimensions
 void GameObject::setSize(const sf::Vector2f& size)
 {
 	m_size = size;
 
-	if (m_texture)	// Check if the texture is loaded before trying to get its size
+	if (m_texture)
 	{
 		sf::Vector2u textureSize = m_texture->getSize(); // original size in pixels
 
-		if (textureSize.x > 0 && textureSize.y > 0) // Avoid division by zero if texture is empty
+		if (textureSize.x > 0 && textureSize.y > 0)
 		{
 			// Calculate the scale factors by dividing the desired size by the texture's original size
 			// (determines how much the texture should be scaled to fit the desired size)

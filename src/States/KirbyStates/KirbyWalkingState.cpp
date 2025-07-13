@@ -1,7 +1,7 @@
 #include "States/KirbyStates/KirbyWalkingState.h"
 #include "States/KirbyStates/KirbyStandingState.h"
 #include "States/KirbyStates/KirbyJumpingState.h"
-#include "States/KirbyStates/KirbyFallingState.h"  // Include falling
+#include "States/KirbyStates/KirbyFallingState.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 
@@ -9,9 +9,6 @@
 
 std::unique_ptr<KirbyState> KirbyWalkingState::handleInput(Kirby& kirby)
 {
-	// --- THIS IS THE "WALK OFF A CLIFF" LOGIC ---
-	// If we are no longer on the ground, we must be falling.
-	// Only transition to falling if Kirby is not grounded AND is moving downward
 	if (!kirby.isGrounded()) {
 			return std::make_unique<KirbyAirborneState>();
 	}

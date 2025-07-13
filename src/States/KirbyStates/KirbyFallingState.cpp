@@ -4,5 +4,5 @@
 
 void KirbyFallingState::enter(Kirby& kirby)
 {
-	//kirby.setAnimation("falling");
+	;
 }

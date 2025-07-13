@@ -7,10 +7,9 @@
 
 std::unique_ptr<KirbyState> KirbyAirborneState::handleInput(Kirby& kirby)
 {
-	// **IMPROVEMENT**: Allow jumping even when in mid-air.
+	// Allow jumping even when in mid-air.
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		// This will allow you to jump out of a falling state.
 		return std::make_unique<KirbyJumpingState>();
 	}
 
@@ -25,12 +24,12 @@ std::unique_ptr<KirbyState> KirbyAirborneState::handleInput(Kirby& kirby)
 
 void KirbyAirborneState::update(Kirby& kirby, float deltaTime)
 {
-	// 1. Apply Gravity
+	// Apply Gravity
 	sf::Vector2f currentVelocity = kirby.getVelocity();
 	currentVelocity.y += GRAVITY * deltaTime;
 	kirby.setVelocity(currentVelocity);
 
-	// 2. Handle Horizontal Air Control
+	// Handle Horizontal Air Control
 	float speed = kirby.getSpeed() * 0.9f; // Slight speed reduction in air
 	float horizontalVelocity = 0.f;
 

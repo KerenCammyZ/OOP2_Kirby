@@ -10,7 +10,6 @@ KirbyWaterAttackState::KirbyWaterAttackState(Kirby& kirby, std::vector<std::uniq
 {
     m_waterStream = std::make_unique<Animator>();
     if (m_waterStream->loadSpriteSheet("KirbySpriteSheet.png")) {
-        // Use your actual frame size and position
         m_waterStream->addGridAnimation("water_attack", 16, 111, 16, 16, 3, 0.15f, true);
         m_waterStream->play("water_attack");
     }
@@ -19,7 +18,6 @@ KirbyWaterAttackState::KirbyWaterAttackState(Kirby& kirby, std::vector<std::uniq
 void KirbyWaterAttackState::enter(Kirby& kirby)
 {
     kirby.setVelocity({ 0.f, kirby.getVelocity().y });
-   // kirby.setAnimation("water_attack");
 }
 
 std::unique_ptr<KirbyState> KirbyWaterAttackState::handleInput(Kirby& kirby)
@@ -75,7 +73,6 @@ void KirbyWaterAttackState::update(Kirby& kirby, float deltaTime)
 void KirbyWaterAttackState::draw(sf::RenderTarget& target)
 {
     if (m_waterStream) {
-        // Scale to Kirby's size
         float animFrameWidth = 16.f;
         float animFrameHeight = 16.f;
         float scaleX = (ENTITY_SIZE / animFrameWidth) * m_streamDirection;

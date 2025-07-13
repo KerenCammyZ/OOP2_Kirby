@@ -1,5 +1,6 @@
 // Animator.cpp
 #include "Animator.h"
+#include "ResourceManager.h"
 #include <iostream>
 
 Animator::Animator()
@@ -8,15 +9,12 @@ Animator::Animator()
 }
 
 bool Animator::loadSpriteSheet(const std::string& filePath) {
-    m_texture = std::make_shared<sf::Texture>();
-
-    if (!m_texture->loadFromFile(filePath)) {
+	m_texture = ResourceManager::getInstance().getTexture(filePath);
+    if (!m_texture) {
         std::cerr << "Failed to load spritesheet: " << filePath << std::endl;
         return false;
     }
-
     m_sprite.setTexture(*m_texture);
-    std::cout << "Loaded spritesheet: " << filePath << std::endl;
     return true;
 }
 
@@ -34,7 +32,6 @@ void Animator::addGridAnimation(const std::string& name, int startX, int startY,
     data.loop = loop;
 
     m_animations[name] = data;
-    std::cout << "Added animation '" << name << "' with " << frameCount << " frames" << std::endl;
 }
 
 void Animator::play(const std::string& animationName) {
