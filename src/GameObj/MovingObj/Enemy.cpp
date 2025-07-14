@@ -12,7 +12,7 @@
 #include "Behaviors/IgnoreWalls.h"
 #include "Commands/SparkCommand.h"
 
-sf::Color WaddleDeeColor(0, 0, 40);
+sf::Color WaddleDeeColor(255, 0, 110);
 sf::Color TwizzyColor(0, 0, 80);
 sf::Color sparkyColor(0, 0, 120);
 
