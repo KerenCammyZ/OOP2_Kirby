@@ -21,7 +21,7 @@ void Floor::handleCollision(Kirby* kirby)
 	sf::FloatRect kirbyBounds = kirby->getBounds();
 	sf::FloatRect floorBounds = getBounds();
 	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
-	const int floorHeight = floorBounds.height;
+	const int floorHeight = floorBounds.height * 1.5;
 	
 	// Check if Kirby was coming from above OR is already walking on the floor.
 	// A small tolerance (e.g., 1.0f) handles floating-point inaccuracies.

@@ -40,7 +40,7 @@ Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 
 void Kirby::setupAnimations() {
 	m_animator->addGridAnimation("idle", 0, 0, 16, 16, 1, 0.5f, true);
-	m_animator->addGridAnimation("walking", 0, 16, 16, 16, 4, 0.15f, false);
+	m_animator->addGridAnimation("walking", 0, 16, 16, 16, 4, 0.15f, true);
 	m_animator->addGridAnimation("falling", 0, 31, 16, 16, 1, 0.3f, true);
 	m_animator->addGridAnimation("swallowing", 0, 48, 16, 16, 3, 0.2f, false);
 	m_animator->addGridAnimation("jumping", 0, 63, 16, 16, 2, 0.2f, false);
