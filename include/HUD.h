@@ -2,6 +2,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "SpriteSheet.h"
+#include "Animator.h"
 #include <memory>
 
 class HUD {
@@ -26,10 +27,20 @@ public:
 
     // Example HUD element drawing functions
     void drawScore(sf::RenderTarget& target, unsigned int score, float x, float y);
+    void drawState(sf::RenderTarget& target, float x, float y);
     void drawLives(sf::RenderTarget& target, float x, float y);
     void drawHealthBar(sf::RenderTarget& target, float x, float y);
 
 private:
+    // Helper to get the scale factors for sprites to match HUD stretching
+    sf::Vector2f getHUDScale();
+
+    // Helper to convert HUD coordinates to screen coordinates
+    sf::Vector2f hudToScreen(float hudX, float hudY);
+
+    // Helper method to update sprite scaling and position
+    void updateSprite();
+
     std::shared_ptr<sf::Texture> m_hudTexture;
     sf::Sprite m_hudSprite;
 
@@ -38,16 +49,7 @@ private:
 
     // Display area (where HUD should be drawn)
     sf::FloatRect m_displayArea;
-
-    // Helper method to update sprite scaling and position
-    void updateSprite();
-
-    // Helper to convert HUD coordinates to screen coordinates
-    sf::Vector2f hudToScreen(float hudX, float hudY);
-
-    // Helper to get the scale factors for sprites to match HUD stretching
-    sf::Vector2f getHUDScale();
-
+    
     // Game state data (updated each frame)
     int m_score;
     int m_lives;

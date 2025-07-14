@@ -28,7 +28,6 @@ void KirbySparkAttackState::enter(Kirby& kirby)
 
 std::unique_ptr<KirbyState> KirbySparkAttackState::handleInput(Kirby& kirby)
 {
-	// This function's ONLY job is now to check if the attack is over.
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
 		// The attack is finished, transition back to the standing state.
@@ -57,7 +56,6 @@ void KirbySparkAttackState::update(Kirby& kirby, float deltaTime)
 		m_sparkAura.setOrigin(newRadius, newRadius); // Keep the origin centered on the circle
 		m_sparkAura.setPosition(kirby.getPosition());
 
-		// --- THIS IS THE FIX ---
 		// Move the collision check from handleInput to update.
 		// This loop now runs every frame, constantly checking the growing aura.
 		for (auto& enemy : m_enemies)

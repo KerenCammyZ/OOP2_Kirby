@@ -23,8 +23,3 @@ void PowerUpManager::update(float deltaTime, Kirby& kirby)
 
 	m_activeEffects.erase(it, m_activeEffects.end());
 }
-
-//PowerUpCommand PowerUpManager::getLastPowerUpEffect()
-//{
-//	return  m_activeEffects.back().command.get();
-//}

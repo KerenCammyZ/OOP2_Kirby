@@ -7,7 +7,6 @@
 
 void KirbySwimmingState::enter(Kirby& kirby)
 {
-	std::cout << "entered swimming state\n";
 	// When entering water, kill any existing vertical velocity from a jump/fall.
 	kirby.setVelocity({ kirby.getVelocity().x, 0.f });
 	kirby.setAnimation("swimming");
@@ -26,15 +25,15 @@ std::unique_ptr<KirbyState> KirbySwimmingState::handleInput(Kirby& kirby)
 
 void KirbySwimmingState::update(Kirby& kirby, float deltaTime)
 {
-	//std::cout << "Kirby is updating in swimming state\n";
-	// 1. Apply Water Physics
+
+	//  Apply Water Physics
 	sf::Vector2f velocity = kirby.getVelocity();
 	// Gravity still applies, but buoyancy pushes upward.
 	velocity.y += (GRAVITY + BUOYANCY) * deltaTime;
 	// Water drag slows down movement.
 	velocity *= (1.0f - WATER_DRAG * deltaTime);
 
-	// 2. Handle Swimming Controls
+	// Handle Swimming Controls
 	float swimSpeed = kirby.getSpeed() * 0.75f; // Swimming is a bit slower
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -48,13 +47,11 @@ void KirbySwimmingState::update(Kirby& kirby, float deltaTime)
 		kirby.setFacingDirection(FacingDirection::Right);
 	}
 
-	// Pressing UP makes Kirby swim upwards
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		velocity.y = -swimSpeed - BUOYANCY;
 	}
 
-	//Pressing DOWN makes Kirby swim downwards
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
 		velocity.y = swimSpeed + BUOYANCY;

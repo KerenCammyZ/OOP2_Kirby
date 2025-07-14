@@ -17,7 +17,7 @@ struct SpriteInfo {
 
 class SpriteSheet {
 public:
-    SpriteSheet();
+    SpriteSheet() = default;
     ~SpriteSheet() = default;
 
     // Load the spritesheet texture

@@ -16,7 +16,7 @@
 #include <typeinfo> 
 
 Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
-	: m_velocity(0.f, 0.f), m_isGrounded(false), m_inWater(false), // Initialize physics members
+	: m_velocity(0.f, 0.f), m_isGrounded(false), m_inWater(false),
 	m_lastAnimationState("idle"), m_animationChangeDelay(0.0f)
 {
 	setTexture(kirbyTexture);
@@ -52,7 +52,6 @@ void Kirby::setupAnimations() {
 	m_animator->addGridAnimation("swallowing", 0, 48, 16, 16, 3, 0.2f, false);
 	m_animator->addGridAnimation("jumping", 0, 63, 16, 16, 2, 0.2f, false);
 	m_animator->addGridAnimation("swimming", 0, 79, 16, 16, 4, 0.25f, true);
-	m_animator->addGridAnimation("water_attack", 0, 111, 16, 16, 4, 0.5f, false);
 	m_animator->addGridAnimation("spark_attack", 0, 175, 16, 16, 4, 0.5f, false);
 }
 
@@ -67,10 +66,9 @@ void Kirby::updateAnimation(float deltaTime) {
 	m_animationChangeDelay -= deltaTime;
 	
 	// Update facing direction based on actual movement
-	if (std::abs(m_velocity.x) > 10.0f) {  // Only change direction when actually moving
+	if (std::abs(m_velocity.x) > 10.0f) {
 		m_facingLeft = (m_velocity.x < 0);
 	}
-
 
 	std::string targetAnimation = "idle";
 
@@ -125,8 +123,6 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 		float distanceX = enemy->getPosition().x - getPosition().x;
 		float distanceY = enemy->getPosition().y - getPosition().y;
 
-		// The vertical tolerance is now much larger (ENTITY_SIZE / 2.0f),
-		// allowing Kirby to swallow enemies that are not perfectly aligned.
 		bool inVerticalRange = std::abs(distanceY) < (ENTITY_SIZE / 2.0f);
 		bool inHorizontalRange = std::abs(distanceX) <= range;
 
@@ -136,24 +132,15 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 		if (collidesWith(*enemy))
 			continue; // do nothing
 
-		if (facingLeft && distanceX < 0 && inRange)
+		if ((facingLeft && distanceX < 0 && inRange) || (distanceX > 0 && inRange))
 		{
 			enemy->startBeingSwallowed();
 			setAnimation("swallowing");
-			std::cout << "Swallowing enemy from the left!" << std::endl;
-			break;
-		}
-		else if (distanceX > 0 && inRange)
-		{
-			enemy->startBeingSwallowed();
-			setAnimation("swallowing");
-			std::cout << "Swallowing enemy from the right!" << std::endl;
 			break;
 		}
 	}
 }
 
-// --- IMPLEMENT NEW POWER-UP FUNCTIONS ---
 void Kirby::setPower(PowerUpType power)
 {
 	m_currentPower = power;
@@ -163,7 +150,6 @@ PowerUpType Kirby::getCurrentPower() const
 {
 	return m_currentPower;
 }
-
 
 void Kirby::draw(sf::RenderTarget& target) const
 {
@@ -179,7 +165,7 @@ void Kirby::draw(sf::RenderTarget& target) const
 	else
 		MovingObject::draw(target);
 
-	// Then, allow the current state to draw any special effects over Kirby
+	// allow the current state to draw any special effects over Kirby
 	if (m_state)
 	{
 		m_state->draw(target);
@@ -195,7 +181,7 @@ void Kirby::update(float deltaTime)
 
 	if (m_animator) m_animator->update(deltaTime);
 	
-	if (m_isInvincible) // set to true in function takeDamage
+	if (m_isInvincible)
 		activateInvincibility(deltaTime);
 
 	std::unique_ptr<KirbyState> newState = nullptr;
@@ -224,7 +210,6 @@ void Kirby::update(float deltaTime)
 	}
 	else
 	{
-		// If no high-priority change, let the current state handle input.
 		newState = m_state->handleInput(*this);
 	}
 
@@ -248,7 +233,7 @@ void Kirby::move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>
 			newPosition.x += dx;
 		}
 		else {
-			m_velocity.x = 0.f; // Stop horizontal movement if blocked
+			m_velocity.x = 0.f;
 		}
 	}
 
@@ -261,7 +246,7 @@ void Kirby::move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>
 			newPosition.y += dy;
 		}
 		else {
-			m_velocity.y = 0.f; // Stop vertical movement if blocked
+			m_velocity.y = 0.f;
 		}
 	}
 
@@ -274,14 +259,17 @@ void Kirby::move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>
 
 	GameObject::update(deltaTime);
 }
+
 void Kirby::setFacingDirection(FacingDirection dir)
 {
 	m_facingDirection = dir;
 }
+
 FacingDirection Kirby::getFacingDirection() const
 {
 	return m_facingDirection;
 }
+
 void Kirby::setState(std::unique_ptr<KirbyState> state)
 {
 	if (state)
@@ -294,6 +282,7 @@ void Kirby::setState(std::unique_ptr<KirbyState> state)
 		std::cerr << "Error: Attempted to set Kirby state to nullptr!" << std::endl;
 	}
 }
+
 bool Kirby::willCollideAt(const sf::Vector2f& intendedPosition, const std::vector<std::unique_ptr<GameObject>>& obstacles) const
 {
 	// Create a temporary bounding box for the intended position
@@ -370,10 +359,10 @@ void Kirby::loseLife()
 	}
 }
 
+
 void Kirby::addLife(int lifeAmount)
 {
 	m_lives += lifeAmount;
-	//std::cout << "Life added! Lives remaining: " << m_lives << std::endl;
 	if (m_lives > 9) // Cap lives at 9
 	{
 		m_lives = 9;
@@ -400,7 +389,8 @@ void Kirby::activateInvincibility(float deltaTime)
 	}
 	if (!m_isInvincible)
 	{
-		m_sprite.setColor(sf::Color::White); // Ensure normal color once invinciblity is over
+		// Ensure normal color once invinciblity is over
+		m_sprite.setColor(sf::Color::White); 
 	}
 }
 
@@ -428,8 +418,6 @@ bool Kirby::isHyper() const { return m_isHyper; }
 void Kirby::setHyper(bool hyper) { m_isHyper = hyper; }
 bool Kirby::isInvincible() const { return m_isInvincible; }
 
-// --- NEW PHYSICS METHOD DEFINITIONS ---
-
 void Kirby::setVelocity(const sf::Vector2f& velocity) { m_velocity = velocity; }
 sf::Vector2f Kirby::getVelocity() const { return m_velocity; }
 
@@ -439,27 +427,15 @@ bool Kirby::isGrounded() const { return m_isGrounded; }
 void Kirby::setInWater(bool inWater) { m_inWater = inWater; }
 bool Kirby::isInWater() const { return m_inWater; }
 
-// other getter/setters
-int Kirby::getLives() const
-{ 	
-	return m_lives; 	
-}
-int Kirby::getHealth() const 
-{ 
-	return m_health; 
-}
-int Kirby::getMaxHealth() const 
-{ 
-	return m_maxHealth; 
-}
+int Kirby::getLives() const { return m_lives; }
+int Kirby::getHealth() const { return m_health; }
+int Kirby::getMaxHealth() const { return m_maxHealth; }
 
-// This is the double-dispatch target. It just calls the specific handler.
+
 void Kirby::handleCollision(Spike* spike)
 {
-	// First, check if Kirby is already invincible from another source.
-	if (isInvincible()) return;
+	if (isInvincible())
+		return;
 
-
-	// If we are not immune, take 1 damage.
 	takeDamage(1);
 }

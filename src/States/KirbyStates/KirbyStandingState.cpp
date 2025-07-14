@@ -23,7 +23,6 @@ std::unique_ptr<KirbyState> KirbyStandingState::handleInput(Kirby& kirby)
 
 void KirbyStandingState::update(Kirby& kirby, float deltaTime)
 {
-	// **THIS IS THE FIX**:
 	// When standing, Kirby should have zero velocity. This prevents
 	// him from sliding and stops gravity from accumulating.
 	kirby.setVelocity({ 0.f, 0.f });

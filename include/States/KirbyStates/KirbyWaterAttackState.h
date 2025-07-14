@@ -3,25 +3,24 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
+#include "Animator.h"
 
-class Enemy; // Forward-declaration
+class Enemy;
 
-// This state handles the logic for the short-range water fountain attack.
 class KirbyWaterAttackState : public KirbyState
 {
 public:
-	// The constructor needs access to the list of enemies to check for collisions.
-	KirbyWaterAttackState(Kirby& kirby, std::vector<std::unique_ptr<Enemy>>& enemies);
+    KirbyWaterAttackState(Kirby& kirby, std::vector<std::unique_ptr<Enemy>>& enemies);
 
-	void enter(Kirby& kirby) override;
-	std::unique_ptr<KirbyState> handleInput(Kirby& kirby) override;
-	void update(Kirby& kirby, float deltaTime) override;
-
-	// This state will draw the water stream itself.
-	void draw(sf::RenderTarget& target) override;
+    void enter(Kirby& kirby) override;
+    std::unique_ptr<KirbyState> handleInput(Kirby& kirby) override;
+    void update(Kirby& kirby, float deltaTime) override;
+    void draw(sf::RenderTarget& target) override;
 
 private:
-	std::vector<std::unique_ptr<Enemy>>& m_enemies;
-	sf::RectangleShape m_waterStreamHitbox; // The visual and hitbox for the attack
-	float m_stateDuration;                  // How long the attack lasts
+    std::vector<std::unique_ptr<Enemy>>& m_enemies;
+    std::unique_ptr<Animator> m_waterStream;
+    sf::Vector2f m_streamPosition;
+    int m_streamDirection = 1;
+    float m_stateDuration;
 };

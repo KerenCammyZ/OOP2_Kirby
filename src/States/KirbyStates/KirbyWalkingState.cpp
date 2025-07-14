@@ -1,7 +1,7 @@
 #include "States/KirbyStates/KirbyWalkingState.h"
 #include "States/KirbyStates/KirbyStandingState.h"
 #include "States/KirbyStates/KirbyJumpingState.h"
-#include "States/KirbyStates/KirbyFallingState.h"  // Include falling
+#include "States/KirbyStates/KirbyFallingState.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 
@@ -51,9 +51,6 @@ void KirbyWalkingState::update(Kirby& kirby, float deltaTime)
 		horizontalVelocity += speed;
 		kirby.setFacingDirection(FacingDirection::Right);
 	}
-
-	// Debug: Show current facing direction
-	std::cout << "Kirby facing left: " << (kirby.isFacingLeft() ? "YES" : "NO") << std::endl;
 
 	// The walking state now controls horizontal velocity.
 	kirby.setVelocity({ horizontalVelocity, 0.f });

@@ -3,11 +3,8 @@
 #include "GameObj/MovingObj/Enemy.h"
 #include "GameObjectFactory.h"
 
-// Choose a unique color for spikes in your collision map.
-// This example uses pure black.
-const sf::Color spikeColor(0, 0, 0);
+const sf::Color spikeColor(0, 0, 0);  // Pure black
 
-// Register the Spike object with the factory.
 bool Spike::m_register = GameObjectFactory::registerType(
 	spikeColor,
 	[](sf::Vector2f position, Kirby* kirby) -> std::unique_ptr<GameObject>

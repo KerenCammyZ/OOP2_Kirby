@@ -1,4 +1,5 @@
 #include "Level.h"
+#include "ResourceManager.h"
 #include "GameObj/MovingObj/Enemy.h" // Ensure Enemy is included for dynamic_cast
 
 Level::Level(int levelNumber, Kirby* kirby)
@@ -7,14 +8,12 @@ Level::Level(int levelNumber, Kirby* kirby)
 	collisionMap = "Level" + std::to_string(levelNumber) + "Collisions.png";
 	backgroundImage = "Level" + std::to_string(levelNumber) + ".png";
 
-	// --- FIX 1: Initialize the shared_ptr before using it ---
-	m_worldMapTexture = std::make_shared<sf::Texture>();
-	if (!m_worldMapTexture->loadFromFile(backgroundImage))
+	m_worldMapTexture = ResourceManager::getInstance().getTexture(backgroundImage);
+	if (!m_worldMapTexture)
 	{
 		throw std::runtime_error("Failed to load world map texture: " + backgroundImage);
 	}
 
-	// Now that the texture is valid, create the WorldMap
 	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
 
 	// Load all the objects associated with this level
@@ -45,16 +44,7 @@ void Level::loadObjects( Kirby* kirby)
 	std::cout << "Loaded " << m_enemies.size() << " enemies.\n";
 }
 
-// --- FIX 2: Use std::move to transfer ownership of the vectors ---
-//std::vector<std::unique_ptr<GameObject>>&& Level::getObjects()
-//{
-//	return std::move(m_objects);
-//}
-//
-//std::vector<std::unique_ptr<Enemy>>&& Level::getEnemies()
-//{
-//	return std::move(m_enemies);
-//}
+
 std::vector<std::unique_ptr<GameObject>> Level::getObjects()
 {
 	return std::move(m_objects);
@@ -65,7 +55,7 @@ std::vector<std::unique_ptr<Enemy>> Level::getEnemies()
 	return std::move(m_enemies);
 }
 
-// This function correctly transfers ownership of the WorldMap
+// transfer ownership of the WorldMap
 std::unique_ptr<WorldMap> Level::getWorldMap()
 {
 	return std::move(m_worldMap);

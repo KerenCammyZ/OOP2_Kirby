@@ -3,9 +3,8 @@
 #include "GameObj/MovingObj/Kirby.h"
 #include <iostream>
 
-// Choose a new, unique color for the life power-up in your collision map.
-// This example uses a bright, pure green.
-const sf::Color lifePowerUpColor(0, 122, 0);
+
+const sf::Color lifePowerUpColor(0, 122, 0); // bright, pure green.
 
 // Register this new object with the GameObjectFactory.
 bool LifePowerUp::m_registerLifePowerUp = GameObjectFactory::registerType(
@@ -14,9 +13,8 @@ bool LifePowerUp::m_registerLifePowerUp = GameObjectFactory::registerType(
 	{
 		auto powerUp = std::make_unique<LifePowerUp>();
 
-		// You will need to create a "LifePowerUp.png" sprite for this.
-		auto powerUpTexture = std::make_shared<sf::Texture>();
-		if (powerUpTexture->loadFromFile("LifePowerUp.png"))
+		auto powerUpTexture = ResourceManager::getInstance().getTexture("LifePowerUp.png");
+		if (powerUpTexture)
 		{
 			powerUp->setTexture(powerUpTexture);
 			powerUp->setSize({ ENTITY_SIZE, ENTITY_SIZE });
@@ -25,14 +23,12 @@ bool LifePowerUp::m_registerLifePowerUp = GameObjectFactory::registerType(
 		{
 			std::cerr << "Failed to load LifePowerUp.png\n";
 		}
-
 		return powerUp;
 	}
 );
 
 void LifePowerUp::applyEffect(Kirby* kirby)
 {
-	// When Kirby collides, create the instant life command
-	// and give it to his manager.
+	// When Kirby collides with this power-up, apply the life effect
 	kirby->addPowerUpEffect(std::make_unique<LifeCommand>());
 }

@@ -2,9 +2,6 @@
 #include "SpriteSheet.h"
 #include <iostream>
 
-SpriteSheet::SpriteSheet() {
-    // Constructor - nothing special needed
-}
 
 bool SpriteSheet::loadTexture(const std::string& filePath) {
     m_texture = std::make_shared<sf::Texture>();
@@ -22,15 +19,15 @@ bool SpriteSheet::loadTexture(const std::string& filePath) {
 }
 
 // Define a sprite type with its dimensions
-void SpriteSheet::defineSpriteType(const std::string& typeName, int width, int height) {
-    // This is mainly for documentation/reference
-   // std::cout << "Defined sprite type '" << typeName << "': " << width << "x" << height << std::endl;
+void SpriteSheet::defineSpriteType(const std::string& typeName, int width, int height)
+{
+    // This is mainly for reference
 }
 
 // Add a specific sprite to the catalog
-void SpriteSheet::addSprite(const std::string& spriteName, int x, int y, int width, int height) {
+void SpriteSheet::addSprite(const std::string& spriteName, int x, int y, int width, int height)
+{
     m_sprites[spriteName] = SpriteInfo(x, y, width, height);
-   // std::cout << "Added sprite '" << spriteName << "' at (" << x << "," << y << ") size " << width << "x" << height << std::endl;
 }
 
 
@@ -88,32 +85,6 @@ void SpriteSheet::setupSprite(const SpriteInfo& info, float x, float y, float sc
     // Set the texture rectangle to the specific sprite area
     m_tempSprite.setTextureRect(sf::IntRect(info.x, info.y, info.width, info.height));
 
-    // Set position and scale
     m_tempSprite.setPosition(x, y);
     m_tempSprite.setScale(scaleX, scaleY);
 }
-
-
-// Additional Documentation:
-/*
-* SpriteSheet::addSpriteGrid()
-* -----------------------------
-* The addSpriteGrid function adds multiple sprites to the sprite catalog
-* by automatically generating their names and positions based on a grid layout.
-* It is useful for efficiently registering a series of similar sprites (like animation frames or digits)
-* that are arranged in rows and columns within a spritesheet.
-* Each sprite is named using the provided prefix and its index (e.g., "digit0", "digit1", ...),
-* and their positions are calculated from the starting coordinates, sprite size, and grid dimensions.
-*
-* Some potential use cases for the addSpriteGrid function in game development include:
-*
-* •	Animation Frames: Quickly registering all frames of a character or object animation that are laid out in a grid on a spritesheet.
-*
-* •	UI Elements: Loading button states, icons, or other interface elements that are organized in a grid.
-*
-* •	Font Glyphs: Registering a set of character images (e.g., numbers, letters) for custom bitmap fonts
-*
-* •	Inventory Items: Many 2D scrollers include collectible items, power-ups, or equipment.
-*   An inventory system lets players collect, view, and use these items.
-*   The icons for these items are typically stored in a spritesheet and managed similarly to other sprites.
-*/

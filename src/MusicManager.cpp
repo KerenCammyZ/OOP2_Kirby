@@ -9,7 +9,6 @@ MusicManager::MusicManager()
 
 void MusicManager::play(const std::string& filename)
 {
-	std::cout << "DEBUG: MusicManager received request to play: " << filename << std::endl;
 	// Stop the current music if there is any
 	if (m_currentMusic)
 	{
