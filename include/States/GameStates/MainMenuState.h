@@ -14,6 +14,6 @@ private:
     sf::Font m_font;
     sf::Text m_title;
     sf::Text m_playButton;
+	sf::Text m_helpButton;
     sf::Text m_exitButton;
-    
 };

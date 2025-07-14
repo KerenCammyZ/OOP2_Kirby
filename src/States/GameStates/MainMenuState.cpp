@@ -1,5 +1,6 @@
 #include "States/GameStates/MainMenuState.h"
 #include "States/GameStates/PlayingState.h"
+#include "States/GameStates/HelpScreenState.h"
 #include <iostream>
 
 MainMenuState::MainMenuState(GameController& game)
@@ -27,12 +28,19 @@ MainMenuState::MainMenuState(GameController& game)
     m_playButton.setFillColor(sf::Color::White);
     m_playButton.setPosition(SCREEN_WIDTH / 2.f - m_playButton.getGlobalBounds().width / 2.f, 400);
 
+    // Help Screen Button
+	m_helpButton.setFont(m_font);
+	m_helpButton.setString("Help");
+	m_helpButton.setCharacterSize(40);
+    m_playButton.setFillColor(sf::Color::White);
+    m_playButton.setPosition(SCREEN_WIDTH / 2.f - m_helpButton.getGlobalBounds().width / 2.f, 500);
+
     // Configure Exit Button
     m_exitButton.setFont(m_font);
     m_exitButton.setString("Exit");
     m_exitButton.setCharacterSize(40);
     m_exitButton.setFillColor(sf::Color::White);
-    m_exitButton.setPosition(SCREEN_WIDTH / 2.f - m_exitButton.getGlobalBounds().width / 2.f, 500);
+    m_exitButton.setPosition(SCREEN_WIDTH / 2.f - m_exitButton.getGlobalBounds().width / 2.f, 600);
 }
 
 void MainMenuState::handleEvents(GameController& game)
@@ -50,6 +58,11 @@ void MainMenuState::handleEvents(GameController& game)
             // Check if play button is clicked
             if (m_playButton.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                 game.changeGameState(std::make_unique<PlayingState>(game));
+            }
+
+            // Check if help button is clicked
+            if (m_playButton.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                game.changeGameState(std::make_unique<HelpScreenState>());
             }
 
             // Check if exit button is clicked
@@ -75,5 +88,6 @@ void MainMenuState::draw(GameController& game)
     window.clear(sf::Color(135, 206, 250)); // A sky blue color
     window.draw(m_title);
     window.draw(m_playButton);
+    window.draw(m_helpButton);
     window.draw(m_exitButton);
 }
