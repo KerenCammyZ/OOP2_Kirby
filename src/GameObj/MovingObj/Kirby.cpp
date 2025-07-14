@@ -431,6 +431,16 @@ int Kirby::getLives() const { return m_lives; }
 int Kirby::getHealth() const { return m_health; }
 int Kirby::getMaxHealth() const { return m_maxHealth; }
 
+void Kirby::setLife(int life)
+{
+	m_lives = life;
+}
+
+void Kirby::setHealth(int health)
+{
+	m_health = health;
+}
+
 
 void Kirby::handleCollision(Spike* spike)
 {

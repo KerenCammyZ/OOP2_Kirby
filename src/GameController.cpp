@@ -49,6 +49,18 @@ void GameController::changeGameState(std::unique_ptr<GameState> newState)
 
 void GameController::loadLevel(int levelNum)
 {
+	if (levelNum == 1)
+	{
+		m_score = 0;
+		m_kirby->setHealth(6);
+		m_kirby->setLife(5);
+
+	}
+	if (levelNum >= 2)
+	{
+		m_score += 100;
+	}
+
 	std::string musicFilename = "Level" + std::to_string(levelNum) + ".ogg";
 
 	m_musicManager.play(musicFilename);

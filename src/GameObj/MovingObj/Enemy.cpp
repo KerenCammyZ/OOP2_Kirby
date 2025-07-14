@@ -13,7 +13,7 @@
 #include "Commands/SparkCommand.h"
 
 sf::Color WaddleDeeColor(255, 0, 110);
-sf::Color TwizzyColor(255, 105, 180);
+sf::Color TwizzyColor(255, 186, 0);
 sf::Color sparkyColor(178, 0, 255);
 
 // Static registration for WaddleDee

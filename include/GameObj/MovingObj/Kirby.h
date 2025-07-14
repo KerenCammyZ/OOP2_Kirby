@@ -67,6 +67,8 @@ public:
 	int getLives() const;
 	int getHealth() const;
 	int getMaxHealth() const;
+	void setLife(int life);
+	void setHealth(int health);
 	
 	bool isHyper() const;
 	void setHyper(bool hyper);
