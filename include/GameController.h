@@ -43,6 +43,7 @@ private:
 	void drawHUD();
 	void updateView();
 	void checkCollisions();
+	void performGroundCheck();
 	void spawnKirby();
 
 	float m_deltaTime;

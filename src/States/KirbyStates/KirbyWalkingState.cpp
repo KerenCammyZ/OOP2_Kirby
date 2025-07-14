@@ -9,12 +9,12 @@
 
 std::unique_ptr<KirbyState> KirbyWalkingState::handleInput(Kirby& kirby)
 {
-	// --- THIS IS THE "WALK OFF A CLIFF" LOGIC ---
-	// If we are no longer on the ground, we must be falling.
-	if (!kirby.isGrounded())
-	{
-		return std::make_unique<KirbyFallingState>();
-	}
+	//// --- THIS IS THE "WALK OFF A CLIFF" LOGIC ---
+	//// If we are no longer on the ground, we must be falling.
+	//if (!kirby.isGrounded())
+	//{
+	//	return std::make_unique<KirbyFallingState>();
+	//}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
@@ -25,6 +25,11 @@ std::unique_ptr<KirbyState> KirbyWalkingState::handleInput(Kirby& kirby)
 		!sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		return std::make_unique<KirbyStandingState>();
+	}
+
+	if(!kirby.isGrounded())
+	{
+		return std::make_unique<KirbyFallingState>();
 	}
 
 

@@ -36,7 +36,14 @@ Kirby::Kirby(const std::shared_ptr<sf::Texture>& kirbyTexture)
 		setupAnimations();
 		m_animator->play("idle");
 	}
-};
+	// --- ADD THIS INITIALIZATION LOGIC ---
+	// Configure the ground sensor rectangle
+	float sensorWidth = getSize().x * 0.8f; // Slightly narrower than Kirby
+	float sensorHeight = 5.f; // A few pixels high
+	m_groundSensor.setSize({ sensorWidth, sensorHeight });
+	m_groundSensor.setFillColor(sf::Color(0, 255, 0, 150)); // Green and semi-transparent for debugging
+	m_groundSensor.setOrigin(sensorWidth / 2.f, sensorHeight / 2.f);
+}
 
 void Kirby::setupAnimations() {
 	m_animator->addGridAnimation("idle", 0, 0, 16, 16, 1, 0.5f, true);
@@ -103,8 +110,7 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 		return;
 	}
 	// Check if Kirby has the Spark power and is in a state that allows attacking
-	if (m_currentPower == PowerUpType::Spark &&
-		(dynamic_cast<KirbyStandingState*>(m_state.get()) || dynamic_cast<KirbyWalkingState*>(m_state.get())))
+	if (m_currentPower == PowerUpType::Spark)
 	{
 		// If so, transition to the special spark attack state
 		m_state = std::make_unique<KirbySparkAttackState>(*this, enemies);
@@ -178,6 +184,8 @@ void Kirby::draw(sf::RenderTarget& target) const
 	{
 		m_state->draw(target);
 	}
+
+	target.draw(m_groundSensor);
 }
 
 void Kirby::update(float deltaTime)
@@ -191,6 +199,20 @@ void Kirby::update(float deltaTime)
 		activateInvincibility(deltaTime);
 
 	std::unique_ptr<KirbyState> newState = nullptr;
+
+	// --- ADD THIS NEW LOGIC BLOCK ---
+	// This master check handles the transition to falling. It's more stable
+	// than having each state check for itself.
+	bool isAirborne = dynamic_cast<KirbyAirborneState*>(m_state.get()) ||
+		dynamic_cast<KirbyJumpingState*>(m_state.get());
+
+
+	if (!isGrounded() && !isInWater() && !isAirborne)
+	{
+		// If not grounded, not in water, and not already in an air-state, we MUST be falling.
+		newState = std::make_unique<KirbyFallingState>();
+	}
+	// --- END OF NEW LOGIC BLOCK ---
 
 	// High-priority check: Should we enter the water?
 	// This only runs if we are in the water but not already in a water-based state.
@@ -230,6 +252,7 @@ void Kirby::move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>
 		}
 	}
 
+
 	// Move along Y axis
 	float dy = m_velocity.y * deltaTime;
 	if (dy != 0.f) {
@@ -244,6 +267,7 @@ void Kirby::move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>
 
 	m_oldPosition = m_position;
 	setPosition(m_position + m_velocity * deltaTime);
+	updateGroundSensor();
 
 	float currentScaleX = m_sprite.getScale().x;
 	m_sprite.setScale(std::abs(currentScaleX) * static_cast<float>(m_facingDirection), m_sprite.getScale().y);
@@ -289,54 +313,15 @@ bool Kirby::willCollideAt(const sf::Vector2f& intendedPosition, const std::vecto
 
 void Kirby::handleCollision(GameObject* other)
 {
-	if (other->getType() == ObjectType::WALL)
-	{
-		sf::FloatRect wallBounds = other->getBounds();
+	other->handleCollision(this);
+}
 
-		setVelocity(sf::Vector2f(0, 0));
-		setPosition(getOldPosition());
-	}
-	else if (other->getType() == ObjectType::ENEMY)
-	{
-		static_cast<Enemy*>(other)->handleCollision(this);
-	}
-	else if (other->getType() == ObjectType::FLOOR)
-	{
-		sf::FloatRect kirbyBounds = getBounds();
-		sf::FloatRect floorBounds = other->getBounds();
-		sf::Vector2f kirbyPrevPos = getOldPosition();
-		const int floorHeight = floorBounds.height;
-
-		// Check if Kirby was coming from above in the previous frame
-		if (kirbyPrevPos.y + kirbyBounds.height / 2.f <= floorBounds.top)
-		{
-			// 1. Stop his vertical movement completely.
-			setVelocity({ getVelocity().x, 0.f });
-
-			// 2. Mark Kirby as being on the ground.
-			setGrounded(true);
-
-			// 3. Reposition him to be exactly on top of the floor.
-			setPosition({ getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
-		}
-
-		else if (kirbyPrevPos.x + kirbyBounds.width / 2.f <= floorBounds.left) // Coming from the left
-		{
-			// Stop horizontal movement and reposition Kirby to the left and on top of the floor
-			setVelocity({ 0.f, getVelocity().y });
-			setPosition({ floorBounds.left - (kirbyBounds.width / 2.f), getPosition().y - floorHeight });
-		}
-		else if (kirbyPrevPos.x - kirbyBounds.width / 2.f >= floorBounds.left + floorBounds.width) // Coming from the right
-		{
-			// Stop horizontal movement and reposition Kirby to the right and on top of the floor
-			setVelocity({ 0.f, getVelocity().y });
-			setPosition({ floorBounds.left + floorBounds.width + (kirbyBounds.width / 2.f), getPosition().y - floorHeight });
-		}
-	}
-	else 
-	{
-		other->handleCollision(this);
-	}
+// Also in Kirby.cpp, add this new function to update the sensor's position
+void Kirby::updateGroundSensor()
+{
+	// Position the sensor just below Kirby's center
+	float yOffset = getSize().y / 2.f;
+	m_groundSensor.setPosition(getPosition().x, getPosition().y + yOffset);
 }
 
 void Kirby::handleCollision(Door* door)

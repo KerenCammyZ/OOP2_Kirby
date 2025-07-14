@@ -54,38 +54,60 @@ bool Floor::m_registeritem = GameObjectFactory::registerType(
 //	}
 // 
 //}
+//void Floor::handleCollision(Kirby* kirby)
+//{
+//	sf::FloatRect kirbyBounds = kirby->getBounds();
+//	sf::FloatRect floorBounds = getBounds();
+//	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
+//	const int floorHeight = floorBounds.height;
+//	
+//	// Check if Kirby was coming from above OR is already walking on the floor.
+//	// A small tolerance (e.g., 1.0f) handles floating-point inaccuracies.
+//	if (kirbyPrevPos.y + kirbyBounds.height / 2.f <= floorBounds.top + 1.0f)
+//	{
+//		// 1. Stop his vertical movement completely.
+//		kirby->setVelocity({ kirby->getVelocity().x, 0.f });
+//
+//		// 2. Mark Kirby as being on the ground.
+//		kirby->setGrounded(true);
+//
+//		// 3. Reposition him to be exactly on top of the floor.
+//		kirby->setPosition({ kirby->getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
+//	}
+//
+//	else if (kirbyPrevPos.x + kirbyBounds.width / 2.f <= floorBounds.left) // Coming from the left
+//	{
+//		// Stop horizontal movement and reposition Kirby to the left and on top of the floor
+//		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
+//		kirby->setPosition({ floorBounds.left - (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight });
+//	}
+//	else if (kirbyPrevPos.x - kirbyBounds.width / 2.f >= floorBounds.left + floorBounds.width) // Coming from the right
+//	{
+//		// Stop horizontal movement and reposition Kirby to the right and on top of the floor
+//		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
+//		kirby->setPosition({ floorBounds.left + floorBounds.width + (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight });
+//	}
+//}
+
+// In Floor.cpp, REPLACE your handleCollision function with this one.
+
 void Floor::handleCollision(Kirby* kirby)
 {
-	sf::FloatRect kirbyBounds = kirby->getBounds();
-	sf::FloatRect floorBounds = getBounds();
-	sf::Vector2f kirbyPrevPos = kirby->getOldPosition();
-	const int floorHeight = floorBounds.height;
-	
-	// Check if Kirby was coming from above OR is already walking on the floor.
-	// A small tolerance (e.g., 1.0f) handles floating-point inaccuracies.
-	if (kirbyPrevPos.y + kirbyBounds.height / 2.f <= floorBounds.top + 1.0f)
+	// If Kirby is moving downwards or horizontally (velocity >= 0), he should land.
+	// This simple condition works for both landing from a jump and walking horizontally.
+	if (kirby->getVelocity().y >= 0)
 	{
-		// 1. Stop his vertical movement completely.
+		sf::FloatRect kirbyBounds = kirby->getBounds();
+		sf::FloatRect floorBounds = getBounds();
+
+		// Snap Kirby's position to be exactly on top of the floor.
+		kirby->setPosition({ kirby->getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
+
+		// Stop his vertical movement.
 		kirby->setVelocity({ kirby->getVelocity().x, 0.f });
 
-		// 2. Mark Kirby as being on the ground.
-		kirby->setGrounded(true);
-
-		// 3. Reposition him to be exactly on top of the floor.
-		kirby->setPosition({ kirby->getPosition().x, floorBounds.top - (kirbyBounds.height / 2.f) });
-	}
-
-	else if (kirbyPrevPos.x + kirbyBounds.width / 2.f <= floorBounds.left) // Coming from the left
-	{
-		// Stop horizontal movement and reposition Kirby to the left and on top of the floor
-		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
-		kirby->setPosition({ floorBounds.left - (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight });
-	}
-	else if (kirbyPrevPos.x - kirbyBounds.width / 2.f >= floorBounds.left + floorBounds.width) // Coming from the right
-	{
-		// Stop horizontal movement and reposition Kirby to the right and on top of the floor
-		kirby->setVelocity({ 0.f, kirby->getVelocity().y });
-		kirby->setPosition({ floorBounds.left + floorBounds.width + (kirbyBounds.width / 2.f), kirby->getPosition().y - floorHeight });
+		// Reliably set his status to grounded.
+		/*kirby->setGrounded(true);*/
 	}
 }
 

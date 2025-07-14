@@ -112,6 +112,7 @@ void GameController::checkCollisions()
 		}
 	}
 
+
 	// Check for collisions between Kirby and enemies
 	for (const auto& enemy : m_enemies)
 	{
@@ -134,6 +135,31 @@ void GameController::checkCollisions()
 		}
 	}
 }
+
+// In GameController.cpp, add the implementation for the new function
+
+void GameController::performGroundCheck()
+{
+	// 1. Assume Kirby is not grounded until we prove he is.
+	m_kirby->setGrounded(false);
+
+	sf::FloatRect groundSensorBounds = m_kirby->getGroundSensorBounds(); // We will create this helper function next
+
+	// 2. Loop through all fixed objects to find floors.
+	for (const auto& object : m_fixedObjects)
+	{
+		if (object->getType() == ObjectType::FLOOR)
+		{
+			// 3. If the sensor intersects with ANY floor, Kirby is grounded.
+			if (object->getBounds().intersects(groundSensorBounds))
+			{
+				m_kirby->setGrounded(true);
+				return; // Exit early, we found a floor.
+			}
+		}
+	}
+}
+
 void GameController::spawnKirby()
 {
 	m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
@@ -185,45 +211,32 @@ void GameController::updateView()
 // It also updates the camera view to follow Kirby's position.
 void GameController::update(float deltaTime)
 {
-	if (m_kirby->getLives() == 0 && m_kirby->getHealth() == 0)
-	{
-		// If Kirby has no health or lives left, end the game.
-		m_window.close();
-		std::cout << "Game Over! Kirby has no health or lives left." << std::endl;
-		exit(EXIT_SUCCESS);
-	}
-
-	// 1. CHECK THE ENVIRONMENT
-	// Run collision checks based on the objects' positions from the last frame.
-	// This will set all environmental flags (isGrounded, isInWater, etc.)
-	//checkCollisions();
-
-	// 2. ACT ON THE ENVIRONMENT
-	// Now that all flags are correctly set for this frame, update all objects.
-	// Kirby's state machine will now see the correct values for m_isGrounded and m_isInWater.
-	m_kirby->update(deltaTime);
-	m_kirby->move(deltaTime, m_fixedObjects);
-	checkCollisions();
-	 
-	for (auto& obj : m_fixedObjects)
-	{
-		obj->update(deltaTime);
-	}
-
-	for (auto& enemy : m_enemies)
-	{
-		if(enemy->isSwallowed())
-			addScore(enemy->getScoreValue());
-
-		enemy->update(deltaTime);
-	}
-
 	m_kirby->setInWater(false);
 	m_kirby->setGrounded(false);
 
-	// update the camera
-	updateView();
+	if (m_kirby->getLives() == 0 && m_kirby->getHealth() == 0)
+	{
+		m_window.close();
+		exit(EXIT_SUCCESS);
+	}
 
+	// 1. CHECK THE ENVIRONMENT FIRST
+	checkCollisions();
+	performGroundCheck();
+
+	// 2. ACT ON THE FRESH DATA
+	m_kirby->update(deltaTime);
+	m_kirby->move(deltaTime, m_fixedObjects);
+
+	for (auto& obj : m_fixedObjects) { obj->update(deltaTime); }
+	for (auto& enemy : m_enemies)
+	{
+		if (enemy->isSwallowed())
+			addScore(enemy->getScoreValue());
+		enemy->update(deltaTime);
+	}
+
+	updateView();
 
 	// 4. CLEAN UP
 	// Remove any objects that were marked for deletion during the update phase.

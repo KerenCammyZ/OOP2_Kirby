@@ -28,33 +28,6 @@ void KirbySparkAttackState::enter(Kirby& kirby)
 
 std::unique_ptr<KirbyState> KirbySparkAttackState::handleInput(Kirby& kirby)
 {
-	//// Check if the player has released the attack key.
-	//if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-	//{
-	//	// Unleash the attack!
-	//	float attackRadius = m_sparkAura.getRadius();
-
-	//	// Check distance against every enemy
-	//	for (auto& enemy : m_enemies)
-	//	{
-	//		if (!enemy || enemy->isSwallowed()) continue;
-
-	//		sf::Vector2f vectorToEnemy = enemy->getPosition() - kirby.getPosition();
-	//		float distance = std::sqrt(vectorToEnemy.x * vectorToEnemy.x + vectorToEnemy.y * vectorToEnemy.y);
-
-	//		if (distance < attackRadius)
-	//		{
-	//			// Stun any enemy caught in the blast
-	//			enemy->onSwallowed();
-	//		}
-	//	}
-
-	//	// The attack is finished, transition back to the standing state.
-	//	// The power-up itself remains until the PowerUpManager's timer runs out.
-	//	return std::make_unique<KirbyStandingState>();
-	//}
-
-	//return nullptr; // Stay in this state while the key is held down.
 	// This function's ONLY job is now to check if the attack is over.
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{

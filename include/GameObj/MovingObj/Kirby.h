@@ -36,6 +36,7 @@ public:
 	float getSpeed() const;
 	void setSpeed(float speed);
 	float getOriginalSpeed() const;
+	sf::FloatRect getGroundSensorBounds() { return m_groundSensor.getGlobalBounds(); }
 
 	// The single public method to add any PowerUp's effect
 	void addPowerUpEffect(std::unique_ptr<PowerUpCommand> command);
@@ -54,6 +55,7 @@ public:
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override {};
+	void updateGroundSensor();
 	void handleCollision(Door* door) override;
 	void handleCollision(Spike* spike) override;
 
@@ -119,6 +121,7 @@ private:
 	int m_health = 6;
 	int m_maxHealth = 6;
 	float m_invincibilityTimer = 0.0f; // Prevents rapid damage
+	sf::RectangleShape m_groundSensor; //will be used to detect ground collision
 
 	PowerUpType m_currentPower = PowerUpType::None;
 	FacingDirection m_facingDirection = FacingDirection::Right;
