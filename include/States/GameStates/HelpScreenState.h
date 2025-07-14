@@ -14,5 +14,9 @@ public:
     void update(float deltaTime, GameController& game) override;
     void draw(GameController& game) override;
 private:
-	sf::Texture m_backgroundTexture;
+    sf::Text m_backButtonText;
+    sf::RectangleShape m_backButtonRect;
+	sf::Sprite m_backgroundSprite;
+    std::shared_ptr<sf::Font> m_font;
+	std::shared_ptr<sf::Texture> m_backgroundTexture;
 };
