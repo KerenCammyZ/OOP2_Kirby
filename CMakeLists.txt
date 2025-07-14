@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.26)
 
 project (KIRBY)
-set (MY_AUTHORS "YOUR-NAME-HERE")
+set (MY_AUTHORS "Keren-Zaig_Issachar-Welt")
 
 include (cmake/CompilerSettings.cmake)
 
