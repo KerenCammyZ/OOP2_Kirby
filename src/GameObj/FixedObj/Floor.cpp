@@ -111,5 +111,5 @@ void Floor::handleCollision(Enemy* enemy)
 {
 	// This simple check is enough for hopping/patrolling enemies.
 	// It tells the enemy that it is on the ground.
-	enemy->setGrounded(true);
+	//enemy->setGrounded(true);
 }

@@ -171,7 +171,7 @@ void Kirby::draw(sf::RenderTarget& target) const
 		m_state->draw(target);
 	}
 
-	target.draw(m_groundSensor);
+	//target.draw(m_groundSensor);
 }
 
 void Kirby::update(float deltaTime)
