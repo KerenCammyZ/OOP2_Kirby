@@ -101,8 +101,7 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 		return;
 	}
 	// Check if Kirby has the Spark power and is in a state that allows attacking
-	if (m_currentPower == PowerUpType::Spark &&
-		(dynamic_cast<KirbyStandingState*>(m_state.get()) || dynamic_cast<KirbyWalkingState*>(m_state.get())))
+	if (m_currentPower == PowerUpType::Spark)
 	{
 		// If so, transition to the special spark attack state
 		m_state = std::make_unique<KirbySparkAttackState>(*this, enemies);
