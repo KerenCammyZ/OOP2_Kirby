@@ -14,7 +14,7 @@
 
 sf::Color WaddleDeeColor(255, 0, 110);
 sf::Color TwizzyColor(0, 0, 80);
-sf::Color sparkyColor(0, 0, 120);
+sf::Color sparkyColor(178, 0, 255);
 
 // Static registration for WaddleDee
 bool Enemy::m_registerWaddleDee = GameObjectFactory::registerType(
