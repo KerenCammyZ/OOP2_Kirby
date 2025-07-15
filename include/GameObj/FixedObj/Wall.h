@@ -8,8 +8,6 @@ public:
 	Wall() = default;  
 
 	void handleCollision(Kirby* kirby) override;  
-	void handleCollision(Door* door) override {};
-	void handleCollision(Spike* spike) override {};
 
 	void draw(sf::RenderTarget& target) const override;
 	void setSize(const sf::Vector2f& size) override;

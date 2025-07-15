@@ -8,11 +8,8 @@ public:
 
 	// Collision Handlers
 	void handleCollision(Kirby* kirby) override;
-	void handleCollision(Door* door) override {};
 	void handleCollision(Enemy* enemy) override;
 
-	// Spikes don't need to interact with each other.
-	void handleCollision(Spike* spike) override {};
 
 	// Return the unique type for this object.
 	ObjectType getType() const override { return ObjectType::SPIKE; }

@@ -8,10 +8,7 @@ class Exit : public FixedObject
 {
 public:
 	Exit() = default;
-
-	void handleCollision(Door* door) override {};
 	void handleCollision(Kirby* kirby) override {};
-	void handleCollision(Spike* spike) override {};
 
 	ObjectType getType() const override { return ObjectType::EXIT; }
 };

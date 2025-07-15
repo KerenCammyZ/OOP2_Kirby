@@ -11,8 +11,7 @@ public:
 
 	void handleCollision(Kirby* kirby) override;
 	void handleCollision(Enemy* enemy) override;
-	void handleCollision(Door* door) override {};
-	void handleCollision(Spike* spike) override {};
+
 private:
 	static bool m_registeritem;
 };

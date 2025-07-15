@@ -49,8 +49,7 @@ public:
 
 	// Collision Handlers
 	void handleCollision(GameObject* other) override;
-	void handleCollision(Kirby* kirby) override {};
-	void handleCollision(Door* door) override;
+	void handleCollision(Door* door);
 	void handleCollision(Spike* spike) override;
 
 	// Kirby's health and lives management

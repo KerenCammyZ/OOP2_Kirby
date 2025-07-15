@@ -17,10 +17,6 @@ public:
 	// When Kirby collides, apply the effect and mark for deletion
 	void handleCollision(Kirby* kirby) override final;
 
-	// PowerUps don't collide with doors
-	void handleCollision(Door* door) override {};
-
-	void handleCollision(Spike* spike) override {};
 
 	bool isCollected() const { return m_isCollected; }
 

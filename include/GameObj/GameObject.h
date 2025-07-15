@@ -31,10 +31,11 @@ public:
 	virtual void draw(sf::RenderTarget& target) const;
 
 	virtual void handleCollision(GameObject* other) = 0;
-	virtual void handleCollision(Kirby* kirby) = 0;
-	virtual void handleCollision(Door* door) = 0;
-	virtual void handleCollision(Enemy* enemy) = 0;
-	virtual void handleCollision(Spike* spike) = 0;
+
+	virtual void handleCollision(Kirby* kirby) {};
+	virtual void handleCollision(Door* door) {};
+	virtual void handleCollision(Enemy* enemy) {};
+	virtual void handleCollision(Spike* spike) {};
 
 	virtual void setPosition(const sf::Vector2f& position);
 	sf::Vector2f getPosition() const;

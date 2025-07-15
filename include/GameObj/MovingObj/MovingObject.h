@@ -8,8 +8,8 @@ public:
 	MovingObject();
 	virtual ~MovingObject();
 
-	virtual void move(float deltaTime) = 0;
 	virtual void update(float deltaTime) override;
+	virtual void move(float deltaTime) = 0;
 	//virtual void move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles) = 0;
 
 	void setOldPosition(const sf::Vector2f& position);
@@ -21,8 +21,7 @@ public:
 	sf::Vector2f getDirection() const;
 	void setDirection(const sf::Vector2f& direction);
 
-	void handleCollision(Enemy* enemy) override {};
-	void handleCollision(Spike* spike) override {};
+
 protected:
 	float m_speed = 200.0f;
 	sf::Vector2f m_direction;

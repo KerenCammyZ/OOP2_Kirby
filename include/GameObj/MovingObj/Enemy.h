@@ -28,8 +28,6 @@ public:
 	
 	void handleCollision(GameObject* other) override;
 	void handleCollision(Kirby* kirby) override;
-	void handleCollision(Door* door) override {};
-	void handleCollision(Spike* spike) override {};
 
 	// Setters for strategies
 	void setMoveBehavior(std::unique_ptr<MoveBehavior> moveBehavior);

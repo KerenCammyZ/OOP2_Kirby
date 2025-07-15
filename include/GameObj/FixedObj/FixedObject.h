@@ -10,8 +10,6 @@ public:
 	void update(float dt) override {};
 
 	virtual void handleCollision(Kirby* kirby) = 0;
-	void handleCollision(Door* door) override = 0;
-	void handleCollision(Spike* spike) override {};
 	void handleCollision(Enemy* enemy) override;
 	void handleCollision(GameObject* other) override;
 
