@@ -22,7 +22,7 @@ public:
     // Draw the HUD stretched across the display area
     void draw(sf::RenderTarget& target);
 
-    // Set the area where HUD should be drawn (usually bottom of screen)
+    // Set the area where HUD should be drawn
     void setDisplayArea(float x, float y, float width, float height);
 
     // Example HUD element drawing functions
@@ -41,19 +41,16 @@ private:
     // Helper method to update sprite scaling and position
     void updateSprite();
 
-    std::shared_ptr<sf::Texture> m_hudTexture;
-    sf::Sprite m_hudSprite;
-
-    // Spritesheet for HUD elements
-    std::unique_ptr<SpriteSheet> m_spriteSheet;
-
-    // Display area (where HUD should be drawn)
-    sf::FloatRect m_displayArea;
-    
-    // Game state data (updated each frame)
     int m_score;
     int m_lives;
     int m_currentHealth;
     int m_maxHealth;
 	std::string m_kirbyState; // special powers or states ("normal", "hyper", "spark", "invincible", etc.)
+
+    sf::FloatRect m_displayArea;
+
+    sf::Sprite m_hudSprite;
+    std::shared_ptr<sf::Texture> m_hudTexture;
+    std::unique_ptr<SpriteSheet> m_spriteSheet; // Spritesheet for HUD elements    
+    
 };

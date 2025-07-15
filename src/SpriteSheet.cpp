@@ -1,7 +1,5 @@
-// SpriteSheet.cpp
 #include "SpriteSheet.h"
 #include <iostream>
-
 
 bool SpriteSheet::loadTexture(const std::string& filePath) {
     m_texture = std::make_shared<sf::Texture>();

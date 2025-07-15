@@ -1,4 +1,4 @@
-// WorldMap.h
+// WorldMap.cpp
 #include "WorldMap.h"
 #include "GameObjectFactory.h"
 #include "GameObj/FixedObj/Door.h"
@@ -44,7 +44,6 @@ void WorldMap::draw(sf::RenderTarget& target) const
 {
 	target.draw(m_backgroundSprite);
 }
-
 
 // Load objects from a collision map file.
 // This function reads the pixel colors from the image and creates game objects accordingly.
@@ -101,7 +100,6 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
         const auto& colorKey = pair.first;
         const auto& locations = pair.second;
 
-        // 
         if (colorKey == waterColor)
         {
             if (locations.size() % 2 != 0)
@@ -128,7 +126,6 @@ std::vector<std::unique_ptr<GameObject>> WorldMap::loadObjectsFromFile(const std
                 waterZoneObject->setPosition({ left + width / 2.f, top + height / 2.f });
 
                 createdObjects.push_back(std::move(waterZoneObject));
-                std::cout << "Created Water Zone at: (" << left << "," << top << ") with size (" << width << "," << height << ")\n";
             }
         }
         else if (locations.size() == 2)

@@ -4,7 +4,7 @@
 MusicManager::MusicManager()
 {
 	// You can set a default volume here if you like.
-	 setVolume(10.f);
+	setVolume(10.f);
 }
 
 void MusicManager::play(const std::string& filename)

@@ -1,3 +1,4 @@
+// Level.h
 #pragma once
 #include <string>
 #include <SFML/Graphics.hpp>
@@ -20,10 +21,10 @@ public:
 
 private:
 	void loadObjects(Kirby* kirby);
-	bool complete;  // TODO: by course conventions, class data members are prefixed 'm_'
-	int levelNumber;
-	std::string collisionMap;
-	std::string backgroundImage;
+	bool m_complete;
+	int m_levelNumber;
+	std::string m_collisionMap;
+	std::string m_backgroundImage;
 
 	std::unique_ptr<WorldMap> m_worldMap;
 	std::shared_ptr<sf::Texture> m_worldMapTexture;

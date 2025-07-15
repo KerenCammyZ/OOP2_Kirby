@@ -33,13 +33,14 @@ bool HUD::loadSpriteSheet(const std::string& filePath) {
     if (!m_spriteSheet->loadTexture(filePath)) {
         return false;
     }
-    // Define your sprite types based on your specifications
+    // Define the sprite types (for reference)
     m_spriteSheet->defineSpriteType("digit", 8, 9);
     m_spriteSheet->defineSpriteType("state", 32, 40);
     m_spriteSheet->defineSpriteType("text", 50, 10);
     m_spriteSheet->defineSpriteType("health", 8, 15);
     m_spriteSheet->defineSpriteType("star", 13, 12);
 
+	// Add sprites to the spritesheet
     m_spriteSheet->addSprite("normal", 0, 42, 32, 40); 
     m_spriteSheet->addSprite("hyper", 32, 42, 32, 40); 
     m_spriteSheet->addSprite("spark", 64, 42, 32, 40);
@@ -47,11 +48,10 @@ bool HUD::loadSpriteSheet(const std::string& filePath) {
 
     m_spriteSheet->addSprite("kirbyText", 0, 0, 50, 10); 
     m_spriteSheet->addSprite("scoreText", 0, 10, 50, 10);
+    m_spriteSheet->addSprite("kirbyIcon", 60, 19, 13, 12);
 
     m_spriteSheet->addSpriteGrid("digit", 0, 33, 8, 9, 10, 10);
     m_spriteSheet->addSpriteGrid("capsule", 60, 0, 8, 15, 3, 3);
-
-    m_spriteSheet->addSprite("kirbyIcon", 60, 19, 13, 12);
 
     return true;
 }

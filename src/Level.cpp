@@ -1,17 +1,18 @@
+// Level.cpp
 #include "Level.h"
 #include "ResourceManager.h"
-#include "GameObj/MovingObj/Enemy.h" // Ensure Enemy is included for dynamic_cast
+#include "GameObj/MovingObj/Enemy.h" // for dynamic_cast
 
 Level::Level(int levelNumber, Kirby* kirby)
-	: levelNumber(levelNumber), complete(false)
+	: m_levelNumber(levelNumber), m_complete(false)
 {
-	collisionMap = "Level" + std::to_string(levelNumber) + "Collisions.png";
-	backgroundImage = "Level" + std::to_string(levelNumber) + ".png";
+	m_collisionMap = "Level" + std::to_string(levelNumber) + "Collisions.png";
+	m_backgroundImage = "Level" + std::to_string(levelNumber) + ".png";
 
-	m_worldMapTexture = ResourceManager::getInstance().getTexture(backgroundImage);
+	m_worldMapTexture = ResourceManager::getInstance().getTexture(m_backgroundImage);
 	if (!m_worldMapTexture)
 	{
-		throw std::runtime_error("Failed to load world map texture: " + backgroundImage);
+		throw std::runtime_error("Failed to load world map texture: " + m_backgroundImage);
 	}
 
 	m_worldMap = std::make_unique<WorldMap>(m_worldMapTexture);
@@ -23,7 +24,7 @@ Level::Level(int levelNumber, Kirby* kirby)
 void Level::loadObjects( Kirby* kirby)
 {
 	// Load all objects from the collision map file
-	auto objects = m_worldMap->loadObjectsFromFile(collisionMap, kirby);
+	auto objects = m_worldMap->loadObjectsFromFile(m_collisionMap, kirby);
 
 	// Separate enemies from fixed objects (load enemies)
 	for (auto it = objects.begin(); it != objects.end(); )
@@ -64,12 +65,12 @@ std::unique_ptr<WorldMap> Level::getWorldMap()
 bool Level::getCompleted() const
 {
 	if (this)
-		return complete;
+		return m_complete;
 	else
 		return false;
 }
 
 void Level::setCompleted(bool completed)
 {
-	complete = completed;
+	m_complete = completed;
 }
