@@ -19,7 +19,6 @@ GameController::GameController():
 	loadHUD(); // Load the HUD and set up the views for the game and HUD
 }
 
-
 void GameController::run()
 {
 	while (m_window.isOpen())
@@ -46,7 +45,6 @@ void GameController::changeGameState(std::unique_ptr<GameState> newState)
 	}
 }
 
-
 void GameController::loadLevel(int levelNum)
 {
 	if (levelNum == 1)
@@ -64,26 +62,28 @@ void GameController::loadLevel(int levelNum)
 	std::string musicFilename = "Level" + std::to_string(levelNum) + ".ogg";
 
 	m_musicManager.play(musicFilename);
+
+	// Load world map and game objects for the specified level
 	m_level = std::make_unique<Level>(levelNum, m_kirby.get());
-	m_worldMap = m_level->getWorldMap(); // Load the world map for the level
-	m_fixedObjects = m_level->getObjects(); // Load all objects from the level
-	m_enemies = m_level->getEnemies(); // Load all enemies from the level
+	m_worldMap = m_level->getWorldMap();
+	m_fixedObjects = m_level->getObjects();
+	m_enemies = m_level->getEnemies();
 
 	spawnKirby();
 
-	// level camera setup
+	// Set the view to the size of the world map
 	if (m_worldMap)
 	{
-		// Calculate the new height for each of the three vertical sections.
+		// Calculate the new height for each of the three vertical sections
 		float newViewHeight = m_worldMap->getSize().y / 3.0f;
 
-		// Update our logical variable for camera snapping.
+		// Set the game view to the new height
 		m_levelAreaHeight = newViewHeight;
-
 		m_gameView.setSize(VIEW_WIDTH, newViewHeight);
 	}
 }
 
+// Check for collisions between game objects and handle them accordingly
 void GameController::checkCollisions()
 {
 	m_kirby->setInWater(false);
@@ -130,30 +130,32 @@ void GameController::checkCollisions()
 	}
 }
 
-// In GameController.cpp, add the implementation for the new function
-
+// Perform a ground check to see if Kirby is on the ground
 void GameController::performGroundCheck()
 {
-	// 1. Assume Kirby is not grounded until we prove he is.
 	m_kirby->setGrounded(false);
 
-	sf::FloatRect groundSensorBounds = m_kirby->getGroundSensorBounds(); // We will create this helper function next
+	// Get the bounds of Kirby's ground sensor
+	// The ground sensor is a rectangle that extends below Kirby's feet.
+	// It is used to check if Kirby is touching the ground.
+	sf::FloatRect groundSensorBounds = m_kirby->getGroundSensorBounds();
 
-	// 2. Loop through all fixed objects to find floors.
+	// Loop through all fixed objects to find floors
 	for (const auto& object : m_fixedObjects)
 	{
 		if (object->getType() == ObjectType::FLOOR)
 		{
-			// 3. If the sensor intersects with ANY floor, Kirby is grounded.
+			// If the sensor intersects with a floor, set Kirby as grounded.
 			if (object->getBounds().intersects(groundSensorBounds))
 			{
 				m_kirby->setGrounded(true);
-				return; // Exit early, we found a floor.
+				return;
 			}
 		}
 	}
 }
 
+// Spawn Kirby at the initial position and set its state to falling
 void GameController::spawnKirby()
 {
 	m_kirby->setPosition(sf::Vector2f(50, 50));
@@ -163,38 +165,31 @@ void GameController::spawnKirby()
 // Update the view to follow Kirby's position
 void GameController::updateView()
 {
-	// horizontal movement
+	// Ensure the view is centered on Kirby's position
 	float viewX = m_kirby->getPosition().x;
-
-	// vertical movement
-	// The floor division gives us an integer index (0 for the top block, 1 for the middle, etc.)
 	int verticalBlockIndex = static_cast<int>(m_kirby->getPosition().y / m_levelAreaHeight);
-	// Calculate the Y-center of that block to lock the camera to it.
-	float viewY = (verticalBlockIndex * m_levelAreaHeight) + (m_levelAreaHeight / 2.f);
+	float viewY = (verticalBlockIndex * m_levelAreaHeight) + (m_levelAreaHeight / 2.f); 
 
-	// Ensure the view stays within the bounds of the world map.
+	// Ensure the view does not go out of bounds of the world map.
 	sf::FloatRect worldBounds = m_worldMap->getBounds();
 	float viewHalfWidth = m_gameView.getSize().x / 2.f;
 	float viewHalfHeight = m_gameView.getSize().y / 2.f;
 
-	// Left boundary
-	if (viewX < viewHalfWidth) {
+	// Clamp the view position to ensure it stays within the world bounds
+	// If the view is too far left or right, adjust it to stay within the bounds.
+	if (viewX < viewHalfWidth) { 
 		viewX = viewHalfWidth;
 	}
-	// Right boundary
 	if (viewX > worldBounds.width - viewHalfWidth) {
 		viewX = worldBounds.width - viewHalfWidth;
 	}
-	// Top boundary
+	// If the view is too far up or down adjust it accordingly
 	if (viewY < viewHalfHeight) {
 		viewY = viewHalfHeight;
 	}
-	// Bottom boundary
 	if (viewY > worldBounds.height - viewHalfHeight) {
 		viewY = worldBounds.height - viewHalfHeight;
 	}
-
-	// Set the view's final center position for this frame.
 	m_gameView.setCenter(viewX, viewY);
 }
 
@@ -213,26 +208,26 @@ void GameController::update(float deltaTime)
 		exit(EXIT_SUCCESS);
 	}
 
-	// 1. CHECK THE ENVIRONMENT FIRST
 	checkCollisions();
 	performGroundCheck();
 
-	// 2. ACT ON THE FRESH DATA
 	m_kirby->update(deltaTime);
 	m_kirby->move(deltaTime, m_fixedObjects);
 
-	for (auto& obj : m_fixedObjects) { obj->update(deltaTime); }
+	for (auto& obj : m_fixedObjects)
+	{ 
+		obj->update(deltaTime); 
+	}
 	for (auto& enemy : m_enemies)
 	{
+		enemy->update(deltaTime);
 		if (enemy->isSwallowed())
 			addScore(enemy->getScoreValue());
-		enemy->update(deltaTime);
 	}
 
 	updateView();
 
-	// 4. CLEAN UP
-	// Remove any objects that were marked for deletion during the update phase.
+	// remove any objects that were marked for deletion during the update phase
 	auto it = std::remove_if(m_fixedObjects.begin(), m_fixedObjects.end(),
 		[](const std::unique_ptr<GameObject>& obj)
 		{
@@ -262,11 +257,11 @@ void GameController::handleEvents()
 	processWindowEvents();
 
 	// Handle Game controll Input
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-		m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
-
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		m_window.close(); // Close game window
+
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		m_kirby->setPosition(sf::Vector2f(50, 50)); // Reset Kirby's position
 
 	// Handle Kirby's input
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
@@ -311,9 +306,7 @@ void GameController::draw()
 	drawHUD();
 }
 
-
-
-// Load the HUD and set up the views for the game and HUD
+// Initializes the HUD and sets up the game and HUD views.
 void GameController::loadHUD()
 {
 	// Game view - takes up the top portion of the screen
@@ -352,10 +345,10 @@ void GameController::drawHUD()
 	PowerUpType powerUp = m_kirby->getCurrentPower();
 
 	std::string kirbyState;
-	if (powerUp == PowerUpType::Spark)
-		kirbyState = "spark";
-	else if (m_kirby->isInvincible())
+	if (m_kirby->isInvincible())
 		kirbyState = "invincible";
+	else if (powerUp == PowerUpType::Spark)
+		kirbyState = "spark";
 	else if (m_kirby->isHyper())
 		kirbyState = "hyper"; 
 	else
@@ -369,7 +362,6 @@ void GameController::drawHUD()
 
 void GameController::addScore(unsigned int points)
 {
-	unsigned int oldScore = m_score;
 	m_score += points;
 }
 

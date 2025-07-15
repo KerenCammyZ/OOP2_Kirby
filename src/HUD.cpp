@@ -20,8 +20,7 @@ bool HUD::loadTexture(const std::string& filePath) {
     m_hudTexture = ResourceManager::getInstance().getTexture(filePath);
 
     if (!m_hudTexture) {
-        std::cerr << "Failed to load HUD texture: " << filePath << std::endl;
-        return false;
+		throw std::runtime_error("Failed to load HUD texture: " + filePath);
     }
     m_hudSprite.setTexture(*m_hudTexture);
     updateSprite(); // Set initial scaling and position

@@ -24,10 +24,10 @@ public:
 	GameController();
 	~GameController() = default;
 	void run();
-	void changeGameState(std::unique_ptr<GameState> newState);
 	void update(float deltaTime);
-	void handleEvents();
 	void draw();
+	void handleEvents();
+	void changeGameState(std::unique_ptr<GameState> newState);
 	void loadLevel(int levelNum);
 	void loadHUD();
 
