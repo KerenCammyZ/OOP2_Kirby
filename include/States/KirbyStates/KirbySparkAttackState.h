@@ -4,13 +4,12 @@
 #include <vector>
 #include <memory>
 
-class Enemy; // Forward-declaration
+class Enemy;
 
 // This state manages the logic for Kirby's Spark charge attack.
 class KirbySparkAttackState : public KirbyState
 {
 public:
-	// The constructor takes a reference to the list of all enemies.
 	KirbySparkAttackState(Kirby& kirby, std::vector<std::unique_ptr<Enemy>>& enemies);
 
 	// Overridden functions from KirbyState
@@ -20,9 +19,8 @@ public:
 	void draw(sf::RenderTarget& target) override;
 
 private:
-	// Member variables to manage the attack
-	std::vector<std::unique_ptr<Enemy>>& m_enemies; // Reference to the game's enemy list
-	sf::CircleShape m_sparkAura; // The visual for the AoE attack
 	bool m_isCharging;
 	float m_chargeTime;
+	sf::CircleShape m_sparkAura; // The visual for the AoE attack
+	std::vector<std::unique_ptr<Enemy>>& m_enemies;
 };

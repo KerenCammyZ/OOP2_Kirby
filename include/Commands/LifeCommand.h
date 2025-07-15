@@ -7,7 +7,7 @@ class LifeCommand : public PowerUpCommand
 public:
 	void execute(Kirby& kirby) override
 	{
-		// Tell Kirby to add one life.
+		// Tell Kirby to add one life
 		kirby.addLife(1);
 	}
 

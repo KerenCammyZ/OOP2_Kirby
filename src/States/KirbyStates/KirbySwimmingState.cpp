@@ -3,7 +3,6 @@
 #include "GameObj/MovingObj/Kirby.h"
 #include <SFML/Window/Keyboard.hpp>
 #include "GlobalSizes.h"
-#include <iostream> // for debugging
 
 void KirbySwimmingState::enter(Kirby& kirby)
 {

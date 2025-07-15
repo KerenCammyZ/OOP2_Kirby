@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "Animator.h"
 
-class Kirby; // Forward-declaration to avoid circular includes
+class Kirby;
 
 class KirbyState
 {

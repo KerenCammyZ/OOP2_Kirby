@@ -8,7 +8,6 @@ public:
 	// The specific effect for this PowerUp
 	void applyEffect(Kirby* kirby) override;
 	ObjectType getType() const { return ObjectType::POWERUP; }
-	//void draw();
 
 
 private:

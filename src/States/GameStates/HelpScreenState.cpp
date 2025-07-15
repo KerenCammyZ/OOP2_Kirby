@@ -39,7 +39,6 @@ void HelpScreenState::handleEvents(GameController& game)
 
 void HelpScreenState::update(float deltaTime, GameController& game)
 {
-
 }
 
 void HelpScreenState::draw(GameController& game)

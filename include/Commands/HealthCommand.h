@@ -7,7 +7,7 @@ class HealthCommand : public PowerUpCommand
 public:
 	void execute(Kirby& kirby) override
 	{
-		// Heal Kirby by 2 health points. You can change this value.
+		// Heal Kirby by 2 health points
 		kirby.heal(2);
 	}
 

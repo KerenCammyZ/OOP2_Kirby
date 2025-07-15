@@ -1,14 +1,14 @@
 #pragma once
 #include "Behaviors/MoveBehavior.h"
 #include "GameObj/MovingObj/Enemy.h"
+#include <corecrt_math_defines.h>
 #include <cmath> // For std::sin
-#include <corecrt_math_defines.h> // For M_PI
 
 class HoppingMove : public MoveBehavior
 {
 public:
     HoppingMove() :
-        m_currentState(State::Waiting), // Start in the waiting state
+        m_currentState(State::Waiting),
         m_timeAccumulator(0.0f),
         m_waitTimer(2.0f), // Start with an initial 2-second wait
         m_baseY(0.0f),

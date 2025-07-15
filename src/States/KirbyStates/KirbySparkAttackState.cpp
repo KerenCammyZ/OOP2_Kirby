@@ -3,7 +3,7 @@
 #include "GameObj/MovingObj/Kirby.h"
 #include "GameObj/MovingObj/Enemy.h"
 #include <SFML/Window/Keyboard.hpp>
-#include <cmath> // For std::sqrt and std::min
+#include <cmath> // for std::sqrt and std::min
 
 KirbySparkAttackState::KirbySparkAttackState(Kirby& kirby, std::vector<std::unique_ptr<Enemy>>& enemies)
 	: m_enemies(enemies), m_isCharging(false), m_chargeTime(0.f)
@@ -13,7 +13,7 @@ KirbySparkAttackState::KirbySparkAttackState(Kirby& kirby, std::vector<std::uniq
 	m_sparkAura.setFillColor(sf::Color(255, 255, 0, 100)); // Yellow, semi-transparent
 	m_sparkAura.setOutlineColor(sf::Color::White);
 	m_sparkAura.setOutlineThickness(2.f);
-	m_sparkAura.setOrigin(0.f, 0.f); // We will update the origin as the radius changes
+	m_sparkAura.setOrigin(0.f, 0.f);
 }
 
 void KirbySparkAttackState::enter(Kirby& kirby)
@@ -21,9 +21,8 @@ void KirbySparkAttackState::enter(Kirby& kirby)
 	// When entering this state, immediately start charging the attack.
 	m_isCharging = true;
 	m_chargeTime = 0.f;
-	kirby.setVelocity({ 0.f, 0.f }); // Stop Kirby from moving while charging
-
-	kirby.setAnimation("spark_attack"); // Set the animation for the spark attack
+	kirby.setVelocity({ 0.f, 0.f });
+	kirby.setAnimation("spark_attack"); 
 }
 
 std::unique_ptr<KirbyState> KirbySparkAttackState::handleInput(Kirby& kirby)
