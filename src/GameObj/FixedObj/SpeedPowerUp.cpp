@@ -1,5 +1,6 @@
+// SpeedPowerUp.cpp
 #include "GameObj/FixedObj/SpeedPowerUp.h"
-#include "Commands/SpeedBoostCommand.h" // Include the command it will issue
+#include "Commands/SpeedBoostCommand.h"
 #include <iostream>
 
 

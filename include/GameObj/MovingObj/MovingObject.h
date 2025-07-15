@@ -8,8 +8,8 @@ public:
 	MovingObject();
 	virtual ~MovingObject();
 
-	virtual void update(float deltaTime) override;
 	virtual void move(float deltaTime) = 0;
+	virtual void update(float deltaTime) override;
 	//virtual void move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles) = 0;
 
 	void setOldPosition(const sf::Vector2f& position);

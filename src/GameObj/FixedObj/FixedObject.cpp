@@ -4,7 +4,6 @@
 
 FixedObject::FixedObject()
 {
-	// Configure the appearance of the debug shape once on creation
 	m_collisionShape.setFillColor(sf::Color::Transparent);
 	m_collisionShape.setOutlineColor(sf::Color::White);
 	m_collisionShape.setOutlineThickness(1.f);
@@ -24,7 +23,7 @@ void FixedObject::setSize(const sf::Vector2f& size)
 
 void FixedObject::setPosition(const sf::Vector2f& position)
 {
-	GameObject::setPosition(position); // Sets m_position
+	GameObject::setPosition(position);
 	m_collisionShape.setPosition(position);
 }
 

@@ -19,7 +19,7 @@ public:
 
 	void update(float deltaTime) override;
 	void move(float deltaTime) override;
-	//void move(float deltaTime, const std::vector<std::unique_ptr<GameObject>>& obstacles) override;
+
 	void attack(float deltaTime);
 	void stun(float duration);
 	void onSwallowed();
@@ -60,18 +60,17 @@ private:
 	EnemyState m_state;
 	bool m_isGrounded = false;
 
+	int m_damageAmount{ 1 };
+	int m_scoreValue{ 10 }; // Score value for defeating this enemy
+	float m_attackDuration{ 0.0f };
+
 	// Timers for State Management
-	int m_damageAmount;
-	int m_scoreValue = 10; // Score value for defeating this enemy
 	float m_stunTimer{ 0.0f };
 	float m_spawnTimer{ 1.75f };
 	float m_actionTimer{ 0.0f };
-	float m_attackDuration{ 0.0f };
-
 
 	// Static registration for the Enemy type
 	static bool m_registerTwizzy;
 	static bool m_registerWaddleDee;
 	static bool m_registerSparky;
-	//static bool m_registerEnemy;
 };

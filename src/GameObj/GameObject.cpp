@@ -1,7 +1,6 @@
+// GameObject.cpp
 #include "GameObj/GameObject.h"
-
 #include <iostream> 
-
 
 GameObject::GameObject()
 {
@@ -29,7 +28,7 @@ void GameObject::draw(sf::RenderTarget& target) const
 	}
 }
 
-// updates sprite position and origin based on the current position and texture size
+// Updates sprite position and origin based on the current position and texture size
 void GameObject::update(float dt)
 {
 	if (m_texture) {
@@ -60,13 +59,11 @@ void GameObject::setSize(const sf::Vector2f& size)
 	{
 		sf::Vector2u textureSize = m_texture->getSize(); // original size in pixels
 
+		// If texture size is valid, scale the sprite to match the desired size
 		if (textureSize.x > 0 && textureSize.y > 0)
-		{
-			// Calculate the scale factors by dividing the desired size by the texture's original size
-			// (determines how much the texture should be scaled to fit the desired size)
+		{			
 			float scaleX = size.x / textureSize.x;
 			float scaleY = size.y / textureSize.y;
-			// Set the sprite's scale to match the desired size
 			m_sprite.setScale(scaleX, scaleY);
 		}
 	}

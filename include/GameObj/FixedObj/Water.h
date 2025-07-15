@@ -19,9 +19,3 @@ private:
 	// The static member variable used to register this class with the factory.
 	static bool m_register;
 };
-
-// IDEA FROM 12:30AM
-/*
-	create water bounding box using two water objects marked on collision map
-	bada bing bada boom we got one object for lot's o water
-*/

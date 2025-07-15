@@ -13,7 +13,7 @@ void Door::handleCollision(Kirby* kirby)
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		sf::Vector2f arrivalPosition = m_destination;
-		arrivalPosition.x += kirby->getSize().x; // Adjust based on Kirby's size
+		arrivalPosition.x += kirby->getSize().x;
 		kirby->setPosition(arrivalPosition);
 	}
 }

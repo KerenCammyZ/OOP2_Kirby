@@ -18,5 +18,6 @@ public:
 	ObjectType getType() const { return ObjectType::WALL; }
 
 private:  
-	static bool m_registeritem; // Static member to register this type with the factory
+	// Static member for factory registration.
+	static bool m_registeritem;
 };

@@ -1,5 +1,6 @@
+// LifePowerUp.cpp
 #include "GameObj/FixedObj/LifePowerUp.h"
-#include "Commands/LifeCommand.h" // Include the new command
+#include "Commands/LifeCommand.h"
 #include "GameObj/MovingObj/Kirby.h"
 #include <iostream>
 

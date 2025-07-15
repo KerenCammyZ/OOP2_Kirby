@@ -1,3 +1,4 @@
+// PowerUp.cpp
 #include "GameObj/FixedObj/PowerUp.h"
 
 void PowerUp::handleCollision(Kirby* kirby)

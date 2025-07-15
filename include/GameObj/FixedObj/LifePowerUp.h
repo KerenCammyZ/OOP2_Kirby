@@ -6,8 +6,6 @@ class LifePowerUp : public PowerUp
 {
 public:
 	void applyEffect(Kirby* kirby) override;
-
-	// Add a new type for this object
 	ObjectType getType() const override { return ObjectType::POWERUP; }
 
 private:

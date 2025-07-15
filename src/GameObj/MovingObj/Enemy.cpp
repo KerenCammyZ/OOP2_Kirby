@@ -106,7 +106,17 @@ void Enemy::update(float deltaTime)
 		GameObject::update(deltaTime);
 		return;
 	}
-	else if (m_state == EnemyState::STUNNED || m_state == EnemyState::SWALLOWED)
+	else if (m_state == EnemyState::STUNNED) 
+	{
+		m_stunTimer -= deltaTime;
+		if (m_stunTimer <= 0.0f)
+		{
+			m_state = EnemyState::ACTIVE;
+		}
+		GameObject::update(deltaTime);
+		return;
+	}
+	else if (m_state == EnemyState::SWALLOWED)
 	{
 		GameObject::update(deltaTime);
 		return;
@@ -129,7 +139,7 @@ void Enemy::update(float deltaTime)
 					// If it is, give Kirby the SparkCommand.
 					m_kirby->addPowerUpEffect(std::make_unique<SparkCommand>());
 				}
-				onSwallowed(); // This sets the state to SWALLOWED for deletion
+				onSwallowed(); // Set enemy state to SWALLOWED
 			}
 			else
 			{
@@ -145,7 +155,7 @@ void Enemy::update(float deltaTime)
 			m_state = EnemyState::ACTIVE;
 		}
 	}
-	// --- State Logic for Active and Attacking ---
+	// Active state logic
 	if (m_state == EnemyState::ACTIVE)
 	{
 		// Countdown the timer until the next attack
@@ -164,25 +174,27 @@ void Enemy::update(float deltaTime)
 			move(deltaTime);
 		}
 	}
+	// Attacking state logic
 	else if (m_state == EnemyState::ATTACKING)
 	{
-		// When attacking, the enemy does NOT move.
-		// Countdown the duration of the attack.
 		m_attackDuration -= deltaTime;
 
 		if (m_attackDuration <= 0.0f)
 		{
-			// Attack is over, switch back to ACTIVE state
 			m_state = EnemyState::ACTIVE;
-			m_actionTimer = 2.0f + (rand() % 3); // Reset timer for the next attack cycle
+			m_actionTimer = 2.0f + (rand() % 3); // reset timer for the next attack cycle
 		}
 		else
 		{
-			// While the attack is happening, call the attack behavior
+			// Waddle Dee (SimpleAttack) keeps moving while attacking
+			if (dynamic_cast<SimpleAttack*>(m_attackBehavior.get()))
+			{
+				m_oldPosition = m_position;
+				move(deltaTime);
+			}
 			attack(deltaTime);
 		}
 	}
-
 	GameObject::update(deltaTime);
 }
 
@@ -195,9 +207,9 @@ void Enemy::stun(float duration)
 
 // Handle the enemy being swallowed by Kirby
 void Enemy::onSwallowed()
-{
-	// removes enemy from the game world
+{	
 	m_state = EnemyState::SWALLOWED;
+	// removes enemy from the game world and updates kirby's score
 }
 
 // Reverse the enemy's direction
