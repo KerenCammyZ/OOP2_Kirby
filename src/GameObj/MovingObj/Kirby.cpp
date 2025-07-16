@@ -96,7 +96,6 @@ void Kirby::updateAnimation(float deltaTime) {
 
 void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 {
-	// If Kirby is in the swimming state, perform the water fountain attack.
 	if (dynamic_cast<KirbySwimmingState*>(m_state.get()))
 	{
 		this->setState(std::make_unique<KirbyWaterAttackState>(*this, enemies));
@@ -107,10 +106,9 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 	{
 		return;
 	}
-	// Check if Kirby has the Spark power and is in a state that allows attacking
+	// Check if Kirby has the Spark power
 	if (m_currentPower == PowerUpType::Spark)
 	{
-		// If so, transition to the special spark attack state
 		m_state = std::make_unique<KirbySparkAttackState>(*this, enemies);
 		m_state->enter(*this);
 		return; // Exit to avoid the regular attack
@@ -130,7 +128,7 @@ void Kirby::attack(std::vector<std::unique_ptr<Enemy>>& enemies, float range)
 		bool inRange = inVerticalRange && inHorizontalRange;
 
 		if (collidesWith(*enemy))
-			continue; // do nothing
+			continue; // do nothing being swallowed
 
 		if ((facingLeft && distanceX < 0 && inRange) || (distanceX > 0 && inRange))
 		{
@@ -186,9 +184,6 @@ void Kirby::update(float deltaTime)
 
 	std::unique_ptr<KirbyState> newState = nullptr;
 
-	// --- ADD THIS NEW LOGIC BLOCK ---
-	// This master check handles the transition to falling. It's more stable
-	// than having each state check for itself.
 	bool isAirborne = dynamic_cast<KirbyAirborneState*>(m_state.get()) ||
 		dynamic_cast<KirbyJumpingState*>(m_state.get());
 
@@ -198,10 +193,8 @@ void Kirby::update(float deltaTime)
 		// If not grounded, not in water, and not already in an air-state, we MUST be falling.
 		newState = std::make_unique<KirbyFallingState>();
 	}
-	// --- END OF NEW LOGIC BLOCK ---
 
-	// High-priority check: Should we enter the water?
-	// This only runs if we are in the water but not already in a water-based state.
+	// Should we enter the water
 	if (isInWater() &&
 		!dynamic_cast<KirbySwimmingState*>(m_state.get()) &&
 		!dynamic_cast<KirbyWaterAttackState*>(m_state.get()))
@@ -305,10 +298,8 @@ void Kirby::handleCollision(GameObject* other)
 	other->handleCollision(this);
 }
 
-// Also in Kirby.cpp, add this new function to update the sensor's position
 void Kirby::updateGroundSensor()
 {
-	// Position the sensor just below Kirby's center
 	float yOffset = getSize().y / 2.f;
 	m_groundSensor.setPosition(getPosition().x, getPosition().y + yOffset);
 }
@@ -339,24 +330,16 @@ void Kirby::takeDamage(int damageAmount)
 	m_invincibilityTimer = 1.0f;
 	m_isInvincible = true;
 
-	std::cout << "Kirby took damage! Health: " << m_health << ", Lives: " << m_lives << std::endl;
 }
 
 void Kirby::heal(int healAmount)
 {
 	m_health = std::min(m_health + healAmount, m_maxHealth);
-	std::cout << "Kirby healed! Health: " << m_health << std::endl;
 }
 
 void Kirby::loseLife()
 {
 	m_lives--;
-	std::cout << "Life lost! Lives remaining: " << m_lives << std::endl;
-
-	if (m_lives <= 0)
-	{
-		std::cout << "Game Over!" << std::endl;
-	}
 }
 
 
