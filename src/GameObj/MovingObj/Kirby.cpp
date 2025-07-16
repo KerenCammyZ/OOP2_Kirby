@@ -316,14 +316,18 @@ void Kirby::handleCollision(Door* door)
 void Kirby::takeDamage(int damageAmount)
 {
 	// Ignore damage if invincible or no lives left
-	if (m_isInvincible || m_lives <= 0) return;
+	if (m_isInvincible || m_lives < 0) return;
 
 	m_health -= damageAmount;
 
 	if (m_health <= 0)
 	{
 		loseLife();
-		m_health = m_maxHealth; // Reset health after losing a life
+		//m_health = m_maxHealth; // Reset health after losing a life
+		if (m_lives > 0)
+			m_health = m_maxHealth; // Only reset health if lives remain
+		else
+			m_health = 0; // Ensure health is 0 if no lives left
 	}
 
 	// Start invincibility period

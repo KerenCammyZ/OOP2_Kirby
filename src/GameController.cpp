@@ -204,8 +204,11 @@ void GameController::update(float deltaTime)
 
 	if (m_kirby->getLives() == 0 && m_kirby->getHealth() == 0)
 	{
-		m_window.close();
-		exit(EXIT_SUCCESS);
+		m_score = 0;
+		m_kirby->setHealth(6);
+		m_kirby->setLife(5);
+		m_currentState = std::make_unique<MainMenuState>(*this); // Transition to the main menu state
+
 	}
 
 	checkCollisions();
